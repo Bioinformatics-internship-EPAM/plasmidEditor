@@ -6,7 +6,11 @@ import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompoundSet;
 import org.biojava.nbio.core.sequence.compound.DNACompoundSet;
 import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
+import org.biojava.nbio.core.sequence.io.GenbankReaderHelper;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
+
+import java.io.File;
+import java.util.LinkedHashMap;
 
 public class GenbankManager {
     public DNASequence readDNAByURL(String accession) {
@@ -30,7 +34,6 @@ public class GenbankManager {
             GenbankProxySequenceReader<AminoAcidCompound> genbankProteinReader =
                     new GenbankProxySequenceReader<AminoAcidCompound>("/tmp", accession,
                             AminoAcidCompoundSet.getAminoAcidCompoundSet());
-
             ProteinSequence proteinSequence = new ProteinSequence(genbankProteinReader);
             genbankProteinReader.getHeaderParser().parseHeader(
                     genbankProteinReader.getHeader(), proteinSequence);
@@ -44,6 +47,16 @@ public class GenbankManager {
     }
 
     public DNASequence readDNAFromFile(String path) {
+        File dnaFile = new File(path);
+        try {
+            LinkedHashMap<String, DNASequence> dnaSequences =
+                    GenbankReaderHelper.readGenbankDNASequence( dnaFile );
+            return dnaSequences.entrySet().iterator().next().getValue();
+        }
+        catch (Exception exc) {
+            System.err.println("Unable to read Genbank file " + path);
+            exc.printStackTrace();
+        }
         return null;
     }
 
