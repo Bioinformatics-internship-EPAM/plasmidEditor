@@ -51,11 +51,11 @@ public class GenbankManager {
         return null;
     }
 
-    public void writeDNAToFile(String fileName) {
+    public void writeDNAToFile(String fileName, DNASequence sequence) {
 
     }
 
-    public void writeProteinToFile(String fileName) {
+    public void writeProteinToFile(String fileName, ProteinSequence sequence) {
 
     }
 }
