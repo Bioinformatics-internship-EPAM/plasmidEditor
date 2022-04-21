@@ -7,6 +7,7 @@
 1) вручную
 Для этого нужно, находясь в корневой папке проекта, прописать следующие команды
 docker build -t plasmid_postgres_database:1.0 .
+
 docker run -d --name plasmid_postgres_database -p 5432:5432 plasmid_postgres_database:1.0
 2) через gradle
 В файле gradle.build прописан запуск контейнеров (docker и dockerRun)
