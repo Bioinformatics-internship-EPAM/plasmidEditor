@@ -2,6 +2,8 @@ plugins {
 	id 'org.springframework.boot' version '2.6.6'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'com.palantir.docker' version '0.22.1'
+	id 'com.palantir.docker-run' version '0.22.1'
 }
 
 group = 'com.example'
@@ -19,6 +21,17 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.postgresql:postgresql')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+docker {
+	name "plasmid_postgres_database:1.0"
+	setDockerfile(file("src/main/resources/Dockerfile"))
+}
+
+dockerRun {
+	name = "plasmid_postgres_databas"
+	image = "plasmid_postgres_database:1.0"
+	ports("5432:5432")
 }
 
 tasks.named('test') {
