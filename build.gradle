@@ -29,7 +29,7 @@ docker {
 }
 
 dockerRun {
-	name = "plasmid_postgres_databas"
+	name = "plasmid_postgres_database"
 	image = "plasmid_postgres_database:1.0"
 	ports("5432:5432")
 }
