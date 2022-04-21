@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Sputnik {
+public class SputnikApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(Sputnik.class, args);
+		SpringApplication.run(SputnikApplication.class, args);
 	}
 }
