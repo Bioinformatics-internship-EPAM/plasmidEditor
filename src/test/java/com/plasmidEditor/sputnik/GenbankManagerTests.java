@@ -48,7 +48,9 @@ class GenbankManagerTests {
         GenbankManager gbManager = new GenbankManager();
         DNASequence dnaSequence = gbManager.readDNAByURL("X81322");
         gbManager.writeDNAToFile(tmpPath, dnaSequence);
-        assertEquals(readStringFromFile("src/test/resources/X81322.gb"), readStringFromFile(tmpPath));
+        DNASequence dnaFromFile = gbManager.readDNAFromFile(tmpPath);
+        assertEquals(dnaSequence, dnaFromFile);
+        checkFeaturesX81322(dnaFromFile);
         Files.delete(tmp);
     }
 
@@ -59,7 +61,9 @@ class GenbankManagerTests {
         GenbankManager gbManager = new GenbankManager();
         ProteinSequence proteinSequence = gbManager.readProteinByURL("NP_000257");
         gbManager.writeProteinToFile(tmpPath, proteinSequence);
-        assertEquals( readStringFromFile("src/test/resources/NP_000257.gb"), readStringFromFile(tmpPath));
+        ProteinSequence proteinFromFile = gbManager.readProteinFromFile(tmpPath);
+        assertEquals(proteinSequence, proteinFromFile);
+        checkFeaturesNP_000257(proteinFromFile);
         Files.delete(tmp);
     }
 
