@@ -60,7 +60,6 @@ class GenbankManagerTests {
         ProteinSequence proteinSequence = gbManager.readProteinByURL("NP_000257");
         gbManager.writeProteinToFile(tmpPath, proteinSequence);
         assertEquals( readStringFromFile("src/test/resources/NP_000257.gb"), readStringFromFile(tmpPath));
-
         Files.delete(tmp);
     }
 

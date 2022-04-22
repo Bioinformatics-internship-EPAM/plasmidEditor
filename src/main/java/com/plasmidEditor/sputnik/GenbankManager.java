@@ -8,9 +8,12 @@ import org.biojava.nbio.core.sequence.compound.AminoAcidCompoundSet;
 import org.biojava.nbio.core.sequence.compound.DNACompoundSet;
 import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
 import org.biojava.nbio.core.sequence.io.GenbankReaderHelper;
+import org.biojava.nbio.core.sequence.io.GenbankWriterHelper;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import java.io.*;
@@ -77,6 +80,13 @@ public class GenbankManager {
     }
 
     public void writeDNAToFile(String fileName, DNASequence sequence) {
+        ByteArrayOutputStream fragwriter = new ByteArrayOutputStream();
+        try {
+            GenbankWriterHelper.writeNucleotideSequence(fragwriter, Collections.singleton(sequence),
+                    GenbankWriterHelper.LINEAR_DNA);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fileName);
@@ -85,7 +95,7 @@ public class GenbankManager {
             e.printStackTrace();
         }
         try {
-            out.write(sequence.getSequenceAsString().getBytes());
+            fragwriter.writeTo(out);
             out.close();
         } catch (IOException e) {
             System.err.println("Unable to write DNA data to file");
@@ -94,6 +104,12 @@ public class GenbankManager {
     }
 
     public void writeProteinToFile(String fileName, ProteinSequence sequence) {
+        ByteArrayOutputStream fragwriter = new ByteArrayOutputStream();
+        try {
+            GenbankWriterHelper.writeProteinSequence(fragwriter, Collections.singleton(sequence));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fileName);
@@ -102,7 +118,7 @@ public class GenbankManager {
             e.printStackTrace();
         }
         try {
-            out.write(sequence.getSequenceAsString().getBytes());
+            fragwriter.writeTo(out);
             out.close();
         } catch (IOException e) {
             System.err.println("Unable to write protein data to file");
