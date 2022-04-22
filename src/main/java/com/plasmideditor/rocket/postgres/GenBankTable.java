@@ -12,7 +12,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
         @PrimaryKeyJoinColumn(name = "accession"),
         @PrimaryKeyJoinColumn(name = "version")
 })
-public class GenBankTable {
+public class GenBankEntity {
 
     @Column(name = "accession")
     private String accession;
