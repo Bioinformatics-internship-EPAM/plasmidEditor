@@ -1,5 +1,6 @@
 package com.plasmidEditor.sputnik;
 
+import com.plasmidEditor.sputnik.utils.ReaderUtils;
 import org.biojava.nbio.core.sequence.*;
 import org.junit.jupiter.api.Test;
 
@@ -98,28 +99,13 @@ class GenbankManagerTests{
 
     private void checkSequenceX81322(DNASequence dnaSequence) {
         assertEquals(1499, dnaSequence.getLength());
-        String expectedSequence = readStringFromFile("src/test/resources/sequenceX81322.txt");
+        String expectedSequence = ReaderUtils.readStringFromFile("src/test/resources/sequenceX81322.txt");
         assertTrue(expectedSequence.equalsIgnoreCase(dnaSequence.getSequenceAsString()));
     }
 
     private void checkSequenceNP_000257(ProteinSequence proteinSequence) {
         assertEquals(133, proteinSequence.getLength());
-        String expectedSequence = readStringFromFile("src/test/resources/sequenceNP_000257.txt");
+        String expectedSequence = ReaderUtils.readStringFromFile("src/test/resources/sequenceNP_000257.txt");
         assertTrue(expectedSequence.equalsIgnoreCase(proteinSequence.getSequenceAsString()));
-    }
-
-    private static String readStringFromFile(String path) {
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = br.readLine();
-            }
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 }
