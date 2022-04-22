@@ -1,5 +1,6 @@
 package com.plasmidEditor.sputnik;
 
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
@@ -11,6 +12,8 @@ import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+
+import java.io.*;
 
 public class GenbankManager {
     public DNASequence readDNAByURL(String accession) {
@@ -61,14 +64,49 @@ public class GenbankManager {
     }
 
     public ProteinSequence readProteinFromFile(String path) {
+        File protFile = new File(path);
+        try {
+            LinkedHashMap<String, ProteinSequence> protSequences =
+                    GenbankReaderHelper.readGenbankProteinSequence(protFile);
+            return protSequences.entrySet().iterator().next().getValue();
+        } catch (Exception e) {
+            System.err.println("Unable to read data from file " + path);
+            e.printStackTrace();
+        }
         return null;
     }
 
     public void writeDNAToFile(String fileName, DNASequence sequence) {
-
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(fileName);
+        } catch (FileNotFoundException e) {
+            System.err.println("Unable to find file " + fileName);
+            e.printStackTrace();
+        }
+        try {
+            out.write(sequence.getSequenceAsString().getBytes());
+            out.close();
+        } catch (IOException e) {
+            System.err.println("Unable to write DNA data to file");
+            e.printStackTrace();
+        }
     }
 
     public void writeProteinToFile(String fileName, ProteinSequence sequence) {
-
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(fileName);
+        } catch (FileNotFoundException e) {
+            System.err.println("Unable to find file " + fileName);
+            e.printStackTrace();
+        }
+        try {
+            out.write(sequence.getSequenceAsString().getBytes());
+            out.close();
+        } catch (IOException e) {
+            System.err.println("Unable to write protein data to file");
+            e.printStackTrace();
+        }
     }
 }
