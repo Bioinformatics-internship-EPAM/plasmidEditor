@@ -18,7 +18,7 @@ public class GenBankEntity {
     private String accession;
 
     @Column(name = "version")
-    private String firstName;
+    private String version;
 
     @Column(name = "file")
     private String file;
@@ -31,12 +31,12 @@ public class GenBankEntity {
         this.accession = accession;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getVersion() {
+        return version;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getFile() {
