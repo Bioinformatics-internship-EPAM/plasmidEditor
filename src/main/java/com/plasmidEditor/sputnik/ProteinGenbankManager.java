@@ -29,8 +29,8 @@ public class ProteinGenbankManager implements GenbankManager<ProteinSequence> {
 
     @Override
     public ProteinSequence readFromFile(@NonNull String path) {
-        File protFile = new File(path);
         try {
+            File protFile = new File(path);
             Map<String, ProteinSequence> protSequences =
                 GenbankReaderHelper.readGenbankProteinSequence(protFile);
             return protSequences.entrySet().iterator().next().getValue();

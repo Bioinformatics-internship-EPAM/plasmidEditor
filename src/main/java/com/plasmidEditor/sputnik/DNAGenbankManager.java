@@ -9,7 +9,7 @@ import org.springframework.lang.NonNull;
 import java.io.*;
 import java.util.*;
 
-public class DNAGenbankManager implements GenbankManager<DNASequence>{
+public class DNAGenbankManager implements GenbankManager<DNASequence> {
     @Override
     public DNASequence readByURL(@NonNull String accession) {
         try {
@@ -19,8 +19,7 @@ public class DNAGenbankManager implements GenbankManager<DNASequence>{
             DNASequence dnaSequence = new DNASequence(genbankDNAReader);
             genbankDNAReader.getHeaderParser().parseHeader(genbankDNAReader.getHeader(), dnaSequence);
             return dnaSequence;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             System.err.println("Unable to get Genbank file with accession " + accession + " by URL");
             exc.printStackTrace();
         }
@@ -29,13 +28,12 @@ public class DNAGenbankManager implements GenbankManager<DNASequence>{
 
     @Override
     public DNASequence readFromFile(@NonNull String path) {
-        File dnaFile = new File(path);
         try {
+            File dnaFile = new File(path);
             Map<String, DNASequence> dnaSequences =
-                GenbankReaderHelper.readGenbankDNASequence( dnaFile );
+                GenbankReaderHelper.readGenbankDNASequence(dnaFile);
             return dnaSequences.entrySet().iterator().next().getValue();
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             System.err.println("Unable to read Genbank file " + path);
             exc.printStackTrace();
         }
