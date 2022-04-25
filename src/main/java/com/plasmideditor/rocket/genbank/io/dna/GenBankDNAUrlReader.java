@@ -1,27 +1,27 @@
-package com.plasmideditor.rocket.genbank.io;
+package com.plasmideditor.rocket.genbank.io.dna;
 
+import com.plasmideditor.rocket.genbank.io.GenBankReader;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.DNACompoundSet;
 import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
-import org.biojava.nbio.core.sequence.io.GenbankReaderHelper;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.List;
 
-public class GenBankDNAReader implements GenBankReader<DNASequence> {
+public class GenBankDNAUrlReader implements GenBankReader<DNASequence> {
+    private final String genbankDirectoryCache = "/tmp";
 
     @Override
-    public DNASequence readFromURL(String accessionID) {
-        DNASequence dnaSequence = null;
+    public List<DNASequence> read_sequence(String accessionID) {
+        DNASequence dnaSequence = new DNASequence();
 
         try {
             GenbankProxySequenceReader<NucleotideCompound> genbankDNAReader =
                     new GenbankProxySequenceReader<>(
-                            "/tmp",
+                            genbankDirectoryCache,
                             accessionID,
                             DNACompoundSet.getDNACompoundSet()
                     );
@@ -33,23 +33,6 @@ public class GenBankDNAReader implements GenBankReader<DNASequence> {
             e.printStackTrace();
         }
 
-        return dnaSequence;
-    }
-
-    @Override
-    public ArrayList<DNASequence> readFromFile(String filename) {
-        ArrayList<DNASequence> dnaSequencesList = new ArrayList<>();
-
-        try {
-            File dnaFile = new File(filename);
-
-            LinkedHashMap<String, DNASequence> dnaSequences =
-                    GenbankReaderHelper.readGenbankDNASequence(dnaFile);
-            dnaSequencesList.addAll(dnaSequences.values());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return dnaSequencesList;
+        return Collections.singletonList(dnaSequence);
     }
 }
