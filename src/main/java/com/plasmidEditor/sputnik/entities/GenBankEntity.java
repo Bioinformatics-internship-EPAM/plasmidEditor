@@ -7,7 +7,7 @@ import javax.persistence.IdClass;
 
 @Entity
 @Table(name = "genbank")
-@IdClass(GenBankEntityKey.class)
+@IdClass(GenBankId.class)
 public class GenBankEntity {
     @Id
     private String accession;

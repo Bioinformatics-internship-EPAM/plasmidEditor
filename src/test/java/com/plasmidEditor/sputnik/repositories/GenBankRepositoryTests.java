@@ -1,7 +1,7 @@
 package com.plasmidEditor.sputnik.repositories;
 
 import com.plasmidEditor.sputnik.entities.GenBankEntity;
-import com.plasmidEditor.sputnik.entities.GenBankEntityKey;
+import com.plasmidEditor.sputnik.entities.GenBankId;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +55,10 @@ class GenBankRepositoryTests{
     @Test
     void updateTest() {
         repository.save(new GenBankEntity("a", "1", "file1"));
-        Optional<GenBankEntity> entity = repository.findById(new GenBankEntityKey("a", "1"));
+        Optional<GenBankEntity> entity = repository.findById(new GenBankId("a", "1"));
         entity.get().setFile("file2");
 
-        Optional<GenBankEntity> updatedEntity = repository.findById(new GenBankEntityKey("a", "1"));
+        Optional<GenBankEntity> updatedEntity = repository.findById(new GenBankId("a", "1"));
         assertEquals(updatedEntity.get().getFile(), entity.get().getFile());
     }
 
@@ -68,7 +68,7 @@ class GenBankRepositoryTests{
         repository.save(new GenBankEntity("b", "2", "file2"));
         repository.save(new GenBankEntity("c", "3", "file3"));
 
-        repository.deleteById(new GenBankEntityKey("a", "1"));
+        repository.deleteById(new GenBankId("a", "1"));
 
         List<GenBankEntity> readEntities = repository.findAll();
         assertEquals(readEntities.size(), 2);
