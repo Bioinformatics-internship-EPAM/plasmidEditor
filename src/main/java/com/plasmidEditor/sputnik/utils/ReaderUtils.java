@@ -12,8 +12,7 @@ public class ReaderUtils {
             }
             return sb.toString();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
