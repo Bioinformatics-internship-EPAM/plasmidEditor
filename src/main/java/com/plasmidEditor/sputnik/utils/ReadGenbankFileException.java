@@ -1,6 +1,8 @@
 package com.plasmidEditor.sputnik.utils;
 
-public class ReadGenbankFileException extends Exception {
+import java.io.IOException;
+
+public class ReadGenbankFileException extends IOException {
     private final String path;
 
     public ReadGenbankFileException(String path, Throwable e){

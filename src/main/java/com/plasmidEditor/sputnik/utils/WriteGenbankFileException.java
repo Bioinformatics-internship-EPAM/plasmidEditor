@@ -1,6 +1,8 @@
 package com.plasmidEditor.sputnik.utils;
 
-public class WriteGenbankFileException extends Exception {
+import java.io.IOException;
+
+public class WriteGenbankFileException extends IOException {
     private final String path;
 
     public WriteGenbankFileException(String path, Throwable e){

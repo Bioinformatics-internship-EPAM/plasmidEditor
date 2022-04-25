@@ -1,7 +1,6 @@
 package com.plasmidEditor.sputnik;
 
-import com.plasmidEditor.sputnik.utils.ReadGenbankFileException;
-import com.plasmidEditor.sputnik.utils.WriteGenbankFileException;
+import com.plasmidEditor.sputnik.utils.*;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.io.*;
 import org.springframework.lang.NonNull;
@@ -15,7 +14,7 @@ public class FileProteinGenbankManager implements GenbankManager<ProteinSequence
         try {
             File protFile = new File(path);
             Map<String, ProteinSequence> protSequences = GenbankReaderHelper.readGenbankProteinSequence(protFile);
-            return protSequences.entrySet().iterator().next().getValue();
+            return getOnlySequenceFromMap(protSequences);
         } catch (Exception e) {
             throw new ReadGenbankFileException(path, e);
         }
@@ -29,6 +28,14 @@ public class FileProteinGenbankManager implements GenbankManager<ProteinSequence
             fragwriter.writeTo(outputStream);
         } catch (Exception e) {
             throw new WriteGenbankFileException(path, e);
+        }
+    }
+
+    private static ProteinSequence getOnlySequenceFromMap(Map<String, ProteinSequence> protSequences) {
+        if (protSequences.size() == 1) {
+            return protSequences.values().iterator().next();
+        } else {
+            throw new IllegalArgumentException("Can't read sequence from file");
         }
     }
 }

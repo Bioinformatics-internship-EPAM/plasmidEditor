@@ -6,9 +6,10 @@ import com.plasmidEditor.sputnik.utils.WriteGenbankFileException;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.springframework.lang.NonNull;
 
-public interface GenbankManager<T extends AbstractSequence<?>> {
-    T readSequence(@NonNull String url) throws ReadGenbankUrlException, ReadGenbankFileException;
+import java.io.IOException;
 
-    void writeSequence(@NonNull String path, T sequence) throws WriteGenbankFileException,
-                                                                UnsupportedOperationException;
+public interface GenbankManager<T extends AbstractSequence<?>> {
+    T readSequence(@NonNull String url) throws IOException;
+
+    void writeSequence(@NonNull String path, T sequence) throws WriteGenbankFileException;
 }

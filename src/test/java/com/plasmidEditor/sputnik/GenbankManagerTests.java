@@ -4,7 +4,6 @@ import com.plasmidEditor.sputnik.utils.ReaderUtils;
 import org.biojava.nbio.core.sequence.*;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
 import java.nio.file.*;
 
 import static org.junit.jupiter.api.Assertions.*;

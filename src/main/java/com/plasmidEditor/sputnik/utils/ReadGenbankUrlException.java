@@ -1,6 +1,8 @@
 package com.plasmidEditor.sputnik.utils;
 
-public class ReadGenbankUrlException extends Exception {
+import java.io.IOException;
+
+public class ReadGenbankUrlException extends IOException {
     private final String accession;
 
     public ReadGenbankUrlException(String accession, Throwable e){
