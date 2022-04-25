@@ -30,7 +30,7 @@ public class ProteinGenbankManager implements GenbankManager<ProteinSequence> {
     public ProteinSequence readFromFile(String path) {
         File protFile = new File(path);
         try {
-            LinkedHashMap<String, ProteinSequence> protSequences =
+            Map<String, ProteinSequence> protSequences =
                 GenbankReaderHelper.readGenbankProteinSequence(protFile);
             return protSequences.entrySet().iterator().next().getValue();
         } catch (Exception e) {

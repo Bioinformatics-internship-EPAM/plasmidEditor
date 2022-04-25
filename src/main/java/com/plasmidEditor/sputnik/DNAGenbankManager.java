@@ -30,7 +30,7 @@ public class DNAGenbankManager implements GenbankManager<DNASequence>{
     public DNASequence readFromFile(String path) {
         File dnaFile = new File(path);
         try {
-            LinkedHashMap<String, DNASequence> dnaSequences =
+            Map<String, DNASequence> dnaSequences =
                 GenbankReaderHelper.readGenbankDNASequence( dnaFile );
             return dnaSequences.entrySet().iterator().next().getValue();
         }
