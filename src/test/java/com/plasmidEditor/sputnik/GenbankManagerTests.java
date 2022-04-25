@@ -12,44 +12,45 @@ import static org.junit.jupiter.api.Assertions.*;
 class GenbankManagerTests{
     @Test
     void readDNAByURLTest() {
-        GenbankManager<DNASequence> gbManager = new DNAGenbankManager();
-        DNASequence dnaSequence = gbManager.readByURL("X81322");
+        GenbankManager<DNASequence> gbManager = new UrlDNAGenbankManager();
+        DNASequence dnaSequence = gbManager.readSequence("X81322");
         checkSequenceX81322(dnaSequence);
         checkFeaturesX81322(dnaSequence);
     }
 
     @Test
     void readProteinByURLTest() {
-        GenbankManager<ProteinSequence> gbManager = new ProteinGenbankManager();
-        ProteinSequence proteinSequence = gbManager.readByURL("NP_000257");
+        GenbankManager<ProteinSequence> gbManager = new UrlProteinGenbankManager();
+        ProteinSequence proteinSequence = gbManager.readSequence("NP_000257");
         checkSequenceNP_000257(proteinSequence);
         checkFeaturesNP_000257(proteinSequence);
     }
 
     @Test
     void readDNAFromFileTest() {
-        GenbankManager<DNASequence> gbManager = new DNAGenbankManager();
-        DNASequence dnaSequence = gbManager.readFromFile("src/test/resources/X81322.gb");
+        GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
+        DNASequence dnaSequence = gbManager.readSequence("src/test/resources/X81322.gb");
         checkSequenceX81322(dnaSequence);
         checkFeaturesX81322(dnaSequence);
     }
 
     @Test
     void readProteinFromFileTest() {
-        GenbankManager<ProteinSequence> gbManager = new ProteinGenbankManager();
-        ProteinSequence proteinSequence = gbManager.readFromFile("src/test/resources/NP_000257.gb");
+        GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
+        ProteinSequence proteinSequence = gbManager.readSequence("src/test/resources/NP_000257.gb");
         checkSequenceNP_000257(proteinSequence);
         checkFeaturesNP_000257(proteinSequence);
     }
 
     @Test
     void writeDNAToFileTest() throws IOException {
+        DNASequence dnaSequence = new UrlDNAGenbankManager().readSequence("X81322");
         Path tmp = Files.createTempFile("dna_", "test");
         String tmpPath = tmp.toFile().getAbsolutePath();
-        GenbankManager<DNASequence> gbManager = new DNAGenbankManager();
-        DNASequence dnaSequence = gbManager.readByURL("X81322");
-        gbManager.writeToFile(tmpPath, dnaSequence);
-        DNASequence dnaFromFile = gbManager.readFromFile(tmpPath);
+
+        GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
+        new FileDNAGenbankManager().writeSequence(tmpPath, dnaSequence);
+        DNASequence dnaFromFile = gbManager.readSequence(tmpPath);
         assertEquals(dnaSequence, dnaFromFile);
         checkFeaturesX81322(dnaFromFile);
         Files.delete(tmp);
@@ -57,12 +58,13 @@ class GenbankManagerTests{
 
     @Test
     void writeProteinToFileTest() throws IOException {
+        ProteinSequence proteinSequence = new UrlProteinGenbankManager().readSequence("NP_000257");
         Path tmp = Files.createTempFile("protein_", "test");
         String tmpPath = tmp.toFile().getAbsolutePath();
-        GenbankManager<ProteinSequence> gbManager = new ProteinGenbankManager();
-        ProteinSequence proteinSequence = gbManager.readByURL("NP_000257");
-        gbManager.writeToFile(tmpPath, proteinSequence);
-        ProteinSequence proteinFromFile = gbManager.readFromFile(tmpPath);
+
+        GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
+        gbManager.writeSequence(tmpPath, proteinSequence);
+        ProteinSequence proteinFromFile = gbManager.readSequence(tmpPath);
         assertEquals(proteinSequence, proteinFromFile);
         checkFeaturesNP_000257(proteinFromFile);
         Files.delete(tmp);
