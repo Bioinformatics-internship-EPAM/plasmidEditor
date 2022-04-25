@@ -4,13 +4,14 @@ import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.*;
 import org.biojava.nbio.core.sequence.io.*;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
+import org.springframework.lang.NonNull;
 
 import java.io.*;
 import java.util.*;
 
 public class ProteinGenbankManager implements GenbankManager<ProteinSequence> {
     @Override
-    public ProteinSequence readByURL(String accession) {
+    public ProteinSequence readByURL(@NonNull String accession) {
         try {
             GenbankProxySequenceReader<AminoAcidCompound> genbankProteinReader =
                 new GenbankProxySequenceReader<>("/tmp", accession,
@@ -27,7 +28,7 @@ public class ProteinGenbankManager implements GenbankManager<ProteinSequence> {
     }
 
     @Override
-    public ProteinSequence readFromFile(String path) {
+    public ProteinSequence readFromFile(@NonNull String path) {
         File protFile = new File(path);
         try {
             Map<String, ProteinSequence> protSequences =
@@ -41,7 +42,7 @@ public class ProteinGenbankManager implements GenbankManager<ProteinSequence> {
     }
 
     @Override
-    public void writeToFile(String fileName, ProteinSequence sequence) {
+    public void writeToFile(@NonNull String fileName, ProteinSequence sequence) {
         ByteArrayOutputStream fragwriter = new ByteArrayOutputStream();
         try {
             GenbankWriterHelper.writeProteinSequence(fragwriter, Collections.singleton(sequence));

@@ -4,13 +4,14 @@ import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.*;
 import org.biojava.nbio.core.sequence.io.*;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
+import org.springframework.lang.NonNull;
 
 import java.io.*;
 import java.util.*;
 
 public class DNAGenbankManager implements GenbankManager<DNASequence>{
     @Override
-    public DNASequence readByURL(String accession) {
+    public DNASequence readByURL(@NonNull String accession) {
         try {
             GenbankProxySequenceReader<NucleotideCompound> genbankDNAReader =
                 new GenbankProxySequenceReader<>("/tmp", accession,
@@ -27,7 +28,7 @@ public class DNAGenbankManager implements GenbankManager<DNASequence>{
     }
 
     @Override
-    public DNASequence readFromFile(String path) {
+    public DNASequence readFromFile(@NonNull String path) {
         File dnaFile = new File(path);
         try {
             Map<String, DNASequence> dnaSequences =
@@ -42,7 +43,7 @@ public class DNAGenbankManager implements GenbankManager<DNASequence>{
     }
 
     @Override
-    public void writeToFile(String fileName, DNASequence sequence) {
+    public void writeToFile(@NonNull String fileName, DNASequence sequence) {
         ByteArrayOutputStream fragwriter = new ByteArrayOutputStream();
         try {
             GenbankWriterHelper.writeNucleotideSequence(fragwriter, Collections.singleton(sequence),
