@@ -13,7 +13,7 @@ import javax.persistence.EmbeddedId;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "genbank")
+@Table(schema = "genbank", name = "genbanks")
 public class GenBankEntity {
     @EmbeddedId
     private GenBankId id;
