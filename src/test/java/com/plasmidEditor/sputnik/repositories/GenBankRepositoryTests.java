@@ -24,11 +24,10 @@ class GenBankRepositoryTests{
 
     @Test
     void createTest() {
-        GenBankEntity entity = new GenBankEntity("a", "1", "file");
+        GenBankEntity entity = new GenBankEntity(new GenBankId("a", "1"), "file");
         GenBankEntity savedEntity = repository.save(entity);
         assertNotNull(savedEntity);
-        assertEquals(entity.getAccession(), savedEntity.getAccession());
-        assertEquals(entity.getVersion(), savedEntity.getVersion());
+        assertEquals(entity.getId(), savedEntity.getId());
         assertEquals(entity.getFile(), savedEntity.getFile());
     }
 
@@ -38,23 +37,22 @@ class GenBankRepositoryTests{
         assertEquals(0, readEntities.size());
 
         List<GenBankEntity> savedEntities = new ArrayList<>();
-        savedEntities.add(repository.save(new GenBankEntity("a", "1", "file1")));
-        savedEntities.add(repository.save(new GenBankEntity("b", "2", "file2")));
+        savedEntities.add(repository.save(new GenBankEntity(new GenBankId("a", "1"), "file1")));
+        savedEntities.add(repository.save(new GenBankEntity(new GenBankId("b", "2"), "file2")));
 
         readEntities = repository.findAll();
 
         assertEquals(savedEntities.size(), readEntities.size());
 
         for (int i = 0; i < readEntities.size(); i++) {
-            assertEquals(savedEntities.get(i).getAccession(), readEntities.get(i).getAccession());
-            assertEquals(savedEntities.get(i).getVersion(), readEntities.get(i).getVersion());
+            assertEquals(savedEntities.get(i).getId(), readEntities.get(i).getId());
             assertEquals(savedEntities.get(i).getFile(), readEntities.get(i).getFile());
         }
     }
 
     @Test
     void updateTest() {
-        repository.save(new GenBankEntity("a", "1", "file1"));
+        repository.save(new GenBankEntity(new GenBankId("a", "1"), "file1"));
         Optional<GenBankEntity> entity = repository.findById(new GenBankId("a", "1"));
         entity.get().setFile("file2");
 
@@ -64,9 +62,9 @@ class GenBankRepositoryTests{
 
     @Test
     void deleteTest() {
-        repository.save(new GenBankEntity("a", "1", "file1"));
-        repository.save(new GenBankEntity("b", "2", "file2"));
-        repository.save(new GenBankEntity("c", "3", "file3"));
+        repository.save(new GenBankEntity(new GenBankId("a", "1"), "file1"));
+        repository.save(new GenBankEntity(new GenBankId("b", "2"), "file2"));
+        repository.save(new GenBankEntity(new GenBankId("c", "3"), "file3"));
 
         repository.deleteById(new GenBankId("a", "1"));
 
