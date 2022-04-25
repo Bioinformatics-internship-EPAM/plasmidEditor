@@ -2,6 +2,7 @@ package com.plasmidEditor.sputnik.entities;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.EmbeddedId;
@@ -17,5 +18,7 @@ import javax.persistence.EmbeddedId;
 public class GenBankEntity {
     @EmbeddedId
     private GenBankId id;
+
+    @Column(nullable = false)
     private String file;
 }
