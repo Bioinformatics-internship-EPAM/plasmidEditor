@@ -13,61 +13,85 @@ class GenbankManagerTests{
     @Test
     void readDNAByURLTest() {
         GenbankManager<DNASequence> gbManager = new UrlDNAGenbankManager();
-        DNASequence dnaSequence = gbManager.readSequence("X81322");
-        checkSequenceX81322(dnaSequence);
-        checkFeaturesX81322(dnaSequence);
+        try {
+            DNASequence dnaSequence = gbManager.readSequence("X81322");
+            checkSequenceX81322(dnaSequence);
+            checkFeaturesX81322(dnaSequence);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
     @Test
     void readProteinByURLTest() {
         GenbankManager<ProteinSequence> gbManager = new UrlProteinGenbankManager();
-        ProteinSequence proteinSequence = gbManager.readSequence("NP_000257");
-        checkSequenceNP_000257(proteinSequence);
-        checkFeaturesNP_000257(proteinSequence);
+        try {
+            ProteinSequence proteinSequence = gbManager.readSequence("NP_000257");
+            checkSequenceNP_000257(proteinSequence);
+            checkFeaturesNP_000257(proteinSequence);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
     @Test
     void readDNAFromFileTest() {
         GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
-        DNASequence dnaSequence = gbManager.readSequence("src/test/resources/X81322.gb");
-        checkSequenceX81322(dnaSequence);
-        checkFeaturesX81322(dnaSequence);
+        try {
+            DNASequence dnaSequence = gbManager.readSequence("src/test/resources/X81322.gb");
+            checkSequenceX81322(dnaSequence);
+            checkFeaturesX81322(dnaSequence);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
     @Test
     void readProteinFromFileTest() {
         GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
-        ProteinSequence proteinSequence = gbManager.readSequence("src/test/resources/NP_000257.gb");
-        checkSequenceNP_000257(proteinSequence);
-        checkFeaturesNP_000257(proteinSequence);
+        try {
+            ProteinSequence proteinSequence = gbManager.readSequence("src/test/resources/NP_000257.gb");
+            checkSequenceNP_000257(proteinSequence);
+            checkFeaturesNP_000257(proteinSequence);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
     @Test
-    void writeDNAToFileTest() throws IOException {
-        DNASequence dnaSequence = new UrlDNAGenbankManager().readSequence("X81322");
-        Path tmp = Files.createTempFile("dna_", "test");
-        String tmpPath = tmp.toFile().getAbsolutePath();
+    void writeDNAToFileTest() {
+        try {
+            DNASequence dnaSequence = new UrlDNAGenbankManager().readSequence("X81322");
+            Path tmp = Files.createTempFile("dna_", "test");
+            String tmpPath = tmp.toFile().getAbsolutePath();
 
-        GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
-        new FileDNAGenbankManager().writeSequence(tmpPath, dnaSequence);
-        DNASequence dnaFromFile = gbManager.readSequence(tmpPath);
-        assertEquals(dnaSequence, dnaFromFile);
-        checkFeaturesX81322(dnaFromFile);
-        Files.delete(tmp);
+            GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
+            new FileDNAGenbankManager().writeSequence(tmpPath, dnaSequence);
+            DNASequence dnaFromFile = gbManager.readSequence(tmpPath);
+            assertEquals(dnaSequence, dnaFromFile);
+            checkFeaturesX81322(dnaFromFile);
+            Files.delete(tmp);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
     @Test
-    void writeProteinToFileTest() throws IOException {
-        ProteinSequence proteinSequence = new UrlProteinGenbankManager().readSequence("NP_000257");
-        Path tmp = Files.createTempFile("protein_", "test");
-        String tmpPath = tmp.toFile().getAbsolutePath();
+    void writeProteinToFileTest() {
+        try {
+            ProteinSequence proteinSequence = new UrlProteinGenbankManager().readSequence("NP_000257");
+            Path tmp = Files.createTempFile("protein_", "test");
+            String tmpPath = tmp.toFile().getAbsolutePath();
 
-        GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
-        gbManager.writeSequence(tmpPath, proteinSequence);
-        ProteinSequence proteinFromFile = gbManager.readSequence(tmpPath);
-        assertEquals(proteinSequence, proteinFromFile);
-        checkFeaturesNP_000257(proteinFromFile);
-        Files.delete(tmp);
+            GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
+            gbManager.writeSequence(tmpPath, proteinSequence);
+            ProteinSequence proteinFromFile = gbManager.readSequence(tmpPath);
+            assertEquals(proteinSequence, proteinFromFile);
+            checkFeaturesNP_000257(proteinFromFile);
+            Files.delete(tmp);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
 
