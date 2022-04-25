@@ -1,13 +1,17 @@
 package com.plasmidEditor.sputnik;
 
+import com.plasmidEditor.sputnik.utils.ReadGenbankUrlException;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.*;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
 import org.springframework.lang.NonNull;
 
+import java.io.IOException;
+
 public class UrlProteinGenbankManager implements GenbankManager<ProteinSequence> {
     @Override
-    public ProteinSequence readSequence(@NonNull String accession) {
+    public ProteinSequence readSequence(@NonNull String accession) throws ReadGenbankUrlException {
         try {
             GenbankProxySequenceReader<AminoAcidCompound> genbankProteinReader =
                 new GenbankProxySequenceReader<>("/tmp", accession,
@@ -16,8 +20,8 @@ public class UrlProteinGenbankManager implements GenbankManager<ProteinSequence>
             genbankProteinReader.getHeaderParser().parseHeader(
                 genbankProteinReader.getHeader(), proteinSequence);
             return proteinSequence;
-        } catch (Exception e) {
-            throw new RuntimeException("Can't read sequence from GenBank", e);
+        } catch (InterruptedException | IOException | CompoundNotFoundException e) {
+            throw new ReadGenbankUrlException(accession, e);
         }
     }
 
