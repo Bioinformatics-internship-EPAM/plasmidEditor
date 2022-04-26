@@ -1,17 +1,14 @@
 package com.plasmidEditor.sputnik;
 
-import com.plasmidEditor.sputnik.entities.GenBankEntity;
-import com.plasmidEditor.sputnik.entities.GenBankId;
 import com.plasmidEditor.sputnik.repositories.GenBankRepository;
 
 import com.plasmidEditor.sputnik.services.GenBankService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,40 +22,42 @@ class GenBankServiceTests {
     @Autowired
     private GenBankRepository repository;
 
+    @BeforeEach
+    void clearDatabase() {
+        repository.deleteAll();
+    }
+
     @Test
     void createTest() {
-        GenBankEntity entity = new GenBankEntity(new GenBankId("a", "1"), "file1");
-        GenBankEntity savedEntity = service.add(entity);
-        assertNotNull(savedEntity);
-        assertEquals(savedEntity, entity);
+        GenBankDTO obj = new GenBankDTO("a", "1", "file");
+        GenBankDTO savedObj = service.add(obj);
+        assertNotNull(savedObj);
+        assertEquals(obj, savedObj);
     }
 
     @Test
     void readTest() {
-        List<GenBankEntity> readEntities = service.getAll();
-        assertEquals(0, readEntities.size());
-
-        GenBankEntity savedEntity = service.add(new GenBankEntity(new GenBankId("a", "1"), "file1"));
-        GenBankEntity readEntity = service.get("a", "1");
-        assertEquals(readEntity, savedEntity);
+        GenBankDTO savedObj = service.add(new GenBankDTO("a", "1", "file"));
+        GenBankDTO readObj = service.get("a", "1");
+        assertEquals(readObj, savedObj);
     }
 
     @Test
     void updateTest() {
-        service.add(new GenBankEntity(new GenBankId("a", "1"), "file1"));
-        GenBankEntity readEntity = service.get("a", "1");
-        readEntity.setFile("file2");
-        service.update(readEntity);
+        service.add(new GenBankDTO("a", "1", "file1"));
+        GenBankDTO readObj = service.get("a", "1");
+        readObj.setFile("file2");
+        service.update(readObj);
 
-        GenBankEntity updatedEntity = service.get("a", "1");
-        assertEquals(readEntity.getFile(), updatedEntity.getFile());
+        GenBankDTO updatedObj = service.get("a", "1");
+        assertEquals(readObj.getFile(), updatedObj.getFile());
     }
 
     @Test
     void deleteTest() {
-        service.add(new GenBankEntity(new GenBankId("a", "1"), "file1"));
-        service.add(new GenBankEntity(new GenBankId("b", "2"), "file2"));
-        service.add(new GenBankEntity(new GenBankId("c", "3"), "file3"));
+        service.add(new GenBankDTO("a", "1", "file1"));
+        service.add(new GenBankDTO("b", "1", "file2"));
+        service.add(new GenBankDTO("c", "1", "file3"));
 
         service.delete("a", "1");
         assertEquals(2, service.getAll().size());
