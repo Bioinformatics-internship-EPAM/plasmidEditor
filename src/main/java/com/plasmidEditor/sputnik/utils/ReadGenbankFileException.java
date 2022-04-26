@@ -4,8 +4,8 @@ import lombok.*;
 
 import java.io.IOException;
 
+@Getter(AccessLevel.PUBLIC)
 public class ReadGenbankFileException extends IOException {
-    @Getter(AccessLevel.PUBLIC)
     private final String path;
 
     public ReadGenbankFileException(String path, Throwable e){

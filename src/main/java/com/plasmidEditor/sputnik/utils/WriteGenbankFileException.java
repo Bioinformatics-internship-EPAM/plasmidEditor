@@ -4,8 +4,8 @@ import lombok.*;
 
 import java.io.IOException;
 
+@Getter(AccessLevel.PUBLIC)
 public class WriteGenbankFileException extends IOException {
-    @Getter(AccessLevel.PUBLIC)
     private final String path;
 
     public WriteGenbankFileException(String path, Throwable e) {

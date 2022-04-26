@@ -7,14 +7,15 @@ import org.biojava.nbio.core.sequence.compound.*;
 import org.biojava.nbio.core.sequence.io.*;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GenbankManagerTests {
-    @SneakyThrows
+
     @Test
-    void readDNAByURLTest() {
+    void readDNAByURLTest() throws IOException {
         GenbankManager<DNASequence> gbManager = new UrlDNAGenbankManager();
         DNASequence dnaSequence = gbManager.readSequence("X81322");
         checkSequenceX81322(dnaSequence);
@@ -22,7 +23,7 @@ class GenbankManagerTests {
 
     @SneakyThrows
     @Test
-    void readProteinByURLTest() {
+    void readProteinByURLTest() throws IOException {
         GenbankManager<ProteinSequence> gbManager = new UrlProteinGenbankManager();
         ProteinSequence proteinSequence = gbManager.readSequence("NP_000257");
         checkSequenceNP_000257(proteinSequence);
@@ -30,7 +31,7 @@ class GenbankManagerTests {
 
     @SneakyThrows
     @Test
-    void readDNAFromFileTest() {
+    void readDNAFromFileTest() throws IOException {
         GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
         DNASequence dnaSequence = gbManager.readSequence("src/test/resources/X81322.gb");
         checkSequenceX81322(dnaSequence);
@@ -38,7 +39,7 @@ class GenbankManagerTests {
 
     @SneakyThrows
     @Test
-    void readProteinFromFileTest() {
+    void readProteinFromFileTest() throws IOException {
         GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
         ProteinSequence proteinSequence = gbManager.readSequence("src/test/resources/NP_000257.gb");
         checkSequenceNP_000257(proteinSequence);
@@ -46,7 +47,7 @@ class GenbankManagerTests {
 
     @SneakyThrows
     @Test
-    void writeDNAToFileTest() {
+    void writeDNAToFileTest() throws IOException {
         Path tmp = Files.createTempFile("dna_", "test");
         String tmpPath = tmp.toFile().getAbsolutePath();
         String id = "TEST";
@@ -62,7 +63,7 @@ class GenbankManagerTests {
 
     @SneakyThrows
     @Test
-    void writeProteinToFileTest() {
+    void writeProteinToFileTest() throws Exception {
         Path tmp = Files.createTempFile("protein_", "test");
         String tmpPath = tmp.toFile().getAbsolutePath();
         String id = "TEST";
