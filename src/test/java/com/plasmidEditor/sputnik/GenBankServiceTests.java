@@ -1,9 +1,10 @@
-package com.plasmidEditor.sputnik.services;
+package com.plasmidEditor.sputnik;
 
 import com.plasmidEditor.sputnik.entities.GenBankEntity;
 import com.plasmidEditor.sputnik.entities.GenBankId;
 import com.plasmidEditor.sputnik.repositories.GenBankRepository;
 
+import com.plasmidEditor.sputnik.services.GenBankService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class GenBankServiceTests{
+class GenBankServiceTests {
     @Autowired
     private GenBankService service;
 
