@@ -1,11 +1,11 @@
 package com.plasmideditor.rocket.genbank.io;
 
-import java.util.ArrayList;
+import com.plasmideditor.rocket.genbank.io.exceptions.GenBankReaderException;
+import org.springframework.lang.NonNull;
+
+import java.util.List;
 
 public interface GenBankReader<T> {
 
-    /* Reads file from https://www.ncbi.nlm.nih.gov */
-    public T readFromURL(String accessionID);
-
-    public ArrayList<T> readFromFile(String filename);
+    public List<T> read_sequence(@NonNull String filename) throws GenBankReaderException;
 }

@@ -1,5 +1,7 @@
-package com.plasmideditor.rocket.genbank.io;
+package com.plasmideditor.rocket.genbank.io.protein;
 
+import com.plasmideditor.rocket.genbank.io.GenBankWriter;
+import com.plasmideditor.rocket.genbank.io.exceptions.GenBankWriterException;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.io.GenbankWriterHelper;
 
@@ -9,7 +11,7 @@ import java.util.List;
 public class GenBankProteinWriter implements GenBankWriter<ProteinSequence> {
 
     @Override
-    public void writeToFile(List<ProteinSequence> sequences, String filename) {
+    public void writeToFile(List<ProteinSequence> sequences, String filename) throws GenBankWriterException {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, sequences);
@@ -17,14 +19,8 @@ public class GenBankProteinWriter implements GenBankWriter<ProteinSequence> {
             try(OutputStream outputStream = new FileOutputStream(filename)) {
                 byteArrayOutputStream.writeTo(outputStream);
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Unable to find file " + filename);
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("Error while writing Protein Sequence to file " + filename);
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GenBankWriterException("Failed to write Protein data to file " + filename, e);
         }
     }
 }
