@@ -9,11 +9,9 @@ import javax.persistence.EmbeddedId;
 
 @Entity
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@AllArgsConstructor
 @Table(schema = "genbank", name = "genbanks")
 public class GenBankEntity {
     @EmbeddedId
