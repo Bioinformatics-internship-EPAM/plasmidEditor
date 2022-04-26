@@ -15,6 +15,14 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.6'
+
+	implementation 'org.biojava:biojava-core:6.0.5'
+}
+
+configurations {
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
 }
 
 tasks.named('test') {
