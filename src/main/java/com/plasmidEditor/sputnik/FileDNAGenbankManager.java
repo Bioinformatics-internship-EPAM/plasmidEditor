@@ -10,7 +10,7 @@ import java.util.*;
 
 public class FileDNAGenbankManager implements GenbankManager<DNASequence> {
     @Override
-    public DNASequence readSequence(@NonNull String path) throws ReadGenbankFileException {
+    public DNASequence readSequence(@NonNull String path) {
         try {
             File dnaFile = new File(path);
             Map<String, DNASequence> dnaSequences = GenbankReaderHelper.readGenbankDNASequence(dnaFile);
@@ -21,7 +21,7 @@ public class FileDNAGenbankManager implements GenbankManager<DNASequence> {
     }
 
     @Override
-    public void writeSequence(@NonNull String path, DNASequence sequence) throws WriteGenbankFileException {
+    public void writeSequence(@NonNull String path, DNASequence sequence) {
         try (ByteArrayOutputStream fragwriter = new ByteArrayOutputStream();
              FileOutputStream outputStream = new FileOutputStream(path)) {
             GenbankWriterHelper.writeNucleotideSequence(fragwriter, Collections.singleton(sequence),

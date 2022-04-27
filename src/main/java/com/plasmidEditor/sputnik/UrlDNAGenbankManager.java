@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class UrlDNAGenbankManager implements GenbankManager<DNASequence> {
     @Override
-    public DNASequence readSequence(@NonNull String accession) throws ReadGenbankUrlException {
+    public DNASequence readSequence(@NonNull String accession) {
         try {
             GenbankProxySequenceReader<NucleotideCompound> genbankDNAReader =
                 new GenbankProxySequenceReader<>("/tmp", accession,

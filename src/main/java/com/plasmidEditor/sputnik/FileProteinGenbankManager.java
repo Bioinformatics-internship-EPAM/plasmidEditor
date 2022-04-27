@@ -10,7 +10,7 @@ import java.util.*;
 
 public class FileProteinGenbankManager implements GenbankManager<ProteinSequence> {
     @Override
-    public ProteinSequence readSequence(@NonNull String path) throws ReadGenbankFileException {
+    public ProteinSequence readSequence(@NonNull String path) {
         try {
             File protFile = new File(path);
             Map<String, ProteinSequence> protSequences = GenbankReaderHelper.readGenbankProteinSequence(protFile);
@@ -21,7 +21,7 @@ public class FileProteinGenbankManager implements GenbankManager<ProteinSequence
     }
 
     @Override
-    public void writeSequence(@NonNull String path, ProteinSequence sequence) throws WriteGenbankFileException {
+    public void writeSequence(@NonNull String path, ProteinSequence sequence) {
         try (ByteArrayOutputStream fragwriter = new ByteArrayOutputStream();
              FileOutputStream outputStream = new FileOutputStream(path)) {
             GenbankWriterHelper.writeProteinSequence(fragwriter, Collections.singleton(sequence));

@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class UrlProteinGenbankManager implements GenbankManager<ProteinSequence> {
     @Override
-    public ProteinSequence readSequence(@NonNull String accession) throws ReadGenbankUrlException {
+    public ProteinSequence readSequence(@NonNull String accession) {
         try {
             GenbankProxySequenceReader<AminoAcidCompound> genbankProteinReader =
                 new GenbankProxySequenceReader<>("/tmp", accession,
