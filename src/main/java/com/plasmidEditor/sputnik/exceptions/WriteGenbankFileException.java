@@ -1,10 +1,10 @@
-package com.plasmidEditor.sputnik.utils;
+package com.plasmidEditor.sputnik.exceptions;
 
 import lombok.*;
 
 import java.io.IOException;
 
-@Getter(AccessLevel.PUBLIC)
+@Getter
 public class WriteGenbankFileException extends IOException {
     private final String path;
 

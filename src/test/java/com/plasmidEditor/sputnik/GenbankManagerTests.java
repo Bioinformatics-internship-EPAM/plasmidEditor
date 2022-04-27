@@ -13,7 +13,7 @@ import java.nio.file.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GenbankManagerTests {
-
+    @SneakyThrows
     @Test
     void readDNAByURLTest() throws IOException {
         GenbankManager<DNASequence> gbManager = new UrlDNAGenbankManager();
@@ -47,7 +47,7 @@ class GenbankManagerTests {
 
     @SneakyThrows
     @Test
-    void writeDNAToFileTest() throws IOException {
+    void writeDNAToFileTest() throws Exception {
         Path tmp = Files.createTempFile("dna_", "test");
         String tmpPath = tmp.toFile().getAbsolutePath();
         String id = "TEST";
@@ -77,13 +77,13 @@ class GenbankManagerTests {
         Files.delete(tmp);
     }
 
-    private void checkSequenceX81322(DNASequence dnaSequence) {
+    private void checkSequenceX81322(DNASequence dnaSequence) throws IOException {
         assertEquals(1499, dnaSequence.getLength());
         String expectedSequence = ReaderUtils.readStringFromFile("src/test/resources/sequenceX81322.txt");
         assertTrue(expectedSequence.equalsIgnoreCase(dnaSequence.getSequenceAsString()));
     }
 
-    private void checkSequenceNP_000257(ProteinSequence proteinSequence) {
+    private void checkSequenceNP_000257(ProteinSequence proteinSequence) throws IOException {
         assertEquals(133, proteinSequence.getLength());
         String expectedSequence = ReaderUtils.readStringFromFile("src/test/resources/sequenceNP_000257.txt");
         assertTrue(expectedSequence.equalsIgnoreCase(proteinSequence.getSequenceAsString()));

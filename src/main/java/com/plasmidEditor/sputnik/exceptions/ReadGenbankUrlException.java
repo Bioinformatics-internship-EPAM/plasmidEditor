@@ -1,10 +1,10 @@
-package com.plasmidEditor.sputnik.utils;
+package com.plasmidEditor.sputnik.exceptions;
 
-import lombok.*;
+import lombok.Getter;
 
 import java.io.IOException;
 
-@Getter(AccessLevel.PUBLIC)
+@Getter
 public class ReadGenbankUrlException extends IOException {
     private final String accession;
 

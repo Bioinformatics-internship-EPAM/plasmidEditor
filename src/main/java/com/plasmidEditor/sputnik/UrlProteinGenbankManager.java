@@ -1,6 +1,6 @@
 package com.plasmidEditor.sputnik;
 
-import com.plasmidEditor.sputnik.utils.ReadGenbankUrlException;
+import com.plasmidEditor.sputnik.exceptions.*;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.*;
@@ -27,6 +27,6 @@ public class UrlProteinGenbankManager implements GenbankManager<ProteinSequence>
 
     @Override
     public void writeSequence(@NonNull String path, ProteinSequence sequence) {
-        throw new UnsupportedOperationException("Can't write to URL");
+        throw new UnsupportedWritingToUrlException();
     }
 }

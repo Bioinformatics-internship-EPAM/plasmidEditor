@@ -1,9 +1,11 @@
 package com.plasmidEditor.sputnik.utils;
 
+import com.plasmidEditor.sputnik.exceptions.FileReadingException;
+
 import java.io.*;
 
 public class ReaderUtils {
-    public static String readStringFromFile(String path) {
+    public static String readStringFromFile(String path) throws FileReadingException {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             StringBuilder sb = new StringBuilder();
             String line;
@@ -12,7 +14,7 @@ public class ReaderUtils {
             }
             return sb.toString();
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new FileReadingException(path, e);
         }
     }
 }

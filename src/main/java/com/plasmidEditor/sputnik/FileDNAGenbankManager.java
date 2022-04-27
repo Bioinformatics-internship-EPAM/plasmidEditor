@@ -1,6 +1,6 @@
 package com.plasmidEditor.sputnik;
 
-import com.plasmidEditor.sputnik.utils.*;
+import com.plasmidEditor.sputnik.exceptions.*;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.*;
 import org.springframework.lang.NonNull;

@@ -1,8 +1,8 @@
 package com.plasmidEditor.sputnik;
 
-import com.plasmidEditor.sputnik.utils.ReadGenbankUrlException;
+import com.plasmidEditor.sputnik.exceptions.*;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
-import org.biojava.nbio.core.sequence.*;
+import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.*;
 import org.biojava.nbio.core.sequence.loader.GenbankProxySequenceReader;
 import org.springframework.lang.NonNull;
@@ -26,6 +26,6 @@ public class UrlDNAGenbankManager implements GenbankManager<DNASequence> {
 
     @Override
     public void writeSequence(@NonNull String path, DNASequence sequence) {
-        throw new UnsupportedOperationException("Can't write to URL");
+        throw new UnsupportedWritingToUrlException();
     }
 }
