@@ -13,33 +13,29 @@ import java.nio.file.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GenbankManagerTests {
-    @SneakyThrows
     @Test
-    void readDNAByURLTest() throws IOException {
+    void readDNAByURLTest() {
         GenbankManager<DNASequence> gbManager = new UrlDNAGenbankManager();
         DNASequence dnaSequence = gbManager.readSequence("X81322");
         checkSequenceX81322(dnaSequence);
     }
 
-    @SneakyThrows
     @Test
-    void readProteinByURLTest() throws IOException {
+    void readProteinByURLTest() {
         GenbankManager<ProteinSequence> gbManager = new UrlProteinGenbankManager();
         ProteinSequence proteinSequence = gbManager.readSequence("NP_000257");
         checkSequenceNP_000257(proteinSequence);
     }
 
-    @SneakyThrows
     @Test
-    void readDNAFromFileTest() throws IOException {
+    void readDNAFromFileTest() {
         GenbankManager<DNASequence> gbManager = new FileDNAGenbankManager();
         DNASequence dnaSequence = gbManager.readSequence("src/test/resources/X81322.gb");
         checkSequenceX81322(dnaSequence);
     }
 
-    @SneakyThrows
     @Test
-    void readProteinFromFileTest() throws IOException {
+    void readProteinFromFileTest() {
         GenbankManager<ProteinSequence> gbManager = new FileProteinGenbankManager();
         ProteinSequence proteinSequence = gbManager.readSequence("src/test/resources/NP_000257.gb");
         checkSequenceNP_000257(proteinSequence);
@@ -77,13 +73,13 @@ class GenbankManagerTests {
         Files.delete(tmp);
     }
 
-    private void checkSequenceX81322(DNASequence dnaSequence) throws IOException {
+    private void checkSequenceX81322(DNASequence dnaSequence) {
         assertEquals(1499, dnaSequence.getLength());
         String expectedSequence = ReaderUtils.readStringFromFile("src/test/resources/sequenceX81322.txt");
         assertTrue(expectedSequence.equalsIgnoreCase(dnaSequence.getSequenceAsString()));
     }
 
-    private void checkSequenceNP_000257(ProteinSequence proteinSequence) throws IOException {
+    private void checkSequenceNP_000257(ProteinSequence proteinSequence) {
         assertEquals(133, proteinSequence.getLength());
         String expectedSequence = ReaderUtils.readStringFromFile("src/test/resources/sequenceNP_000257.txt");
         assertTrue(expectedSequence.equalsIgnoreCase(proteinSequence.getSequenceAsString()));
