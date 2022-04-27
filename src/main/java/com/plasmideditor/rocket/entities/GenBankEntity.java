@@ -1,27 +1,37 @@
 package com.plasmideditor.rocket.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.PrimaryKeyJoinColumns;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "genbank")
-@PrimaryKeyJoinColumns({
-        @PrimaryKeyJoinColumn(name = "accession"),
-        @PrimaryKeyJoinColumn(name = "version")
-})
+@Table(
+        schema = "genbank",
+        name = "genbanks",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})}
+)
+@PrimaryKeyJoinColumn(name = "genbank_id")
 public class GenBankEntity {
 
-    @Column(name = "accession")
+    @Id
+    @GeneratedValue
+    @Column(name = "genbank_id", nullable = false)
+    private Long genbank_id;
+
+    @Column(name = "accession", nullable = false)
     private String accession;
 
-    @Column(name = "version")
+    @Column(name = "version", nullable = false)
     private String version;
 
-    @Column(name = "file")
+    @Column(name = "file", nullable = false)
     private String file;
+
+    public Long getGenbank_id() {
+        return genbank_id;
+    }
+
+    public void setGenbank_id(Long genbank_id) {
+        this.genbank_id = genbank_id;
+    }
 
     public String getAccession() {
         return accession;
