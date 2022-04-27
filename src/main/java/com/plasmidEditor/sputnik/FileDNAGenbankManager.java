@@ -32,11 +32,10 @@ public class FileDNAGenbankManager implements GenbankManager<DNASequence> {
         }
     }
 
-    private static DNASequence getOnlySequenceFromMap(Map<String, DNASequence> dnaSequences) {
+    private DNASequence getOnlySequenceFromMap(Map<String, DNASequence> dnaSequences) {
         if (dnaSequences.size() == 1) {
             return dnaSequences.values().iterator().next();
-        } else {
-            throw new IllegalArgumentException("Can't read sequence from file");
         }
+        throw new IllegalArgumentException("Can't read sequence from file");
     }
 }

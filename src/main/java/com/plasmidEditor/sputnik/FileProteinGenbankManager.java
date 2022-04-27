@@ -31,11 +31,10 @@ public class FileProteinGenbankManager implements GenbankManager<ProteinSequence
         }
     }
 
-    private static ProteinSequence getOnlySequenceFromMap(Map<String, ProteinSequence> protSequences) {
+    private ProteinSequence getOnlySequenceFromMap(Map<String, ProteinSequence> protSequences) {
         if (protSequences.size() == 1) {
             return protSequences.values().iterator().next();
-        } else {
-            throw new IllegalArgumentException("Can't read sequence from file");
         }
+        throw new IllegalArgumentException("Can't read sequence from file");
     }
 }
