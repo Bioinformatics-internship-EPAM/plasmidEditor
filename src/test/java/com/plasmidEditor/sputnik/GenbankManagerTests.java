@@ -7,7 +7,6 @@ import org.biojava.nbio.core.sequence.compound.*;
 import org.biojava.nbio.core.sequence.io.*;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.file.*;
 
 import static org.junit.jupiter.api.Assertions.*;

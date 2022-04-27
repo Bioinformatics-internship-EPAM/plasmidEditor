@@ -5,7 +5,7 @@ import com.plasmidEditor.sputnik.exceptions.FileReadingException;
 import java.io.*;
 
 public class ReaderUtils {
-    public static String readStringFromFile(String path) throws FileReadingException {
+    public static String readStringFromFile(String path) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             StringBuilder sb = new StringBuilder();
             String line;
