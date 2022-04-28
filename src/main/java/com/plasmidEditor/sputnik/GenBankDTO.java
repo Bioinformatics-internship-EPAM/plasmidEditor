@@ -11,7 +11,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class GenBankDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Long genbank_id;
+    private Long genbankId;
     @NonNull
     private String accession;
     @NonNull
