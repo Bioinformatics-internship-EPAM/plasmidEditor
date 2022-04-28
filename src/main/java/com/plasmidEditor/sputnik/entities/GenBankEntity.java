@@ -16,7 +16,6 @@ import javax.persistence.*;
 public class GenBankEntity {
     @Id
     @GeneratedValue
-    @Column(nullable = false)
     private Long genbank_id;
 
     @Column(nullable = false)
