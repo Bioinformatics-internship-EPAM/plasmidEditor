@@ -5,24 +5,23 @@ import javax.persistence.*;
 @Entity
 @Table(
         schema = "genbank",
-        name = "genbanks",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})}
+        name = "genbanks"
 )
 @PrimaryKeyJoinColumn(name = "genbank_id")
 public class GenBankEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "genbank_id", nullable = false)
+    @Column(name = "genbank_id")
     private Long genbank_id;
 
-    @Column(name = "accession", nullable = false)
+    @Column(name = "accession")
     private String accession;
 
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private String version;
 
-    @Column(name = "file", nullable = false)
+    @Column(name = "file")
     private String file;
 
     public Long getGenbank_id() {
