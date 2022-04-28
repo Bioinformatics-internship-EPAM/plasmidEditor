@@ -1,9 +1,6 @@
 package com.plasmidEditor.sputnik;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -11,9 +8,14 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class GenBankDTO implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Long genbank_id;
+    @NonNull
     private String accession;
+    @NonNull
     private String version;
+    @NonNull
     private String file;
 }
