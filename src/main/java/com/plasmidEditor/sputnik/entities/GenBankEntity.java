@@ -8,22 +8,13 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(
-        schema = "genbank",
-        name = "genbanks",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})}
-)
+@Table(schema = "genbank", name = "genbanks")
 public class GenBankEntity {
     @Id
     @GeneratedValue
-    private Long genbank_id;
+    private Long genbankId;
 
-    @Column(nullable = false)
     private String accession;
-
-    @Column(nullable = false)
     private String version;
-
-    @Column(nullable = false)
     private String file;
 }
