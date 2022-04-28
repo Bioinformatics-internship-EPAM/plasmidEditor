@@ -13,8 +13,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import javax.persistence.EntityNotFoundException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -73,16 +71,5 @@ class GenBankServiceImplTests {
 
         GenBankDTO updatedObj = service.get("a", "1");
         assertEquals(readObj.getFile(), updatedObj.getFile());
-    }
-
-    @Test
-    @Transactional
-    void deleteTest() {
-        service.save(new GenBankDTO("a", "1", "file1"));
-        service.save(new GenBankDTO("b", "1", "file2"));
-
-        service.delete("a", "1");
-        assertEquals(1, service.getAll().size());
-        assertThrows(EntityNotFoundException.class, () -> service.get("a", "1"));
     }
 }

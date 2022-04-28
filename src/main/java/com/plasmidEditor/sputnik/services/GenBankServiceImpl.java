@@ -47,23 +47,4 @@ public class GenBankServiceImpl implements GenBankService<GenBankDTO> {
 
         return mapper.map(entity.get(), GenBankDTO.class);
     }
-
-    @Override
-    public List<GenBankDTO> getAll() {
-        List<GenBankEntity> entities = repository.findAll();
-        return entities
-                .stream()
-                .map(entity -> mapper.map(entity, GenBankDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
-
-    @Override
-    public void delete(String accession, String version) {
-        repository.deleteByAccessionAndVersion(accession, version);
-    }
 }
