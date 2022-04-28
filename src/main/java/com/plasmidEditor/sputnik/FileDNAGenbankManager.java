@@ -36,6 +36,6 @@ public class FileDNAGenbankManager implements GenbankManager<DNASequence> {
         if (dnaSequences.size() == 1) {
             return dnaSequences.values().iterator().next();
         }
-        throw new IllegalArgumentException("Can't read sequence from file");
+        throw new ReadGenbankFileException();
     }
 }

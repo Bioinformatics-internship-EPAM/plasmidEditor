@@ -35,6 +35,6 @@ public class FileProteinGenbankManager implements GenbankManager<ProteinSequence
         if (protSequences.size() == 1) {
             return protSequences.values().iterator().next();
         }
-        throw new IllegalArgumentException("Can't read sequence from file");
+        throw new ReadGenbankFileException();
     }
 }
