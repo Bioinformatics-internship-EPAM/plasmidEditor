@@ -1,6 +1,9 @@
 .vscode/
 .idea/
 
+# Compiled class file
+*.class
+
 .gradle/
 build/
 bin/

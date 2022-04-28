@@ -20,12 +20,22 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+	implementation group: 'org.biojava', name: 'biojava-core', version: '6.0.5'
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+	implementation "com.google.guava:guava:16+"
+	implementation 'org.projectlombok:lombok:1.18.16'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation "org.testcontainers:testcontainers:1.16.3"
 	testImplementation "org.testcontainers:junit-jupiter:1.16.3"
 	testImplementation "org.testcontainers:postgresql:1.16.3"
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+configurations {
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
 }
 
 tasks.named('test') {
