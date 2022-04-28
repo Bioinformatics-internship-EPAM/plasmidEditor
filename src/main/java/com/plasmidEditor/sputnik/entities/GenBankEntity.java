@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(schema = "genbank", name = "genbanks")
 public class GenBankEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long genbankId;
 
     private String accession;
