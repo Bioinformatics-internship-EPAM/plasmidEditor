@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class GenBankServiceImpl implements GenBankService<GenBankDTO> {
+public class GenBankServiceImpl implements GenBankService {
     @Autowired
     private GenBankRepository repository;
 

@@ -1,9 +1,11 @@
 package com.plasmidEditor.sputnik.services;
 
+import com.plasmidEditor.sputnik.GenBankDTO;
+
 import java.util.List;
 
-public interface GenBankService<T> {
-    public abstract T save(T t);
-    public abstract T get(Long id);
-    public abstract T get(String accession, String version);
+public interface GenBankService {
+    public abstract GenBankDTO save(GenBankDTO t);
+    public abstract GenBankDTO get(Long id);
+    public abstract GenBankDTO get(String accession, String version);
 }
