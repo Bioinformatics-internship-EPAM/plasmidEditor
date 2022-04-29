@@ -5,7 +5,8 @@ import javax.persistence.*;
 @Entity
 @Table(
         schema = "genbank",
-        name = "genbanks"
+        name = "genbanks",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})}
 )
 @PrimaryKeyJoinColumn(name = "genbank_id")
 public class GenBankEntity {
