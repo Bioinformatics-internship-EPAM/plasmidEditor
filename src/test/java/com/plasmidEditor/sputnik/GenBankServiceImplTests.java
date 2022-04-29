@@ -4,37 +4,12 @@ import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ContextConfiguration(initializers = {GenBankServiceImplTests.Initializer.class})
-@Testcontainers
-class GenBankServiceImplTests {
-    @Container
-    public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.2")
-            .withDatabaseName("test_plasmid_database")
-            .withUsername("user")
-            .withPassword("password");
-
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                    "spring.datasource.url=" + container.getJdbcUrl(),
-                    "spring.datasource.username=" + container.getUsername(),
-                    "spring.datasource.password=" + container.getPassword()
-            ).applyTo(configurableApplicationContext.getEnvironment());
-        }
-    }
-
+class GenBankServiceImplTests extends PostgreSQLTestContainer {
     @Autowired
     private GenBankServiceImpl service;
 
