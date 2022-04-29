@@ -13,7 +13,7 @@ public class GenBankEntity {
     @Id
     @GeneratedValue
     @Column(name = "genbank_id")
-    private Long genbank_id;
+    private Long genbankId;
 
     @Column(name = "accession")
     private String accession;
@@ -24,12 +24,12 @@ public class GenBankEntity {
     @Column(name = "file")
     private String file;
 
-    public Long getGenbank_id() {
-        return genbank_id;
+    public Long getGenbankId() {
+        return genbankId;
     }
 
-    public void setGenbank_id(Long genbank_id) {
-        this.genbank_id = genbank_id;
+    public void setGenbankId(Long genbankId) {
+        this.genbankId = genbankId;
     }
 
     public String getAccession() {
