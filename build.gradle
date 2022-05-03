@@ -21,6 +21,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.postgresql:postgresql')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	implementation 'org.biojava:biojava-core:6.0.5'
 }
 
 docker {
@@ -32,6 +33,12 @@ dockerRun {
 	name = "plasmid_postgres_database"
 	image = "plasmid_postgres_database:1.0"
 	ports("5432:5432")
+}
+
+configurations {
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
 }
 
 tasks.named('test') {
