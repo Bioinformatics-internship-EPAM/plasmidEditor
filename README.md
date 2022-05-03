@@ -15,6 +15,15 @@ docker run -d --name plasmid_postgres_database -p 5432:5432 plasmid_postgres_dat
 
 2) через gradle. В файле gradle.build прописан запуск контейнеров (docker и dockerRun)
 
+## Миграция БД при помощи goose
+
+Для мигарции схемы базы данных используется goose. Необходимые действия для миграции:
+
+* Установить goose любым удобным способом: https://github.com/pressly/goose#install
+* Находясь в папке /src/main/resources/db/migration выполнить команду goose up
+
+При необходимости создать новую мигарцию, необходимо воспользоваться командой goose create https://github.com/pressly/goose#create
+
 ## Участники
 * Брусницына Анна, гр. 3540904/10202
 * Варламов Дмитрий, гр. 3540904/10202
