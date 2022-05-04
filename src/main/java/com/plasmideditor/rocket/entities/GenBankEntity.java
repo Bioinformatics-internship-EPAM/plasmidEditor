@@ -1,5 +1,8 @@
 package com.plasmideditor.rocket.entities;
 
+import lombok.Builder;
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,6 +12,8 @@ import javax.persistence.*;
         uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})}
 )
 @PrimaryKeyJoinColumn(name = "genbank_id")
+@Data
+@Builder
 public class GenBankEntity {
 
     @Id
@@ -25,35 +30,4 @@ public class GenBankEntity {
     @Column(name = "file")
     private String file;
 
-    public Long getGenbankId() {
-        return genbankId;
-    }
-
-    public void setGenbankId(Long genbankId) {
-        this.genbankId = genbankId;
-    }
-
-    public String getAccession() {
-        return accession;
-    }
-
-    public void setAccession(String accession) {
-        this.accession = accession;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
-    }
 }
