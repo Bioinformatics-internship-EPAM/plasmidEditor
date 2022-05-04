@@ -2,6 +2,7 @@ package com.plasmidEditor.sputnik.services;
 
 import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.entities.GenBankEntity;
+import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
 import com.plasmidEditor.sputnik.repositories.GenBankRepository;
 
 import org.modelmapper.ModelMapper;
@@ -9,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GenBankServiceImpl implements GenBankService {
@@ -31,7 +30,7 @@ public class GenBankServiceImpl implements GenBankService {
         Optional<GenBankEntity> entity = repository.findById(id);
 
         if (entity.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new GenBankNotFoundException(id);
         }
 
         return mapper.map(entity.get(), GenBankDTO.class);
@@ -42,7 +41,7 @@ public class GenBankServiceImpl implements GenBankService {
         Optional<GenBankEntity> entity = repository.findByAccessionAndVersion(accession, version);
 
         if (entity.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new GenBankNotFoundException(accession, version);
         }
 
         return mapper.map(entity.get(), GenBankDTO.class);
