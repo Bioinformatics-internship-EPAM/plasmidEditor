@@ -9,9 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
-
 @Service
 public class GenBankServiceImpl implements GenBankService {
     @Autowired
@@ -26,24 +23,17 @@ public class GenBankServiceImpl implements GenBankService {
     }
 
     @Override
-    public GenBankDTO get(Long id) throws EntityNotFoundException{
-        Optional<GenBankEntity> entity = repository.findById(id);
+    public GenBankDTO get(Long id) throws GenBankNotFoundException{
+        return repository.findById(id)
+                .map(x -> mapper.map(x, GenBankDTO.class))
+                .orElseThrow(() -> new GenBankNotFoundException(id));
 
-        if (entity.isEmpty()) {
-            throw new GenBankNotFoundException(id);
-        }
-
-        return mapper.map(entity.get(), GenBankDTO.class);
     }
 
     @Override
-    public GenBankDTO get(String accession, String version) throws EntityNotFoundException{
-        Optional<GenBankEntity> entity = repository.findByAccessionAndVersion(accession, version);
-
-        if (entity.isEmpty()) {
-            throw new GenBankNotFoundException(accession, version);
-        }
-
-        return mapper.map(entity.get(), GenBankDTO.class);
+    public GenBankDTO get(String accession, String version) throws GenBankNotFoundException{
+        return repository.findByAccessionAndVersion(accession, version)
+                .map(x -> mapper.map(x, GenBankDTO.class))
+                .orElseThrow(() -> new GenBankNotFoundException(accession, version));
     }
 }
