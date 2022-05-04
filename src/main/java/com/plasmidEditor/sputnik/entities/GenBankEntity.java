@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class GenBankEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="genbank_id")
     private Long genbankId;
     private String accession;
     private String version;
