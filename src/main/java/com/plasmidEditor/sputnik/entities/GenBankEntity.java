@@ -13,7 +13,6 @@ public class GenBankEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long genbankId;
-
     private String accession;
     private String version;
     private String file;
