@@ -1,45 +1,58 @@
 package com.plasmidEditor.sputnik;
 
 import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GenBankServiceImplTests extends PostgreSQLTestContainer {
     @Autowired
     private GenBankServiceImpl service;
 
     @Test
-    @Transactional
+    @Order(1)
     void createTest() {
-        GenBankDTO obj = new GenBankDTO("a", "1", "file");
-        GenBankDTO savedObj = service.save(obj);
-        assertNotNull(savedObj);
-        assertEquals(obj.getAccession(), savedObj.getAccession());
-        assertEquals(obj.getVersion(), savedObj.getVersion());
-        assertEquals(obj.getFile(), savedObj.getFile());
+        GenBankDTO savedObj1 = service.save(new GenBankDTO("a", "1", "file1"));
+        GenBankDTO savedObj2 = service.save(new GenBankDTO("b", "1", "file2"));
+
+        assertNotNull(savedObj1);
+        assertEquals(savedObj1.getAccession(), "a");
+        assertEquals(savedObj1.getVersion(), "1");
+        assertEquals(savedObj1.getFile(), "file1");
+
+        assertNotNull(savedObj2);
+        assertEquals(savedObj2.getAccession(), "b");
+        assertEquals(savedObj2.getVersion(), "1");
+        assertEquals(savedObj2.getFile(), "file2");
     }
 
     @Test
-    @Transactional
+    @Order(2)
     void readTest() {
-        GenBankDTO savedObj = service.save(new GenBankDTO("a", "1", "file"));
-        GenBankDTO readObj = service.get("a", "1");
-        assertEquals(readObj, savedObj);
+        GenBankDTO readObj1 = service.get("a", "1");
+        GenBankDTO readObj2 = service.get("b", "1");
 
-        savedObj = service.save(new GenBankDTO("b", "1", "file"));
-        readObj = service.get(2L);
-        assertEquals(readObj, savedObj);
+        assertNotNull(readObj1);
+        assertEquals(readObj1.getAccession(), "a");
+        assertEquals(readObj1.getVersion(), "1");
+        assertEquals(readObj1.getFile(), "file1");
+
+        assertNotNull(readObj2);
+        assertEquals(readObj2.getAccession(), "b");
+        assertEquals(readObj2.getVersion(), "1");
+        assertEquals(readObj2.getFile(), "file2");
     }
 
     @Test
-    @Transactional
+    @Order(3)
     void updateTest() {
-        service.save(new GenBankDTO("a", "1", "file"));
         GenBankDTO readObj = service.get("a", "1");
         readObj.setFile("new_file");
         service.save(readObj);
