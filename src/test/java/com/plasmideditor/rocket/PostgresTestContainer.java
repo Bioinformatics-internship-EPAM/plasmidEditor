@@ -13,7 +13,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class PostgresTestContainer {
 
     @ClassRule
-    public static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
+    public static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:14.2")
             .withDatabaseName("plasmid_database_test")
             .withUsername("plasmid")
             .withPassword("plasmid");
