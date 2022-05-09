@@ -1,0 +1,134 @@
+LOCUS       3MJ8_A                   213 aa            linear   ROD 01-DEC-2020
+DEFINITION  Chain A, Stimulatory Hamster Antibody Hl4e10 Fab Light Chain.
+ACCESSION   3MJ8_A
+VERSION     3MJ8_A
+DBSOURCE    pdb: molecule 3MJ8, chain A, release Jun 5, 2013;
+            deposition: Apr 12, 2010;
+            class: Immune System;
+            source: Mmdb_id: 89830, Pdb_id 1: 3MJ8;
+            Exp. method: X-Ray Diffraction.
+KEYWORDS    .
+SOURCE      Cricetulus migratorius (Armenian hamster)
+  ORGANISM  Cricetulus migratorius
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia; Myomorpha;
+            Muroidea; Cricetidae; Cricetinae; Cricetulus.
+REFERENCE   1  (residues 1 to 213)
+  AUTHORS   Verdino,P., Witherden,D.A., Podshivalova,K., Rieder,S.E.,
+            Havran,W.L. and Wilson,I.A.
+  TITLE     cDNA sequence and Fab crystal structure of HL4E10, a hamster IgG
+            lambda light chain antibody stimulatory for gammadelta T cells
+  JOURNAL   PLoS ONE 6 (5), E19828 (2011)
+   PUBMED   21629689
+REFERENCE   2  (residues 1 to 213)
+  AUTHORS   Verdino,P. and Wilson,I.A.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (12-APR-2010)
+COMMENT     Crystal structure of HL4E10 Fab, a hamster Ab stimulatory for
+            gammadelta T cells.
+FEATURES             Location/Qualifiers
+     source          1..213
+                     /organism="Cricetulus migratorius"
+                     /db_xref="taxon:10032"
+     Region          1..111
+                     /region_name="Domain 5"
+                     /note="NCBI Domains"
+     Region          7..107
+                     /region_name="IG"
+                     /note="Immunoglobulin; smart00409"
+                     /db_xref="CDD:214652"
+     SecStr          8..14
+                     /sec_str_type="sheet"
+                     /note="strand 38"
+     SecStr          16..24
+                     /sec_str_type="sheet"
+                     /note="strand 39"
+     Bond            bond(22,87)
+                     /bond_type="disulfide"
+     SecStr          32..38
+                     /sec_str_type="sheet"
+                     /note="strand 40"
+     SecStr          43..49
+                     /sec_str_type="sheet"
+                     /note="strand 41"
+     SecStr          60..67
+                     /sec_str_type="sheet"
+                     /note="strand 42"
+     SecStr          68..76
+                     /sec_str_type="sheet"
+                     /note="strand 43"
+     SecStr          82..93
+                     /sec_str_type="sheet"
+                     /note="strand 44"
+     SecStr          94..100
+                     /sec_str_type="sheet"
+                     /note="strand 45"
+     SecStr          102..109
+                     /sec_str_type="sheet"
+                     /note="strand 46"
+     Region          112..213
+                     /region_name="Domain 6"
+                     /note="NCBI Domains"
+     SecStr          113..122
+                     /sec_str_type="sheet"
+                     /note="strand 47"
+     Region          131..204
+                     /region_name="IGc1"
+                     /note="Immunoglobulin C-Type; smart00407"
+                     /db_xref="CDD:214651"
+     SecStr          131..142
+                     /sec_str_type="sheet"
+                     /note="strand 48"
+     Bond            bond(136,194)
+                     /bond_type="disulfide"
+     Region          145..150
+                     /region_name="Ig strand C"
+                     /note="Ig strand C [structural motif]"
+                     /db_xref="CDD:409353"
+     SecStr          146..153
+                     /sec_str_type="sheet"
+                     /note="strand 49"
+     SecStr          154..157
+                     /sec_str_type="sheet"
+                     /note="strand 50"
+     Region          155..157
+                     /region_name="Ig strand C'"
+                     /note="Ig strand C' [structural motif]"
+                     /db_xref="CDD:409353"
+     Region          159..168
+                     /region_name="Ig strand D"
+                     /note="Ig strand D [structural motif]"
+                     /db_xref="CDD:409353"
+     SecStr          160..164
+                     /sec_str_type="sheet"
+                     /note="strand 51"
+     SecStr          166..170
+                     /sec_str_type="sheet"
+                     /note="strand 52"
+     SecStr          171..182
+                     /sec_str_type="sheet"
+                     /note="strand 53"
+     Region          172..181
+                     /region_name="Ig strand E"
+                     /note="Ig strand E [structural motif]"
+                     /db_xref="CDD:409353"
+     SecStr          190..199
+                     /sec_str_type="sheet"
+                     /note="strand 54"
+     Region          192..199
+                     /region_name="Ig strand F"
+                     /note="Ig strand F [structural motif]"
+                     /db_xref="CDD:409353"
+     SecStr          200..209
+                     /sec_str_type="sheet"
+                     /note="strand 55"
+     Region          202..207
+                     /region_name="Ig strand G"
+                     /note="Ig strand G [structural motif]"
+                     /db_xref="CDD:409353"
+ORIGIN
+        1 sytltqpplb svalgqkati tcsgdklsdv yvhwyqqkag qapvlviyed nrrpsgipdh
+       61 fsgsnsgnma tltiskaqag deadyycqsw dgtnsawvfg sgtkvtvlgq pnaapsvtlf
+      121 ppsseelktn qatlvcming fypadvavtw eadgtpitqg vkttqpsksd skymatsylt
+      181 mtadawksrn tfickvthgg ntvekslsps acs
+//

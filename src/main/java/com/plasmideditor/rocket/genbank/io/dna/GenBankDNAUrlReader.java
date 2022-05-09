@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class GenBankDNAUrlReader implements GenBankReader<DNASequence> {
+public class GenBankDNAUrlReader implements GenBankReader<DNASequence, String> {
     private final String genbankDirectoryCache = "/tmp";
 
     @Override
-    public List<DNASequence> read_sequence(@NonNull String accessionID) throws GenBankUrlReaderException {
+    public List<DNASequence> readSequence(@NonNull String accessionID) throws GenBankUrlReaderException {
         try {
             GenbankProxySequenceReader<NucleotideCompound> genbankDNAReader =
                     new GenbankProxySequenceReader<>(

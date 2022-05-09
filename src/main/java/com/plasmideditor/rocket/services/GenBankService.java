@@ -5,11 +5,16 @@ import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
 import com.plasmideditor.rocket.mappers.GenBankMapper;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
+import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class GenBankService {
 
     private final GenBankRepository repository;
@@ -43,4 +48,20 @@ public class GenBankService {
         repository.deleteById(id);
     }
 
+    public void insertSequence(String accession, int version, String content)
+            throws FileAlreadyExistsException {
+        Optional<GenBankEntity> genBankFile = repository.findByAccessionAndVersion(accession, String.valueOf(version));
+        if (genBankFile.isPresent()) {
+            String msg = String.format("GenBank file with accession %s and version %d already exists", accession, version);
+            throw new FileAlreadyExistsException(msg);
+        }
+
+        GenBankEntity updatedGenBank = GenBankEntity.builder()
+                .accession(accession)
+                .version(String.valueOf(version))
+                .file(content)
+                .build();
+        repository.save(updatedGenBank);
+        log.info("Upload " + accession + "." + version);
+    }
 }
