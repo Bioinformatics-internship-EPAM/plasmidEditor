@@ -15,11 +15,11 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.ValidationException;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,110 +33,67 @@ public class EditService {
 
 //    private final GenBankRepository genBankRepository;
 //
-//    public CutService(GenBankRepository genBankRepository) {
+//    public EditService(GenBankRepository genBankRepository) {
 //        this.genBankRepository = genBankRepository;
 //    }
 
-    private String getFileFromDB(String id, String version) {
+    public String getFileFromDB(String id, String version) {
 //        GenBankEntity genBankFile = genBankRepository.findByGenbankId(id, version);
 //        return genbankFile.getFile();
         return "";
     }
 
-    private void saveFileToDB(String id, String version, String file) {
-
-    }
-
-    public String cutGenBankFile(int startPosition, String sequence, String id, String version) throws GenBankFileEditorException {
-        String fileContent = getFileFromDB(id, version);
-
-        String type = fileContent.split("\n")[0].split(" +")[3];
-        BufferedReader br = new BufferedReader(new StringReader(fileContent));
+    public <S extends AbstractSequence<C>, C extends Compound> String saveSequenceToDB(String id, String version, S newSequence) throws GenBankFileEditorException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        if (type.equalsIgnoreCase("aa")) {
-            ProteinSequence newSequence = cut(br, startPosition, sequence, ProteinSequence.class);
-            try {
-                GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, Collections.singleton(newSequence));
-            } catch (Exception e) {
-                throw new GenBankFileEditorException("Cannot write sequence", e);
+        try {
+            if (newSequence.getClass() == ProteinSequence.class) {
+                GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, (Collection<ProteinSequence>) Collections.singleton(newSequence));
             }
-        } else if (type.equalsIgnoreCase("bp")) {
-            DNASequence newSequence = cut(br, startPosition, sequence, DNASequence.class);
-            try {
-                GenbankWriterHelper.writeNucleotideSequence(byteArrayOutputStream, Collections.singleton(newSequence));
-            } catch (Exception e) {
-                throw new GenBankFileEditorException("Cannot write sequence", e);
+            if (newSequence.getClass() == DNASequence.class) {
+                GenbankWriterHelper.writeNucleotideSequence(byteArrayOutputStream, (Collection<DNASequence>) Collections.singleton(newSequence));
             }
+        } catch (Exception e) {
+            throw new GenBankFileEditorException("Cannot write sequence", e);
         }
-
-        saveFileToDB(id, version, byteArrayOutputStream.toString());
+        // save to DB
         return byteArrayOutputStream.toString();
     }
 
-    public String modifyGenBankFile(int startPosition, String sequence, String id, String version) throws GenBankFileEditorException, SequenceValidationException {
-        String fileContent = getFileFromDB(id, version);
-        String type = fileContent.split("\n")[0].split(" +")[3];
-        BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    public Class getSequenceType(String file) {
+        String type = file.split("\n")[0].split(" +")[3];
         if (type.equalsIgnoreCase("aa")) {
-            if (!sequence.toLowerCase().matches(aaRegex)) {
-                throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence,
-                        SequenceValidationException.ExpectedType.PROTEIN);
-            }
-            ProteinSequence newSequence = modify(br, startPosition, sequence, ProteinSequence.class);
-            try {
-                GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, Collections.singleton(newSequence));
-            } catch (Exception e) {
-                throw new GenBankFileEditorException("Cannot write sequence", e);
-            }
-        } else if (type.equalsIgnoreCase("bp")) {
-            if (!sequence.toLowerCase().matches(bpRegex)) {
-                throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence,
-                        SequenceValidationException.ExpectedType.DNA);
-            }
-            DNASequence newSequence = modify(br, startPosition, sequence, DNASequence.class);
-            try {
-                GenbankWriterHelper.writeNucleotideSequence(byteArrayOutputStream, Collections.singleton(newSequence));
-            } catch (Exception e) {
-                throw new GenBankFileEditorException("Cannot write sequence", e);
-            }
+            return ProteinSequence.class;
         }
-
-        saveFileToDB(id, version, byteArrayOutputStream.toString());
-        return byteArrayOutputStream.toString();
+        if (type.equalsIgnoreCase("bp")) {
+            return DNASequence.class;
+        }
+        return null;
     }
 
-    public String addGenBankFile(int startPosition, String sequence, String id, String version) throws GenBankFileEditorException, SequenceValidationException {
-        String fileContent = getFileFromDB(id, version);
-        String type = fileContent.split("\n")[0].split(" +")[3];
-        BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        if (type.equalsIgnoreCase("aa")) {
-            if (!sequence.toLowerCase().matches(aaRegex)) {
-                throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence,
-                        SequenceValidationException.ExpectedType.PROTEIN);
-            }
-            ProteinSequence newSequence = add(br, startPosition, sequence, ProteinSequence.class);
-            try {
-                GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, Collections.singleton(newSequence));
-            } catch (Exception e) {
-                throw new GenBankFileEditorException("Cannot write sequence", e);
-            }
-        } else if (type.equalsIgnoreCase("bp")) {
-            if (!sequence.toLowerCase().matches(bpRegex)) {
-                throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence,
-                        SequenceValidationException.ExpectedType.DNA);
-            }
-            DNASequence newSequence = add(br, startPosition, sequence, DNASequence.class);
-            try {
-                GenbankWriterHelper.writeNucleotideSequence(byteArrayOutputStream, Collections.singleton(newSequence));
-            } catch (Exception e) {
-                throw new GenBankFileEditorException("Cannot write sequence", e);
-            }
+    public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) throws SequenceValidationException {
+        if (cls == ProteinSequence.class && !sequence.toLowerCase().matches(aaRegex)) {
+            throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence,
+                    SequenceValidationException.ExpectedType.PROTEIN);
         }
+        if (cls == DNASequence.class && !sequence.toLowerCase().matches(bpRegex)) {
+            throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence,
+                    SequenceValidationException.ExpectedType.DNA);
+        }
+    }
 
-        saveFileToDB(id, version, byteArrayOutputStream.toString());
-        return byteArrayOutputStream.toString();
+    public <S extends AbstractSequence<C>, C extends Compound> S cutGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
+        BufferedReader br = new BufferedReader(new StringReader(fileContent));
+        return cut(br, startPosition, sequence, cls);
+    }
+
+    public <S extends AbstractSequence<C>, C extends Compound> S modifyGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException, SequenceValidationException {
+        BufferedReader br = new BufferedReader(new StringReader(fileContent));
+        return modify(br, startPosition, sequence, cls);
+    }
+
+    public <S extends AbstractSequence<C>, C extends Compound> S addGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException, SequenceValidationException {
+        BufferedReader br = new BufferedReader(new StringReader(fileContent));
+        return add(br, startPosition, sequence, cls);
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> S cut(
