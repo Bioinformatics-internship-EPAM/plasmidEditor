@@ -23,12 +23,7 @@ public class DNAFileEditorService implements FileEditorService<DNASequence> {
 
             // If possible to read then the format is correct
             sequenceList = new GenBankDNAFileReader().read_sequence(file.getAbsolutePath());
-
-            if (sequenceList.size() > 1)
-                throw new Exception("Upload " +
-                        sequenceList.size() + " sequences at once. " +
-                        "Upload only one sequence per file."
-                );
+            validateListSize(sequenceList);
         } catch (Exception e) {
             throw new FileEditorUploadException(e.getMessage(), e);
         }
@@ -41,6 +36,20 @@ public class DNAFileEditorService implements FileEditorService<DNASequence> {
 //                 genBankService.upload(accession, version, new String(multipartFile.getBytes()));
 //             }
             System.out.println("Upload " + accession + "." + version);
+        }
+    }
+
+    private void validateListSize(List<DNASequence> sequences) throws Exception {
+        switch (sequences.size()) {
+            case 0:
+                throw new Exception("File has invalid format.");
+            case 1:
+                break;
+            default:
+                throw new Exception("Upload " +
+                        sequences.size() + " sequences at once. " +
+                        "Upload only one sequence per file."
+                );
         }
     }
 }
