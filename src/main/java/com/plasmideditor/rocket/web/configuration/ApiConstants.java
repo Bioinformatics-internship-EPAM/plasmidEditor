@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.genbank.configuration;
+package com.plasmideditor.rocket.web.configuration;
 
 public class ApiConstants {
     public static final String EDIT_FILE_PATH = "/edit";

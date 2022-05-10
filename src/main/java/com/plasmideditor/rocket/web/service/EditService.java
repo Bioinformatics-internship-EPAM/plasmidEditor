@@ -1,7 +1,11 @@
-package com.plasmideditor.rocket.genbank.services;
+package com.plasmideditor.rocket.web.service;
 
-import com.plasmideditor.rocket.genbank.services.exceptions.GenBankFileEditorException;
-import com.plasmideditor.rocket.genbank.services.exceptions.SequenceValidationException;
+import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
+import com.plasmideditor.rocket.web.domains.GenBankEntity;
+import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
+import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
+import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.DataSource;
 import org.biojava.nbio.core.sequence.ProteinSequence;
@@ -17,13 +21,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class EditService {
     private final String bpRegex = "[atcg]+";
     private final String aaRegex = "[arndcqeghilkmfpsrwyv]+";
@@ -31,16 +38,19 @@ public class EditService {
     private final String ADD_OPERATION = "ADD";
     private final String CUT_OPERATION = "CUT";
 
-//    private final GenBankRepository genBankRepository;
-//
-//    public EditService(GenBankRepository genBankRepository) {
-//        this.genBankRepository = genBankRepository;
-//    }
+    private final GenBankRepository genBankRepository;
 
-    public String getFileFromDB(String id, String version) {
-//        GenBankEntity genBankFile = genBankRepository.findByGenbankId(id, version);
-//        return genbankFile.getFile();
-        return "";
+    public EditService(GenBankRepository genBankRepository) {
+        this.genBankRepository = genBankRepository;
+    }
+
+    public String getFileFromDB(String id, String version) throws FileNotFoundException {
+        Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionIdAndVersion(id, version);
+        if (genBankFile.isPresent()) {
+            return genBankFile.get().getFile();
+        } else {
+            throw new FileNotFoundException();
+        }
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> String saveSequenceToDB(String id, String version, S newSequence) throws GenBankFileEditorException {
@@ -56,18 +66,34 @@ public class EditService {
             throw new GenBankFileEditorException("Cannot write sequence", e);
         }
         // save to DB
+        GenBankEntity updatedGenBank = new GenBankEntity();
+        Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionIdAndVersion(id, version);
+        if (genBankFile.isPresent()) {
+            updatedGenBank.setAccession(id);
+            updatedGenBank.setVersion("");
+            updatedGenBank.setFile(byteArrayOutputStream.toString());
+        } else {
+            log.warn("Initial file was deleted during work with sequence");
+            // what should we do here?
+
+        }
+
+        genBankRepository.save(updatedGenBank);
         return byteArrayOutputStream.toString();
     }
 
-    public Class getSequenceType(String file) {
+    public Class getSequenceType(String file) throws UnknownSequenceType {
         String type = file.split("\n")[0].split(" +")[3];
         if (type.equalsIgnoreCase("aa")) {
+            log.debug("Sequence type is protein");
             return ProteinSequence.class;
-        }
-        if (type.equalsIgnoreCase("bp")) {
+        } else if (type.equalsIgnoreCase("bp")) {
+            log.debug("Sequence type is DNA");
             return DNASequence.class;
+        } else {
+            log.error("Sequence type is unknown");
+            throw new UnknownSequenceType("Sequence type is unknown");
         }
-        return null;
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) throws SequenceValidationException {
@@ -79,6 +105,7 @@ public class EditService {
             throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence,
                     SequenceValidationException.ExpectedType.DNA);
         }
+        log.info("Validation is successful");
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> S cutGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
@@ -86,12 +113,12 @@ public class EditService {
         return cut(br, startPosition, sequence, cls);
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> S modifyGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException, SequenceValidationException {
+    public <S extends AbstractSequence<C>, C extends Compound> S modifyGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
         return modify(br, startPosition, sequence, cls);
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> S addGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException, SequenceValidationException {
+    public <S extends AbstractSequence<C>, C extends Compound> S addGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
         return add(br, startPosition, sequence, cls);
     }
@@ -106,6 +133,7 @@ public class EditService {
         S storedSequence = getStoredSequence(cls, sequenceParser.getSequence(br, 0));
 
         if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence, startPosition)) {
+            log.error("Illegal start position or sequence to delete: {}, {}", startPosition, sequence);
             throw new GenBankFileEditorException("Illegal start position or sequence to delete: " + startPosition + ", " + sequence);
         }
 
@@ -131,6 +159,7 @@ public class EditService {
         S storedSequence = getStoredSequence(cls, sequenceParser.getSequence(br, 0));
 
         if (startPosition + sequence.length() > storedSequence.getLength()) {
+            log.error("Modified sequence is too long");
             throw new GenBankFileEditorException("Modified sequence is too long");
         }
 
@@ -230,8 +259,10 @@ public class EditService {
                     newSequence.addFeature(f);
                 }
                 if (operation.equals(CUT_OPERATION)) {
+                    log.debug("Start features modification for Cut operation");
                     updatePositionAfterCutOperation(newSequence, start, seqLength, f, featureStartPosition, featureEndPosition);
                 } else if (operation.equals(ADD_OPERATION)) {
+                    log.debug("Start features modification for Add operation");
                     updatePositionAfterAddOperation(newSequence, start, seqLength, f, featureStartPosition, featureEndPosition);
                 } else {
                     throw new GenBankFileEditorException("Unknown modification operation");
@@ -241,11 +272,11 @@ public class EditService {
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterAddOperation(S newSequence, int start, int seqLength, AbstractFeature<AbstractSequence<C>, C> f, int featureStartPosition, int featureEndPosition) {
-        if (featureStartPosition < start) {
+        if (featureStartPosition <= start) {
             f.setLocation(new SimpleLocation(featureStartPosition, featureEndPosition + seqLength));
             newSequence.addFeature(f);
         }
-        if (featureStartPosition >= start) {
+        if (featureStartPosition > start) {
             f.setLocation(new SimpleLocation(featureStartPosition + seqLength, featureEndPosition + seqLength));
             newSequence.addFeature(f);
         }
