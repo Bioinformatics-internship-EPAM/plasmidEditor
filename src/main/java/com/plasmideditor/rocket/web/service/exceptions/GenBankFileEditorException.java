@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.genbank.services.exceptions;
+package com.plasmideditor.rocket.web.service.exceptions;
 
 public class GenBankFileEditorException extends Exception {
     public GenBankFileEditorException(String msg) {

@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.genbank.services.exceptions;
+package com.plasmideditor.rocket.web.service.exceptions;
 
 public class SequenceValidationException extends Exception {
     private ExpectedType type;

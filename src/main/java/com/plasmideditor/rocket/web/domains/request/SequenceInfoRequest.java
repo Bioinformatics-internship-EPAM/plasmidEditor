@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.genbank.domains.request;
+package com.plasmideditor.rocket.web.domains.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
