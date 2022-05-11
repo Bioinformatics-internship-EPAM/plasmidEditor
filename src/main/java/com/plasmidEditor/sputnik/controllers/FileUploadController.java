@@ -1,69 +1,46 @@
 package com.plasmidEditor.sputnik.controllers;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.plasmidEditor.sputnik.storage.StorageService;
-import com.plasmidEditor.sputnik.storage.StorageFileNotFoundException;
+import com.plasmidEditor.sputnik.uploadServices.*;
 
-@Controller
+@RestController
 public class FileUploadController {
-	private final StorageService storageService;
-
+	private final DNAFileUploadService dnaFileUploadService;
+	private final ProteinFileUploadService proteinFileUploadService;
+	
 	@Autowired
-	public FileUploadController(StorageService storageService) {
-		this.storageService = storageService;
+	public FileUploadController(DNAFileUploadService dnaFileUploadService, 
+			ProteinFileUploadService proteinFileUploadService) {
+		this.dnaFileUploadService = dnaFileUploadService;
+		this.proteinFileUploadService = proteinFileUploadService;
 	}
-
-	@GetMapping("/")
-	public String listUploadedFiles(Model model) throws IOException {
-
-		model.addAttribute("files", storageService.loadAll().map(
-				path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
-						"serveFile", path.getFileName().toString()).build().toUri().toString())
-				.collect(Collectors.toList()));
-
-		return "uploadForm";
+	
+	@PostMapping(path="/genbank/dna", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> uploadDNAFile(@RequestParam("file") MultipartFile file) {
+		try {
+			dnaFileUploadService.upload(file);
+			return ResponseEntity.ok("File was successfully uploaded");
+		}
+		catch(Exception e) {
+			return ResponseEntity.badRequest().body("File wasn't uploaded because " + e.getMessage());
+		}
 	}
-
-	@GetMapping("/files/{filename:.+}")
-	@ResponseBody
-	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-
-		Resource file = storageService.loadAsResource(filename);
-		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
-	}
-
-	@PostMapping("/")
-	public String handleFileUpload(@RequestParam("file") MultipartFile file,
-			RedirectAttributes redirectAttributes) {
-
-		storageService.store(file);
-		redirectAttributes.addFlashAttribute("message",
-				"You successfully uploaded " + file.getOriginalFilename() + "!");
-
-		return "redirect:/";
-	}
-
-	@ExceptionHandler(StorageFileNotFoundException.class)
-	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
-		return ResponseEntity.notFound().build();
+	
+	@PostMapping(path="/genbank/protein", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> uploadProteinFile(@RequestParam("file") MultipartFile file) {
+		try {
+			proteinFileUploadService.upload(file);
+			return ResponseEntity.ok("File was successfully uploaded");
+		}
+		catch(Exception e) {
+			return ResponseEntity.badRequest().body("File wasn't uploaded because " + e.getMessage());
+		}
 	}
 }
