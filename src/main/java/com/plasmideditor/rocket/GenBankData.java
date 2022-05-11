@@ -7,8 +7,6 @@ import java.io.Serializable;
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
-@NoArgsConstructor
 public class GenBankData implements Serializable {
 
     private Long genbankId;
