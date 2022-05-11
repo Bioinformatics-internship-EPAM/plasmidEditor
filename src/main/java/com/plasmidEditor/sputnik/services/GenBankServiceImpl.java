@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GenBankServiceImpl implements GenBankService {
     @Autowired
@@ -35,5 +37,14 @@ public class GenBankServiceImpl implements GenBankService {
         return repository.findByAccessionAndVersion(accession, version)
                 .map(x -> mapper.map(x, GenBankDTO.class))
                 .orElseThrow(() -> new GenBankNotFoundException(accession, version));
+    }
+
+    @Override
+    public GenBankDTO getLatestVersion(String accession) {
+        List<GenBankEntity> descList = repository.findByAccessionOrderByVersionDesc(accession);
+        if (descList.isEmpty()) {
+            throw new GenBankNotFoundException(accession);
+        }
+        return mapper.map(descList.get(0), GenBankDTO.class);
     }
 }

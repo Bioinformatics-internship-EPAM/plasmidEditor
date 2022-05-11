@@ -6,16 +6,19 @@ import com.plasmidEditor.sputnik.services.GenBankService;
 import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.ProteinSequence;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProteinFileDownloadService implements GenbankFileDownloadService<ProteinSequence> {
     @Override
     public ProteinSequence downloadFile(String accession, String version) {
         GenBankService service = new GenBankServiceImpl();
+        GenBankDTO fileDTO;
         if (version.equals("latest")) {
-            //search for latest version in database
-            //version = ...
+            fileDTO = service.getLatestVersion(accession);
+        } else {
+            fileDTO = service.get(accession, version);
         }
-        GenBankDTO fileDTO = service.get(accession, version);
         ProteinSequence dna;
         try {
             dna = new ProteinSequence(fileDTO.getFile());
