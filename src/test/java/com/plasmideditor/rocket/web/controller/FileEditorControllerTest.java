@@ -32,6 +32,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(FileEditorController.class)
 public class FileEditorControllerTest {
+    private final String testSequence = "AAAAA";
+    private final String testFileContent = "some file content";
+    private final String sequenceForModification = "ATGAAAAAC";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -40,9 +44,6 @@ public class FileEditorControllerTest {
 
     @Test
     public void testSuccessfulResponseDuringAddOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
-        String sequenceForModification = "ATGAAAAAC";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
@@ -52,18 +53,11 @@ public class FileEditorControllerTest {
                 .thenReturn(newSeq);
         when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + ADD_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(content().string(sequenceForModification));
+        checkResponseIsOk(ADD_SEQ_PATH, json);
     }
 
     @Test
     public void testSuccessfulResponseDuringCutOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
-        String sequenceForModification = "ATGC";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
@@ -73,18 +67,11 @@ public class FileEditorControllerTest {
                 .thenReturn(newSeq);
         when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(content().string(sequenceForModification));
+        checkResponseIsOk(CUT_SEQ_PATH, json);
     }
 
     @Test
     public void testSuccessfulResponseDuringModifyOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
-        String sequenceForModification = "ATAAAAAGC";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
@@ -94,141 +81,92 @@ public class FileEditorControllerTest {
                 .thenReturn(newSeq);
         when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(content().string(sequenceForModification));
+        checkResponseIsOk(MODIFY_SEQ_PATH, json);
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
-        String testSequence = "AAAAA";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + ADD_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Such file doesn't exist in database"));
+        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Such file doesn't exist in database");
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
-        String testSequence = "AAAAA";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Such file doesn't exist in database"));
+        checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Such file doesn't exist in database");
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
-        String testSequence = "AAAAA";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Such file doesn't exist in database"));
+        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Such file doesn't exist in database");
     }
 
     @Test
     public void testUnknownSequenceTypeDuringAddOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + ADD_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Sequence type is unknown"));
+        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Sequence type is unknown");
     }
 
     @Test
     public void testUnknownSequenceTypeDuringCutOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Sequence type is unknown"));
+        checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Sequence type is unknown");
     }
 
     @Test
     public void testUnknownSequenceTypeDuringModifyOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Sequence type is unknown"));
+        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Sequence type is unknown");
     }
 
     @Test
     public void testSequenceValidationErrorDuringAddOperation() throws Exception {
-        String testSequence = "Wrong";
-        String testFileContent = "some file content";
-        String json = createRequest(testSequence);
+        String testWrongSequence = "Wrong";
+        String json = createRequest(testWrongSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        doThrow(SequenceValidationException.class).when(editService).validateSequence(testSequence, DNASequence.class);
+        doThrow(SequenceValidationException.class).when(editService).validateSequence(testWrongSequence, DNASequence.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + ADD_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Sequence not suitable for file: expected type is ")));
+        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Sequence not suitable for file: expected type is ");
     }
 
     @Test
     public void testSequenceValidationErrorDuringModifyOperation() throws Exception {
-        String testSequence = "Wrong";
-        String testFileContent = "some file content";
-        String json = createRequest(testSequence);
+        String testWrongSequence = "Wrong";
+        String json = createRequest(testWrongSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        doThrow(SequenceValidationException.class).when(editService).validateSequence(testSequence, DNASequence.class);
+        doThrow(SequenceValidationException.class).when(editService).validateSequence(testWrongSequence, DNASequence.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Sequence not suitable for file: expected type is ")));
+        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json,"Sequence not suitable for file: expected type is ");
     }
 
     @Test
     public void testErrorWithGenBankFileDuringAddOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
@@ -236,17 +174,11 @@ public class FileEditorControllerTest {
         when(editService.addGenBankFile(3, testSequence, testFileContent, DNASequence.class))
                 .thenThrow(GenBankFileEditorException.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + ADD_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Fail to edit file")));
+        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Fail to edit file");
     }
 
     @Test
     public void testErrorWithGenBankFileDuringCutOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
@@ -254,17 +186,11 @@ public class FileEditorControllerTest {
         when(editService.cutGenBankFile(3, testSequence, testFileContent, DNASequence.class))
                 .thenThrow(GenBankFileEditorException.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Fail to edit file")));
+        checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Fail to edit file");
     }
 
     @Test
     public void testErrorWithGenBankFileDuringModifyOperation() throws Exception {
-        String testSequence = "AAAAA";
-        String testFileContent = "some file content";
         String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
@@ -272,11 +198,7 @@ public class FileEditorControllerTest {
         when(editService.modifyGenBankFile(3, testSequence, testFileContent, DNASequence.class))
                 .thenThrow(GenBankFileEditorException.class);
 
-        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Fail to edit file")));
+        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Fail to edit file");
     }
 
     private String createRequest(String testSequence) throws JsonProcessingException {
@@ -285,6 +207,22 @@ public class FileEditorControllerTest {
         ModificationRequest request = new ModificationRequest(sequenceInfoRequest, fileRequest);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(request);
+    }
+
+    private void checkResponseIsOk(String path, String json) throws Exception {
+        this.mockMvc.perform(post(EDIT_FILE_PATH + path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string(sequenceForModification));
+    }
+
+    private void checkResponseIsBadRequest(String path, String json, String content) throws Exception {
+        this.mockMvc.perform(post(EDIT_FILE_PATH + path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(content)));
     }
 
 }
