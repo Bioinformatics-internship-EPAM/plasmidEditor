@@ -27,7 +27,9 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadDNAFile(@RequestParam("file") MultipartFile file) {
         try {
-            dnaFileDownloadService.downloadFile(file);
+            String accession = "";
+            String version = "";
+            dnaFileDownloadService.downloadFile(accession, version);
             return ResponseEntity.ok("File was successfully downloaded");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Fail to download file\n" + e.getMessage());
@@ -39,7 +41,9 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadProteinFile(@RequestParam("file") MultipartFile file) {
         try {
-            proteinFileDownloadService.downloadFile(file);
+            String accession = "";
+            String version = "";
+            proteinFileDownloadService.downloadFile(accession, version);
             return ResponseEntity.ok("File was successfully downloaded");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Fail to download file\n" + e.getMessage());

@@ -5,6 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface GenbankFileDownloadService<T extends AbstractSequence<?>> {
 
-    void downloadFile(MultipartFile file); //throws DownloadGenbankFileException
+    T downloadFile(String accession, String version); //throws DownloadGenbankFileException
 
 }
