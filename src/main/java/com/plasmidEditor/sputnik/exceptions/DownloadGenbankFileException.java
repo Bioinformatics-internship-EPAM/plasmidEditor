@@ -12,6 +12,4 @@ public class DownloadGenbankFileException extends RuntimeException {
     public DownloadGenbankFileException(String accession, String version) {
         super(String.format("GenBank with accession '%s' version '%s' not exists", accession, version));
     }
-
-
 }
