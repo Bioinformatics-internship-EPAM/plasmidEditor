@@ -19,8 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.FileNotFoundException;
 
-import static com.plasmideditor.rocket.web.configuration.ApiConstants.ADD_SEQ_PATH;
 import static com.plasmideditor.rocket.web.configuration.ApiConstants.EDIT_FILE_PATH;
+import static com.plasmideditor.rocket.web.configuration.ApiConstants.ADD_SEQ_PATH;
+import static com.plasmideditor.rocket.web.configuration.ApiConstants.CUT_SEQ_PATH;
+import static com.plasmideditor.rocket.web.configuration.ApiConstants.MODIFY_SEQ_PATH;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -41,7 +43,7 @@ public class FileEditorControllerTest {
         String testSequence = "AAAAA";
         String testFileContent = "some file content";
         String sequenceForModification = "ATGAAAAAC";
-        String json = createAddRequest(testSequence);
+        String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
@@ -58,9 +60,51 @@ public class FileEditorControllerTest {
     }
 
     @Test
+    public void testSuccessfulResponseDuringCutOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String testFileContent = "some file content";
+        String sequenceForModification = "ATGC";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
+        DNASequence newSeq = new DNASequence(sequenceForModification);
+        when(editService.cutGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+                .thenReturn(newSeq);
+        when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string(sequenceForModification));
+    }
+
+    @Test
+    public void testSuccessfulResponseDuringModifyOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String testFileContent = "some file content";
+        String sequenceForModification = "ATAAAAAGC";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
+        DNASequence newSeq = new DNASequence(sequenceForModification);
+        when(editService.modifyGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+                .thenReturn(newSeq);
+        when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string(sequenceForModification));
+    }
+
+    @Test
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
         String testSequence = "AAAAA";
-        String json = createAddRequest(testSequence);
+        String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
 
@@ -72,10 +116,38 @@ public class FileEditorControllerTest {
     }
 
     @Test
+    public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Such file doesn't exist in database"));
+    }
+
+    @Test
+    public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Such file doesn't exist in database"));
+    }
+
+    @Test
     public void testUnknownSequenceTypeDuringAddOperation() throws Exception {
         String testSequence = "AAAAA";
         String testFileContent = "some file content";
-        String json = createAddRequest(testSequence);
+        String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
@@ -88,10 +160,42 @@ public class FileEditorControllerTest {
     }
 
     @Test
+    public void testUnknownSequenceTypeDuringCutOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String testFileContent = "some file content";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Sequence type is unknown"));
+    }
+
+    @Test
+    public void testUnknownSequenceTypeDuringModifyOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String testFileContent = "some file content";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Sequence type is unknown"));
+    }
+
+    @Test
     public void testSequenceValidationErrorDuringAddOperation() throws Exception {
         String testSequence = "Wrong";
         String testFileContent = "some file content";
-        String json = createAddRequest(testSequence);
+        String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
@@ -105,10 +209,27 @@ public class FileEditorControllerTest {
     }
 
     @Test
+    public void testSequenceValidationErrorDuringModifyOperation() throws Exception {
+        String testSequence = "Wrong";
+        String testFileContent = "some file content";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
+        doThrow(SequenceValidationException.class).when(editService).validateSequence(testSequence, DNASequence.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Sequence not suitable for file: expected type is ")));
+    }
+
+    @Test
     public void testErrorWithGenBankFileDuringAddOperation() throws Exception {
         String testSequence = "AAAAA";
         String testFileContent = "some file content";
-        String json = createAddRequest(testSequence);
+        String json = createRequest(testSequence);
 
         when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
         when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
@@ -122,7 +243,43 @@ public class FileEditorControllerTest {
                 .andExpect(content().string(containsString("Fail to edit file")));
     }
 
-    private String createAddRequest(String testSequence) throws JsonProcessingException {
+    @Test
+    public void testErrorWithGenBankFileDuringCutOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String testFileContent = "some file content";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
+        when(editService.cutGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+                .thenThrow(GenBankFileEditorException.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + CUT_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Fail to edit file")));
+    }
+
+    @Test
+    public void testErrorWithGenBankFileDuringModifyOperation() throws Exception {
+        String testSequence = "AAAAA";
+        String testFileContent = "some file content";
+        String json = createRequest(testSequence);
+
+        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
+        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
+        when(editService.modifyGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+                .thenThrow(GenBankFileEditorException.class);
+
+        this.mockMvc.perform(post(EDIT_FILE_PATH + MODIFY_SEQ_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Fail to edit file")));
+    }
+
+    private String createRequest(String testSequence) throws JsonProcessingException {
         FileRequest fileRequest = new FileRequest("1", "v1");
         SequenceInfoRequest sequenceInfoRequest = new SequenceInfoRequest(3, testSequence);
         ModificationRequest request = new ModificationRequest(sequenceInfoRequest, fileRequest);

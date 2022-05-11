@@ -73,7 +73,7 @@ public class FileEditorController {
                     sequenceType);
             response = editService.saveSequenceToDB(request.getFileRequest().getFileId(), request.getFileRequest().getFileVersion(), sequence);
         } catch (FileNotFoundException e) {
-            return ResponseEntity.badRequest().body("Such file doesn't exist");
+            return ResponseEntity.badRequest().body("Such file doesn't exist in database");
         } catch (UnknownSequenceType e) {
             return ResponseEntity.badRequest().body("Sequence type is unknown");
         } catch (GenBankFileEditorException e) {
@@ -100,7 +100,7 @@ public class FileEditorController {
                     sequenceType);
             response = editService.saveSequenceToDB(request.getFileRequest().getFileId(), request.getFileRequest().getFileVersion(), sequence);
         } catch (FileNotFoundException e) {
-            return ResponseEntity.badRequest().body("Such file doesn't exist");
+            return ResponseEntity.badRequest().body("Such file doesn't exist in database");
         } catch (UnknownSequenceType e) {
             return ResponseEntity.badRequest().body("Sequence type is unknown");
         } catch (SequenceValidationException e) {
