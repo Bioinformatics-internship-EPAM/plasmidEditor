@@ -132,7 +132,7 @@ public class EditService {
         GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
         S storedSequence = getStoredSequence(cls, sequenceParser.getSequence(br, 0));
 
-        if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence, startPosition)) {
+        if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence.toLowerCase(), startPosition)) {
             log.error("Illegal start position or sequence to delete: {}, {}", startPosition, sequence);
             throw new GenBankFileEditorException("Illegal start position or sequence to delete: " + startPosition + ", " + sequence);
         }
@@ -284,7 +284,7 @@ public class EditService {
 
     private <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterCutOperation(S newSequence, int start, int seqLength, AbstractFeature<AbstractSequence<C>, C> f, int featureStartPosition, int featureEndPosition) {
         if (featureStartPosition < start) {
-            if (isFeatureEndBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)) {
+            if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)) {
                 f.setLocation(new SimpleLocation(featureStartPosition, start));
                 newSequence.addFeature(f);
             }
@@ -293,7 +293,7 @@ public class EditService {
                 newSequence.addFeature(f);
             }
         }
-        if (isFeatureEndBetweenSequenceStartAndEnd(start, seqLength, featureStartPosition)) {
+        if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureStartPosition)) {
             if (isFeaturePositionAfterSequenceEnd(start, seqLength, featureEndPosition)) {
                 f.setLocation(new SimpleLocation(start, featureEndPosition - seqLength));
                 newSequence.addFeature(f);
@@ -309,8 +309,8 @@ public class EditService {
         return featurePosition > start + seqLength;
     }
 
-    private boolean isFeatureEndBetweenSequenceStartAndEnd(int start, int seqLength, int featureEndPosition) {
-        return featureEndPosition > start && featureEndPosition < start + seqLength;
+    private boolean isFeaturePositionBetweenSequenceStartAndEnd(int start, int seqLength, int featurePosition) {
+        return featurePosition >= start && featurePosition <= start + seqLength;
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> S getStoredSequence(Class<S> cls, String sequenceParser) throws GenBankFileEditorException {
