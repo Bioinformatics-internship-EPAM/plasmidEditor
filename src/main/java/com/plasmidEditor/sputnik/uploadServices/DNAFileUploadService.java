@@ -8,7 +8,7 @@ public class DNAFileUploadService implements FileUploadService<DNASequence> {
 	@Override
 	public void upload(MultipartFile file) {
 		// TODO Auto-generated method stub
-		
+		SpringApplication.run(UploadingFilesApplication.class, args);
 	}
 
 }
