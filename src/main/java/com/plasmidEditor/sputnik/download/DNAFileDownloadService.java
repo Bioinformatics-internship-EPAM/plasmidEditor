@@ -11,6 +11,10 @@ public class DNAFileDownloadService implements GenbankFileDownloadService<DNASeq
     @Override
     public DNASequence downloadFile(String accession, String version) {
         GenBankService service = new GenBankServiceImpl();
+        if (version == "latest") {
+            //search for latest version in database
+            //version = ...
+        }
         GenBankDTO fileDTO = service.get(accession, version);
         DNASequence dna;
         try {

@@ -5,10 +5,9 @@ import com.plasmidEditor.sputnik.download.ProteinFileDownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class GenbankFileDownloadController {
@@ -22,13 +21,12 @@ public class GenbankFileDownloadController {
         this.proteinFileDownloadService = proteinFileEditorService;
     }
 
-    @PostMapping(path="/genbank/dna",
+    @GetMapping(path="/genbank/dna",
                  produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> downloadDNAFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> downloadDNAFile(@RequestParam String accession,
+                                                  @RequestParam(defaultValue = "latest") String version) {
         try {
-            String accession = "";
-            String version = "";
             dnaFileDownloadService.downloadFile(accession, version);
             return ResponseEntity.ok("File was successfully downloaded");
         } catch (Exception e) {
@@ -36,13 +34,12 @@ public class GenbankFileDownloadController {
         }
     }
 
-    @PostMapping(path="/genbank/protein",
+    @GetMapping(path="/genbank/protein",
                  produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> downloadProteinFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> downloadProteinFile(@RequestParam String accession,
+                                                      @RequestParam(defaultValue = "latest") String version) {
         try {
-            String accession = "";
-            String version = "";
             proteinFileDownloadService.downloadFile(accession, version);
             return ResponseEntity.ok("File was successfully downloaded");
         } catch (Exception e) {
