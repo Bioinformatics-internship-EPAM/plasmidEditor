@@ -8,7 +8,17 @@ public class ProteinFileUploadService implements FileUploadService<ProteinSequen
 	@Override
 	public void upload(MultipartFile file) {
 		// TODO Auto-generated method stub
-		
+		void init();
+
+	void store(MultipartFile file);
+
+	Stream<Path> loadAll();
+
+	Path load(String filename);
+
+	Resource loadAsResource(String filename);
+
+	void deleteAll();
 	}
 
 }
