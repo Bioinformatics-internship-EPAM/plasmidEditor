@@ -22,7 +22,7 @@ public class GenbankFileDownloadController {
     }
 
     @GetMapping(path="/genbank/dna",
-                 produces = MediaType.APPLICATION_JSON_VALUE
+                produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadDNAFile(@RequestParam String accession,
                                                   @RequestParam(defaultValue = "latest") String version) {
@@ -35,7 +35,7 @@ public class GenbankFileDownloadController {
     }
 
     @GetMapping(path="/genbank/protein",
-                 produces = MediaType.APPLICATION_JSON_VALUE
+                produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadProteinFile(@RequestParam String accession,
                                                       @RequestParam(defaultValue = "latest") String version) {

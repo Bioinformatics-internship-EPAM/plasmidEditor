@@ -11,7 +11,7 @@ public class ProteinFileDownloadService implements GenbankFileDownloadService<Pr
     @Override
     public ProteinSequence downloadFile(String accession, String version) {
         GenBankService service = new GenBankServiceImpl();
-        if (version == "latest") {
+        if (version.equals("latest")) {
             //search for latest version in database
             //version = ...
         }
