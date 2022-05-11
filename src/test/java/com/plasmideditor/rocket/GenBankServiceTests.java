@@ -1,13 +1,16 @@
 package com.plasmideditor.rocket;
 
 import com.plasmideditor.rocket.services.GenBankService;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GenBankServiceTests extends PostgresTestContainer{
 
     @Autowired

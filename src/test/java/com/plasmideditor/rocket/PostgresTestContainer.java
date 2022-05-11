@@ -1,31 +1,30 @@
 package com.plasmideditor.rocket;
 
-import org.junit.ClassRule;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import javax.sql.DataSource;
+
 @Testcontainers
-@ContextConfiguration(initializers = {PostgresTestContainer.Initializer.class})
 public class PostgresTestContainer {
 
-    @ClassRule
-    public static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:14.2")
-            .withDatabaseName("plasmid_database_test")
-            .withUsername("plasmid")
-            .withPassword("plasmid");
+    @Bean
+    public PostgreSQLContainer postgreSQLContainer() {
+        final PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:14.2");
+        postgreSQLContainer.start();
+        return postgreSQLContainer;
+    }
 
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                    "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-                    "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
-            ).applyTo(configurableApplicationContext.getEnvironment());
-        }
+    @Bean
+    public DataSource datasource(PostgreSQLContainer postgreSQLContainer) {
+        return DataSourceBuilder.create()
+                .driverClassName(postgreSQLContainer.getDriverClassName())
+                .url(postgreSQLContainer.getJdbcUrl())
+                .username(postgreSQLContainer.getUsername())
+                .password(postgreSQLContainer.getPassword())
+                .build();
     }
 
 }
