@@ -20,7 +20,7 @@ public class RocketExceptionHandler {
 
     @ExceptionHandler(SequenceValidationException.class)
     public ResponseEntity<String> handleSequenceValidationException(SequenceValidationException e) {
-        String response = "Sequence not suitable for file: expected type is " + e.getType();
+        String response = "Sequence not suitable for file: " + e.getMessage();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

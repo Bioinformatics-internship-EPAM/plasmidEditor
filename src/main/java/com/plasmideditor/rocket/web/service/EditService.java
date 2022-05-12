@@ -38,6 +38,10 @@ public class EditService {
 
     private final String ADD_OPERATION = "ADD";
     private final String CUT_OPERATION = "CUT";
+    
+    private final String UNKNOWN_SEQ_TYPE = "Sequence type is unknown";
+    private final String SEQ_LEN_OUT_OF_RANGE = "Modified sequence is out of range";
+    private final String CAN_NOT_CREATE_SEQ = "Cannot create a sequence";
 
     private final GenBankRepository genBankRepository;
 
@@ -91,19 +95,17 @@ public class EditService {
             log.debug("Sequence type is DNA");
             return DNASequence.class;
         } else {
-            log.error("Sequence type is unknown");
-            throw new UnknownSequenceType("Sequence type is unknown");
+            log.error(UNKNOWN_SEQ_TYPE);
+            throw new UnknownSequenceType(UNKNOWN_SEQ_TYPE);
         }
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) throws SequenceValidationException {
         if (cls == ProteinSequence.class && !sequence.toLowerCase().matches(aaRegex)) {
-            throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence,
-                    SequenceValidationException.ExpectedType.PROTEIN);
+            throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence);
         }
         if (cls == DNASequence.class && !sequence.toLowerCase().matches(bpRegex)) {
-            throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence,
-                    SequenceValidationException.ExpectedType.DNA);
+            throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence);
         }
         log.info("Sequence validation is successful");
     }
@@ -173,8 +175,8 @@ public class EditService {
         S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         if (startPosition + sequence.length() > storedSequence.getLength()) {
-            log.error("Modified sequence is out of range");
-            throw new GenBankFileEditorException("Modified sequence is out of range");
+            log.error(SEQ_LEN_OUT_OF_RANGE);
+            throw new GenBankFileEditorException(SEQ_LEN_OUT_OF_RANGE);
         }
 
         S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);
@@ -224,7 +226,7 @@ public class EditService {
             );
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new GenBankFileEditorException("Cannot create a sequence", e);
+            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
         }
         return newSequence;
     }
@@ -239,7 +241,7 @@ public class EditService {
             );
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new GenBankFileEditorException("Cannot create a sequence", e);
+            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
         }
         return newSequence;
     }
@@ -253,7 +255,7 @@ public class EditService {
             );
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new GenBankFileEditorException("Cannot create a sequence", e);
+            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
         }
         return newSequence;
     }
@@ -333,7 +335,7 @@ public class EditService {
             storedSequence = cls.getConstructor(String.class).newInstance(sequenceParser);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new GenBankFileEditorException("Cannot create a sequence", e);
+            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
         }
         return storedSequence;
     }
