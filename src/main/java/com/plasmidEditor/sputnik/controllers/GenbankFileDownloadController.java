@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(value="/")
 public class GenbankFileDownloadController {
     private final DNAFileDownloadService dnaFileDownloadService;
     private final ProteinFileDownloadService proteinFileDownloadService;
@@ -25,6 +26,7 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadDNAFile(@RequestParam String accession,
                                              @RequestParam(defaultValue = "latest") String version) {
+        System.out.println("accession: " + accession + " version: " + version);
         String dnaFile = dnaFileDownloadService.downloadFileAsString(accession, version);
         return ResponseEntity.ok() //status 200
                 .header("Download-Status","File was successfully downloaded")
