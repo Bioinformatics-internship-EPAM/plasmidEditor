@@ -5,15 +5,19 @@ import lombok.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plasmidEditor.sputnik.uploadServices.*;
 
 @RestController
 @RequestMapping(value = "/genbank")
+@ResponseStatus(HttpStatus.CREATED)
 public class FileUploadController {
 	private final DNAFileUploadService dnaFileUploadService;
 	private final ProteinFileUploadService proteinFileUploadService;
@@ -32,16 +36,14 @@ public class FileUploadController {
 		this.proteinFileUploadService = proteinFileUploadService;
 	}
 	
-	@PostMapping(path="/genbank/dna", produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<JsonError> uploadDNAFile(@RequestParam("file") InputStream file) {
+	@PostMapping(path="/dna", produces=MediaType.APPLICATION_JSON_VALUE)
+	public void uploadDNAFile(@RequestParam("file") InputStream file) {
 		dnaFileUploadService.upload(file);
-		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
-	@PostMapping(path="/genbank/protein", produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<JsonError> uploadProteinFile(@RequestParam("file") InputStream file) {
+	@PostMapping(path="/protein", produces=MediaType.APPLICATION_JSON_VALUE)
+	public void uploadProteinFile(@RequestParam("file") InputStream file) {
 		proteinFileUploadService.upload(file);
-		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@ExceptionHandler(Exception.class)
