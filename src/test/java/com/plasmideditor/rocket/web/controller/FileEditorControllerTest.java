@@ -2,9 +2,7 @@ package com.plasmideditor.rocket.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.plasmideditor.rocket.web.domains.request.FileRequest;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
-import com.plasmideditor.rocket.web.domains.request.SequenceInfoRequest;
 import com.plasmideditor.rocket.web.service.EditService;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
@@ -40,7 +38,8 @@ public class FileEditorControllerTest {
     @Test
     public void testSuccessfulResponseDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.addGenBankFile(request))
                 .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(ADD_SEQ_PATH, json);
@@ -49,7 +48,8 @@ public class FileEditorControllerTest {
     @Test
     public void testSuccessfulResponseDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.cutGenBankFile(request))
                 .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(CUT_SEQ_PATH, json);
@@ -58,7 +58,8 @@ public class FileEditorControllerTest {
     @Test
     public void testSuccessfulResponseDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.modifyGenBankFile(request))
                 .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(MODIFY_SEQ_PATH, json);
@@ -67,7 +68,8 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.addGenBankFile(request))
                 .thenThrow(GenBankFileNotFound.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Requested file does not exist in database");
@@ -76,8 +78,8 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.cutGenBankFile(3, testSequence, "1", "v1")).thenThrow(GenBankFileNotFound.class);
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.cutGenBankFile(request)).thenThrow(GenBankFileNotFound.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Requested file does not exist in database");
     }
@@ -85,7 +87,8 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.modifyGenBankFile(3, testSequence, "1", "v1")).thenThrow(GenBankFileNotFound.class);
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.modifyGenBankFile(request)).thenThrow(GenBankFileNotFound.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Requested file does not exist in database");
     }
@@ -93,7 +96,8 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.addGenBankFile(request))
                 .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Sequence type is unknown");
@@ -102,7 +106,8 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.cutGenBankFile(request))
                 .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Sequence type is unknown");
@@ -111,7 +116,8 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.modifyGenBankFile(request))
                 .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Sequence type is unknown");
@@ -121,7 +127,8 @@ public class FileEditorControllerTest {
     public void testSequenceValidationErrorDuringAddOperation() throws Exception {
         String testWrongSequence = "Wrong";
         String json = createRequest(testWrongSequence);
-        doThrow(SequenceValidationException.class).when(editService).addGenBankFile(3, testWrongSequence, "1", "v1");
+        ModificationRequest request = new ModificationRequest(3, testWrongSequence, "1", "v1");
+        doThrow(SequenceValidationException.class).when(editService).addGenBankFile(request);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Sequence not suitable for file: expected type is ");
     }
@@ -130,7 +137,8 @@ public class FileEditorControllerTest {
     public void testSequenceValidationErrorDuringModifyOperation() throws Exception {
         String testWrongSequence = "Wrong";
         String json = createRequest(testWrongSequence);
-        doThrow(SequenceValidationException.class).when(editService).modifyGenBankFile(3, testWrongSequence, "1", "v1");
+        ModificationRequest request = new ModificationRequest(3, testWrongSequence, "1", "v1");
+        doThrow(SequenceValidationException.class).when(editService).modifyGenBankFile(request);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json,"Sequence not suitable for file: expected type is ");
     }
@@ -138,7 +146,8 @@ public class FileEditorControllerTest {
     @Test
     public void testErrorWithGenBankFileDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.addGenBankFile(request))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsInternalServerError(ADD_SEQ_PATH, json, "Internal modification error");
@@ -147,7 +156,8 @@ public class FileEditorControllerTest {
     @Test
     public void testErrorWithGenBankFileDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.cutGenBankFile(request))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsInternalServerError(CUT_SEQ_PATH, json, "Internal modification error");
@@ -156,16 +166,15 @@ public class FileEditorControllerTest {
     @Test
     public void testErrorWithGenBankFileDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
+        when(editService.modifyGenBankFile(request))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsInternalServerError(MODIFY_SEQ_PATH, json, "Internal modification error");
     }
 
     private String createRequest(String testSequence) throws JsonProcessingException {
-        FileRequest fileRequest = new FileRequest("1", "v1");
-        SequenceInfoRequest sequenceInfoRequest = new SequenceInfoRequest(3, testSequence);
-        ModificationRequest request = new ModificationRequest(sequenceInfoRequest, fileRequest);
+        ModificationRequest request = new ModificationRequest(3, testSequence, "1", "v1");
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(request);
     }
