@@ -2,8 +2,7 @@ package com.plasmidEditor.sputnik.download;
 
 import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.exceptions.DownloadGenbankFileException;
-import com.plasmidEditor.sputnik.services.GenBankService;
-import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
+import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.springframework.stereotype.Service;
@@ -11,20 +10,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class DNAFileDownloadService implements GenbankFileDownloadService<DNASequence> {
     @Override
-    public DNASequence downloadFile(String accession, String version) {
-        GenBankService service = new GenBankServiceImpl();
-        GenBankDTO fileDTO;
-        if (version.equals("latest")) {
-            fileDTO = service.getLatestVersion(accession);
-        } else {
-            fileDTO = service.get(accession, version);
-        }
-        DNASequence dna;
+    public DNASequence downloadFileAsSequence(String accession, String version) {
         try {
-            dna = new DNASequence(fileDTO.getFile());
-        } catch (CompoundNotFoundException e) {
-            throw new DownloadGenbankFileException(accession, version);
+            GenBankDTO fileDTO = downloadFile(accession, version);
+            return new DNASequence(fileDTO.getFile());
+        } catch (GenBankNotFoundException | CompoundNotFoundException e) {
+            if (version.equals("latest")) {
+                throw new DownloadGenbankFileException(accession);
+            } else {
+                throw new DownloadGenbankFileException(accession, version);
+            }
         }
-        return dna;
     }
 }
