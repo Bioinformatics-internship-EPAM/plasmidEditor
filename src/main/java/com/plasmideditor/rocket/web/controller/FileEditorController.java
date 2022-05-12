@@ -3,6 +3,7 @@ package com.plasmideditor.rocket.web.controller;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.service.EditService;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
 import org.springframework.http.MediaType;
@@ -29,64 +30,35 @@ public class FileEditorController {
     @PostMapping(path = ADD_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addSequenceToFile(@RequestBody ModificationRequest request) {
-        String response;
-        try {
-            response = editService.addGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
-                    request.getSequenceInfoRequest().getSequence(),
-                    request.getFileRequest().getFileId(),
-                    request.getFileRequest().getFileVersion()).getSequenceAsString();
-        } catch (FileNotFoundException e) {
-            return ResponseEntity.badRequest().body("Such file doesn't exist in database");
-        } catch (UnknownSequenceType e) {
-            return ResponseEntity.badRequest().body("Sequence type is unknown");
-        } catch (SequenceValidationException e) {
-            return ResponseEntity.badRequest().body("Sequence not suitable for file: expected type is " + e.getType());
-        } catch (GenBankFileEditorException e) {
-            return ResponseEntity.badRequest().body("Fail to edit file: " + e.getMessage());
-        }
+    public ResponseEntity<String> addSequenceToFile(@RequestBody ModificationRequest request) throws GenBankFileEditorException, UnknownSequenceType, GenBankFileNotFound, SequenceValidationException {
+        String response = editService.addGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
+                request.getSequenceInfoRequest().getSequence(),
+                request.getFileRequest().getFileId(),
+                request.getFileRequest().getFileVersion()).getSequenceAsString();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = CUT_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) {
-        String response;
-        try {
-            response = editService.cutGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
-                    request.getSequenceInfoRequest().getSequence(),
-                    request.getFileRequest().getFileId(),
-                    request.getFileRequest().getFileVersion()).getSequenceAsString();
-        } catch (FileNotFoundException e) {
-            return ResponseEntity.badRequest().body("Such file doesn't exist in database");
-        } catch (UnknownSequenceType e) {
-            return ResponseEntity.badRequest().body("Sequence type is unknown");
-        } catch (GenBankFileEditorException e) {
-            return ResponseEntity.badRequest().body("Fail to edit file: " + e.getMessage());
-        }
+    public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType {
+        String response = editService.cutGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
+                request.getSequenceInfoRequest().getSequence(),
+                request.getFileRequest().getFileId(),
+                request.getFileRequest().getFileVersion()).getSequenceAsString();
+
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = MODIFY_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> modifySequence(@RequestBody ModificationRequest request) {
-        String response;
-        try {
-            response = editService.modifyGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
-                    request.getSequenceInfoRequest().getSequence(),
-                    request.getFileRequest().getFileId(),
-                    request.getFileRequest().getFileVersion()).getSequenceAsString();
-        } catch (FileNotFoundException e) {
-            return ResponseEntity.badRequest().body("Such file doesn't exist in database");
-        } catch (UnknownSequenceType e) {
-            return ResponseEntity.badRequest().body("Sequence type is unknown");
-        } catch (SequenceValidationException e) {
-            return ResponseEntity.badRequest().body("Sequence not suitable for file: expected type is " + e.getType());
-        } catch (GenBankFileEditorException e) {
-            return ResponseEntity.badRequest().body("Fail to edit file: " + e.getMessage());
-        }
+    public ResponseEntity<String> modifySequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType, SequenceValidationException {
+        String response = editService.modifyGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
+                request.getSequenceInfoRequest().getSequence(),
+                request.getFileRequest().getFileId(),
+                request.getFileRequest().getFileVersion()).getSequenceAsString();
+
         return ResponseEntity.ok(response);
     }
 }
