@@ -4,6 +4,8 @@ import com.plasmidEditor.sputnik.download.DNAFileDownloadService;
 import com.plasmidEditor.sputnik.download.ProteinFileDownloadService;
 import com.plasmidEditor.sputnik.exceptions.DownloadGenbankFileException;
 import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,27 +29,27 @@ public class GenbankFileDownloadController {
     @GetMapping(path="/genbank/dna",
                 produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> downloadDNAFile(@RequestParam String accession,
+    public ResponseEntity<DNASequence> downloadDNAFile(@RequestParam String accession,
                                                   @RequestParam(defaultValue = "latest") String version) {
-        dnaFileDownloadService.downloadFile(accession, version);
-
-        return ResponseEntity.ok("File was successfully downloaded");
+        DNASequence dna = dnaFileDownloadService.downloadFileAsSequence(accession, version);
+        return ResponseEntity.ok()
+                .header("Condition","File was successfully downloaded")
+                .body(dna);
     }
 
     @GetMapping(path="/genbank/protein",
                 produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> downloadProteinFile(@RequestParam String accession,
+    public ResponseEntity<ProteinSequence> downloadProteinFile(@RequestParam String accession,
                                                       @RequestParam(defaultValue = "latest") String version) {
-        proteinFileDownloadService.downloadFile(accession, version);
-
-        return ResponseEntity.ok("File was successfully downloaded");
+        ProteinSequence protein = proteinFileDownloadService.downloadFileAsSequence(accession, version);
+        return ResponseEntity.ok()
+                .header("Condition","File was successfully downloaded")
+                .body(protein);
     }
 
-    //убрать отсюда GenBankNotFoundException.class?
-    //и в downloadFile() интерфейса GenbankFileDownloadService обрабатывать его и бросать DownloadGenbankFileException?
     @ExceptionHandler({DownloadGenbankFileException.class, GenBankNotFoundException.class})
-    public ResponseEntity<?> handleException(DownloadGenbankFileException e) {
+    public ResponseEntity<String> handleException(RuntimeException e) {
         return ResponseEntity.badRequest().body("Fail to download file\n" + e.getMessage());
     }
 }

@@ -16,6 +16,5 @@ public interface GenbankFileDownloadService<T extends AbstractSequence<?>> {
         } else {
             return service.get(accession, version);
         }
-        //обрабатывать GenBankNotFoundException тут и бросать DownloadGenbankFileException?
     }
 }
