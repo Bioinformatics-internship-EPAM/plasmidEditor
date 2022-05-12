@@ -5,7 +5,6 @@ import com.plasmideditor.rocket.web.service.EditService;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
-import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,17 +32,10 @@ public class FileEditorController {
     public ResponseEntity<String> addSequenceToFile(@RequestBody ModificationRequest request) {
         String response;
         try {
-            String fileContent = editService.getFileFromDB(
-                    request.getFileRequest().getFileId(),
-                    request.getFileRequest().getFileVersion()
-            );
-            Class sequenceType = editService.getSequenceType(fileContent);
-            editService.validateSequence(request.getSequenceInfoRequest().getSequence(), sequenceType);
-            AbstractSequence sequence = editService.addGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
+            response = editService.addGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
                     request.getSequenceInfoRequest().getSequence(),
-                    fileContent,
-                    sequenceType);
-            response = editService.saveSequenceToDB(request.getFileRequest().getFileId(), request.getFileRequest().getFileVersion(), sequence);
+                    request.getFileRequest().getFileId(),
+                    request.getFileRequest().getFileVersion()).getSequenceAsString();
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body("Such file doesn't exist in database");
         } catch (UnknownSequenceType e) {
@@ -62,16 +54,10 @@ public class FileEditorController {
     public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) {
         String response;
         try {
-            String fileContent = editService.getFileFromDB(
-                    request.getFileRequest().getFileId(),
-                    request.getFileRequest().getFileVersion()
-            );
-            Class sequenceType = editService.getSequenceType(fileContent);
-            AbstractSequence sequence = editService.cutGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
+            response = editService.cutGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
                     request.getSequenceInfoRequest().getSequence(),
-                    fileContent,
-                    sequenceType);
-            response = editService.saveSequenceToDB(request.getFileRequest().getFileId(), request.getFileRequest().getFileVersion(), sequence);
+                    request.getFileRequest().getFileId(),
+                    request.getFileRequest().getFileVersion()).getSequenceAsString();
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body("Such file doesn't exist in database");
         } catch (UnknownSequenceType e) {
@@ -88,17 +74,10 @@ public class FileEditorController {
     public ResponseEntity<String> modifySequence(@RequestBody ModificationRequest request) {
         String response;
         try {
-            String fileContent = editService.getFileFromDB(
-                    request.getFileRequest().getFileId(),
-                    request.getFileRequest().getFileVersion()
-            );
-            Class sequenceType = editService.getSequenceType(fileContent);
-            editService.validateSequence(request.getSequenceInfoRequest().getSequence(), sequenceType);
-            AbstractSequence sequence = editService.modifyGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
+            response = editService.modifyGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
                     request.getSequenceInfoRequest().getSequence(),
-                    fileContent,
-                    sequenceType);
-            response = editService.saveSequenceToDB(request.getFileRequest().getFileId(), request.getFileRequest().getFileVersion(), sequence);
+                    request.getFileRequest().getFileId(),
+                    request.getFileRequest().getFileVersion()).getSequenceAsString();
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body("Such file doesn't exist in database");
         } catch (UnknownSequenceType e) {
