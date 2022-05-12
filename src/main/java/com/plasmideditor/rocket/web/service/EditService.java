@@ -2,6 +2,7 @@ package com.plasmideditor.rocket.web.service;
 
 import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.GenBankEntity;
+import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
@@ -104,35 +105,35 @@ public class EditService {
             throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence,
                     SequenceValidationException.ExpectedType.DNA);
         }
-        log.info("Validation is successful");
+        log.info("Sequence validation is successful");
     }
 
-    public AbstractSequence cutGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType {
-        String fileContent = getFileFromDB(fileId, fileVersion);
+    public AbstractSequence cutGenBankFile(ModificationRequest request) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType {
+        String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        AbstractSequence newSequence = cut(br, startPosition, sequence, sequenceType);
-        saveSequenceToDB(fileId, fileVersion, newSequence);
+        AbstractSequence newSequence = cut(br, request.getStartPosition(), request.getSequence(), sequenceType);
+        saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
         return newSequence;
     }
 
-    public AbstractSequence modifyGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
-        String fileContent = getFileFromDB(fileId, fileVersion);
+    public AbstractSequence modifyGenBankFile(ModificationRequest request) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
+        String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
-        validateSequence(sequence, sequenceType);
+        validateSequence(request.getSequence(), sequenceType);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        AbstractSequence newSequence = modify(br, startPosition, sequence, sequenceType);
-        saveSequenceToDB(fileId, fileVersion, newSequence);
+        AbstractSequence newSequence = modify(br, request.getStartPosition(), request.getSequence(), sequenceType);
+        saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
         return newSequence;
     }
 
-    public AbstractSequence addGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
-        String fileContent = getFileFromDB(fileId, fileVersion);
+    public AbstractSequence addGenBankFile(ModificationRequest request) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
+        String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
-        validateSequence(sequence, sequenceType);
+        validateSequence(request.getSequence(), sequenceType);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        AbstractSequence newSequence = add(br, startPosition, sequence, sequenceType);
-        saveSequenceToDB(fileId, fileVersion, newSequence);
+        AbstractSequence newSequence = add(br, request.getStartPosition(), request.getSequence(), sequenceType);
+        saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
         return newSequence;
     }
 
@@ -172,8 +173,8 @@ public class EditService {
         S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         if (startPosition + sequence.length() > storedSequence.getLength()) {
-            log.error("Modified sequence is too long");
-            throw new GenBankFileEditorException("Modified sequence is too long");
+            log.error("Modified sequence is out of range");
+            throw new GenBankFileEditorException("Modified sequence is out of range");
         }
 
         S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);

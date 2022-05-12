@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ModificationRequest {
-    private SequenceInfoRequest sequenceInfoRequest;
-    private FileRequest fileRequest;
+    private Integer startPosition;
+    private String sequence;
+    private String fileId;
+    private String fileVersion;
 }

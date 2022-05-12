@@ -31,10 +31,7 @@ public class FileEditorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addSequenceToFile(@RequestBody ModificationRequest request) throws GenBankFileEditorException, UnknownSequenceType, GenBankFileNotFound, SequenceValidationException {
-        String response = editService.addGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
-                request.getSequenceInfoRequest().getSequence(),
-                request.getFileRequest().getFileId(),
-                request.getFileRequest().getFileVersion()).getSequenceAsString();
+        String response = editService.addGenBankFile(request).getSequenceAsString();
         return ResponseEntity.ok(response);
     }
 
@@ -42,10 +39,7 @@ public class FileEditorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType {
-        String response = editService.cutGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
-                request.getSequenceInfoRequest().getSequence(),
-                request.getFileRequest().getFileId(),
-                request.getFileRequest().getFileVersion()).getSequenceAsString();
+        String response = editService.cutGenBankFile(request).getSequenceAsString();
 
         return ResponseEntity.ok(response);
     }
@@ -54,10 +48,7 @@ public class FileEditorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> modifySequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType, SequenceValidationException {
-        String response = editService.modifyGenBankFile(request.getSequenceInfoRequest().getStartPosition(),
-                request.getSequenceInfoRequest().getSequence(),
-                request.getFileRequest().getFileId(),
-                request.getFileRequest().getFileVersion()).getSequenceAsString();
+        String response = editService.modifyGenBankFile(request).getSequenceAsString();
 
         return ResponseEntity.ok(response);
     }
