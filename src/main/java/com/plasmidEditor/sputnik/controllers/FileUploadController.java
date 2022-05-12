@@ -24,23 +24,18 @@ public class FileUploadController {
 	
 	@PostMapping(path="/genbank/dna", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> uploadDNAFile(@RequestParam("file") MultipartFile file) {
-		try {
-			dnaFileUploadService.upload(file);
-			return ResponseEntity.ok("File was successfully uploaded");
-		}
-		catch(Exception e) {
-			return ResponseEntity.badRequest().body("File wasn't uploaded because " + e.getMessage());
-		}
+		dnaFileUploadService.upload(file);
+		return ResponseEntity.ok("File was successfully uploaded");
 	}
 	
 	@PostMapping(path="/genbank/protein", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> uploadProteinFile(@RequestParam("file") MultipartFile file) {
-		try {
-			proteinFileUploadService.upload(file);
-			return ResponseEntity.ok("File was successfully uploaded");
-		}
-		catch(Exception e) {
-			return ResponseEntity.badRequest().body("File wasn't uploaded because " + e.getMessage());
-		}
+		proteinFileUploadService.upload(file);
+		return ResponseEntity.ok("File was successfully uploaded");
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<?> handleException(Exception e) {
+		return ResponseEntity.badRequest().build();
 	}
 }
