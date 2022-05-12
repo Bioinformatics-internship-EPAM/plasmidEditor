@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(FileEditorController.class)
 public class FileEditorControllerTest {
     private final String testSequence = "AAAAA";
-    private final String testFileContent = "some file content";
     private final String sequenceForModification = "ATGAAAAAC";
 
     @Autowired
@@ -45,13 +44,8 @@ public class FileEditorControllerTest {
     @Test
     public void testSuccessfulResponseDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        DNASequence newSeq = new DNASequence(sequenceForModification);
-        when(editService.addGenBankFile(3, testSequence, testFileContent, DNASequence.class))
-                .thenReturn(newSeq);
-        when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
+        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+                .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(ADD_SEQ_PATH, json);
     }
@@ -59,13 +53,8 @@ public class FileEditorControllerTest {
     @Test
     public void testSuccessfulResponseDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        DNASequence newSeq = new DNASequence(sequenceForModification);
-        when(editService.cutGenBankFile(3, testSequence, testFileContent, DNASequence.class))
-                .thenReturn(newSeq);
-        when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
+        when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
+                .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(CUT_SEQ_PATH, json);
     }
@@ -73,13 +62,8 @@ public class FileEditorControllerTest {
     @Test
     public void testSuccessfulResponseDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        DNASequence newSeq = new DNASequence(sequenceForModification);
-        when(editService.modifyGenBankFile(3, testSequence, testFileContent, DNASequence.class))
-                .thenReturn(newSeq);
-        when(editService.saveSequenceToDB("1", "v1", newSeq)).thenReturn(sequenceForModification);
+        when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
+                .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(MODIFY_SEQ_PATH, json);
     }
@@ -87,8 +71,8 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
+        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+                .thenThrow(FileNotFoundException.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Such file doesn't exist in database");
     }
@@ -97,7 +81,7 @@ public class FileEditorControllerTest {
     public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
 
-        when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
+        when(editService.cutGenBankFile(3, testSequence, "1", "v1")).thenThrow(FileNotFoundException.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Such file doesn't exist in database");
     }
@@ -105,8 +89,7 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenThrow(FileNotFoundException.class);
+        when(editService.modifyGenBankFile(3, testSequence, "1", "v1")).thenThrow(FileNotFoundException.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Such file doesn't exist in database");
     }
@@ -114,9 +97,8 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
+        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
+                .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Sequence type is unknown");
     }
@@ -124,9 +106,8 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
+        when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
+                .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Sequence type is unknown");
     }
@@ -134,9 +115,8 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenThrow(UnknownSequenceType.class);
+        when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
+                .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Sequence type is unknown");
     }
@@ -145,10 +125,7 @@ public class FileEditorControllerTest {
     public void testSequenceValidationErrorDuringAddOperation() throws Exception {
         String testWrongSequence = "Wrong";
         String json = createRequest(testWrongSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        doThrow(SequenceValidationException.class).when(editService).validateSequence(testWrongSequence, DNASequence.class);
+        doThrow(SequenceValidationException.class).when(editService).addGenBankFile(3, testWrongSequence, "1", "v1");
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Sequence not suitable for file: expected type is ");
     }
@@ -157,10 +134,7 @@ public class FileEditorControllerTest {
     public void testSequenceValidationErrorDuringModifyOperation() throws Exception {
         String testWrongSequence = "Wrong";
         String json = createRequest(testWrongSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        doThrow(SequenceValidationException.class).when(editService).validateSequence(testWrongSequence, DNASequence.class);
+        doThrow(SequenceValidationException.class).when(editService).modifyGenBankFile(3, testWrongSequence, "1", "v1");
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json,"Sequence not suitable for file: expected type is ");
     }
@@ -168,10 +142,7 @@ public class FileEditorControllerTest {
     @Test
     public void testErrorWithGenBankFileDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        when(editService.addGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+        when(editService.addGenBankFile(3, testSequence, "1", "v1"))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Fail to edit file");
@@ -180,10 +151,7 @@ public class FileEditorControllerTest {
     @Test
     public void testErrorWithGenBankFileDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        when(editService.cutGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+        when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Fail to edit file");
@@ -192,10 +160,7 @@ public class FileEditorControllerTest {
     @Test
     public void testErrorWithGenBankFileDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-
-        when(editService.getFileFromDB("1", "v1")).thenReturn(testFileContent);
-        when(editService.getSequenceType(testFileContent)).thenReturn(DNASequence.class);
-        when(editService.modifyGenBankFile(3, testSequence, testFileContent, DNASequence.class))
+        when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Fail to edit file");

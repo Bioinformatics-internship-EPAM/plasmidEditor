@@ -53,7 +53,7 @@ public class EditService {
         }
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> String saveSequenceToDB(String id, String version, S newSequence) throws GenBankFileEditorException {
+    public <S extends AbstractSequence<C>, C extends Compound> void saveSequenceToDB(String id, String version, S newSequence) throws GenBankFileEditorException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             if (newSequence.getClass() == ProteinSequence.class) {
@@ -79,7 +79,6 @@ public class EditService {
         }
 
         genBankRepository.save(updatedGenBank);
-        return byteArrayOutputStream.toString();
     }
 
     public Class getSequenceType(String file) throws UnknownSequenceType {
@@ -108,19 +107,33 @@ public class EditService {
         log.info("Validation is successful");
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> S cutGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
+    public AbstractSequence cutGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, FileNotFoundException, UnknownSequenceType {
+        String fileContent = getFileFromDB(fileId, fileVersion);
+        Class sequenceType = getSequenceType(fileContent);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        return cut(br, startPosition, sequence, cls);
+        AbstractSequence newSequence = cut(br, startPosition, sequence, sequenceType);
+        saveSequenceToDB(fileId, fileVersion, newSequence);
+        return newSequence;
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> S modifyGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
+    public AbstractSequence modifyGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, FileNotFoundException, UnknownSequenceType, SequenceValidationException {
+        String fileContent = getFileFromDB(fileId, fileVersion);
+        Class sequenceType = getSequenceType(fileContent);
+        validateSequence(sequence, sequenceType);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        return modify(br, startPosition, sequence, cls);
+        AbstractSequence newSequence = modify(br, startPosition, sequence, sequenceType);
+        saveSequenceToDB(fileId, fileVersion, newSequence);
+        return newSequence;
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> S addGenBankFile(int startPosition, String sequence, String fileContent, Class<S> cls) throws GenBankFileEditorException {
+    public AbstractSequence addGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, FileNotFoundException, UnknownSequenceType, SequenceValidationException {
+        String fileContent = getFileFromDB(fileId, fileVersion);
+        Class sequenceType = getSequenceType(fileContent);
+        validateSequence(sequence, sequenceType);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        return add(br, startPosition, sequence, cls);
+        AbstractSequence newSequence = add(br, startPosition, sequence, sequenceType);
+        saveSequenceToDB(fileId, fileVersion, newSequence);
+        return newSequence;
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> S cut(
@@ -130,7 +143,7 @@ public class EditService {
             Class<S> cls
     ) throws GenBankFileEditorException {
         GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
-        S storedSequence = getStoredSequence(cls, sequenceParser.getSequence(br, 0));
+        S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence.toLowerCase(), startPosition)) {
             log.error("Illegal start position or sequence to delete: {}, {}", startPosition, sequence);
@@ -156,7 +169,7 @@ public class EditService {
             Class<S> cls
     ) throws GenBankFileEditorException {
         GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
-        S storedSequence = getStoredSequence(cls, sequenceParser.getSequence(br, 0));
+        S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         if (startPosition + sequence.length() > storedSequence.getLength()) {
             log.error("Modified sequence is too long");
@@ -186,7 +199,7 @@ public class EditService {
             Class<S> cls
     ) throws GenBankFileEditorException {
         GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
-        S storedSequence = getStoredSequence(cls, sequenceParser.getSequence(br, 0));
+        S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         S newSequence = addToSequence(startPosition, sequence, cls, storedSequence);
         sequenceParser.getSequenceHeaderParser().parseHeader(sequenceParser.getHeader(), newSequence);
@@ -313,7 +326,7 @@ public class EditService {
         return featurePosition >= start && featurePosition <= start + seqLength;
     }
 
-    private <S extends AbstractSequence<C>, C extends Compound> S getStoredSequence(Class<S> cls, String sequenceParser) throws GenBankFileEditorException {
+    private <S extends AbstractSequence<C>, C extends Compound> S createSequence(Class<S> cls, String sequenceParser) throws GenBankFileEditorException {
         S storedSequence;
         try {
             storedSequence = cls.getConstructor(String.class).newInstance(sequenceParser);
