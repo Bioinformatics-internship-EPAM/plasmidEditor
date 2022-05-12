@@ -1,6 +1,6 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
-import java.io.InputStream
+import java.io.InputStream;
 
 import org.biojava.nbio.core.sequence.DNASequence;
 
