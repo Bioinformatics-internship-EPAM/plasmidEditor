@@ -3,6 +3,7 @@ package com.plasmideditor.rocket.web.service;
 import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.GenBankEntity;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -44,12 +44,12 @@ public class EditService {
         this.genBankRepository = genBankRepository;
     }
 
-    public String getFileFromDB(String id, String version) throws FileNotFoundException {
+    public String getFileFromDB(String id, String version) throws GenBankFileNotFound {
         Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionIdAndVersion(id, version);
         if (genBankFile.isPresent()) {
             return genBankFile.get().getFile();
         } else {
-            throw new FileNotFoundException();
+            throw new GenBankFileNotFound();
         }
     }
 
@@ -107,7 +107,7 @@ public class EditService {
         log.info("Validation is successful");
     }
 
-    public AbstractSequence cutGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, FileNotFoundException, UnknownSequenceType {
+    public AbstractSequence cutGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType {
         String fileContent = getFileFromDB(fileId, fileVersion);
         Class sequenceType = getSequenceType(fileContent);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
@@ -116,7 +116,7 @@ public class EditService {
         return newSequence;
     }
 
-    public AbstractSequence modifyGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, FileNotFoundException, UnknownSequenceType, SequenceValidationException {
+    public AbstractSequence modifyGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
         String fileContent = getFileFromDB(fileId, fileVersion);
         Class sequenceType = getSequenceType(fileContent);
         validateSequence(sequence, sequenceType);
@@ -126,7 +126,7 @@ public class EditService {
         return newSequence;
     }
 
-    public AbstractSequence addGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, FileNotFoundException, UnknownSequenceType, SequenceValidationException {
+    public AbstractSequence addGenBankFile(int startPosition, String sequence, String fileId, String fileVersion) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
         String fileContent = getFileFromDB(fileId, fileVersion);
         Class sequenceType = getSequenceType(fileContent);
         validateSequence(sequence, sequenceType);

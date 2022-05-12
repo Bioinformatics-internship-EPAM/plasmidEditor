@@ -7,6 +7,7 @@ import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.domains.request.SequenceInfoRequest;
 import com.plasmideditor.rocket.web.service.EditService;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -17,12 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.FileNotFoundException;
-
-import static com.plasmideditor.rocket.web.configuration.ApiConstants.EDIT_FILE_PATH;
-import static com.plasmideditor.rocket.web.configuration.ApiConstants.ADD_SEQ_PATH;
-import static com.plasmideditor.rocket.web.configuration.ApiConstants.CUT_SEQ_PATH;
-import static com.plasmideditor.rocket.web.configuration.ApiConstants.MODIFY_SEQ_PATH;
+import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -72,26 +68,26 @@ public class FileEditorControllerTest {
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
         String json = createRequest(testSequence);
         when(editService.addGenBankFile(3, testSequence, "1", "v1"))
-                .thenThrow(FileNotFoundException.class);
+                .thenThrow(GenBankFileNotFound.class);
 
-        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Such file doesn't exist in database");
+        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Requested file does not exist in database");
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
         String json = createRequest(testSequence);
 
-        when(editService.cutGenBankFile(3, testSequence, "1", "v1")).thenThrow(FileNotFoundException.class);
+        when(editService.cutGenBankFile(3, testSequence, "1", "v1")).thenThrow(GenBankFileNotFound.class);
 
-        checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Such file doesn't exist in database");
+        checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Requested file does not exist in database");
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
         String json = createRequest(testSequence);
-        when(editService.modifyGenBankFile(3, testSequence, "1", "v1")).thenThrow(FileNotFoundException.class);
+        when(editService.modifyGenBankFile(3, testSequence, "1", "v1")).thenThrow(GenBankFileNotFound.class);
 
-        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Such file doesn't exist in database");
+        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Requested file does not exist in database");
     }
 
     @Test
@@ -145,7 +141,7 @@ public class FileEditorControllerTest {
         when(editService.addGenBankFile(3, testSequence, "1", "v1"))
                 .thenThrow(GenBankFileEditorException.class);
 
-        checkResponseIsBadRequest(ADD_SEQ_PATH, json, "Fail to edit file");
+        checkResponseIsInternalServerError(ADD_SEQ_PATH, json, "Internal modification error");
     }
 
     @Test
@@ -154,7 +150,7 @@ public class FileEditorControllerTest {
         when(editService.cutGenBankFile(3, testSequence, "1", "v1"))
                 .thenThrow(GenBankFileEditorException.class);
 
-        checkResponseIsBadRequest(CUT_SEQ_PATH, json, "Fail to edit file");
+        checkResponseIsInternalServerError(CUT_SEQ_PATH, json, "Internal modification error");
     }
 
     @Test
@@ -163,7 +159,7 @@ public class FileEditorControllerTest {
         when(editService.modifyGenBankFile(3, testSequence, "1", "v1"))
                 .thenThrow(GenBankFileEditorException.class);
 
-        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, "Fail to edit file");
+        checkResponseIsInternalServerError(MODIFY_SEQ_PATH, json, "Internal modification error");
     }
 
     private String createRequest(String testSequence) throws JsonProcessingException {
@@ -187,6 +183,14 @@ public class FileEditorControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(content)));
+    }
+
+    private void checkResponseIsInternalServerError(String path, String json, String content) throws Exception {
+        this.mockMvc.perform(post(EDIT_FILE_PATH + path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(content)));
     }
 
