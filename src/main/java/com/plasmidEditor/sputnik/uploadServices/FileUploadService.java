@@ -1,7 +1,7 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.io.InputStream;
 
 public interface FileUploadService<T> {
-	public void upload(MultipartFile file);
+	public void upload(InputStream file);
 }
