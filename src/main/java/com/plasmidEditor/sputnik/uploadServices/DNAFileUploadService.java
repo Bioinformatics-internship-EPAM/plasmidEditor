@@ -1,12 +1,13 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
+import java.io.InputStream
+
 import org.biojava.nbio.core.sequence.DNASequence;
-import org.springframework.web.multipart.MultipartFile;
 
 public class DNAFileUploadService implements FileUploadService<DNASequence> {
 
 	@Override
-	public void upload(MultipartFile file) {
+	public void upload(InputStream file) {
 		
 	}
 
