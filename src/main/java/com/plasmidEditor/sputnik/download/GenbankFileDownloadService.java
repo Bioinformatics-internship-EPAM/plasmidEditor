@@ -6,6 +6,8 @@ import com.plasmidEditor.sputnik.services.GenBankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.plasmidEditor.sputnik.utils.Constants.DEFAULT_VERSION_VALUE;
+
 @Service
 public abstract class GenbankFileDownloadService {
     @Autowired
@@ -13,17 +15,15 @@ public abstract class GenbankFileDownloadService {
 
     public GenBankDTO downloadFile(String accession, String version) {
         try {
-            if (version.equals("latest")) {
+            if (version.equals(DEFAULT_VERSION_VALUE)) {
                 return service.getLatestVersion(accession);
-            } else {
-                return service.get(accession, version);
             }
+            return service.get(accession, version);
         } catch (GenBankNotFoundException e) {
-            if (version.equals("latest")) {
+            if (version.equals(DEFAULT_VERSION_VALUE)) {
                 throw new DownloadGenbankFileException(accession);
-            } else {
-                throw new DownloadGenbankFileException(accession, version);
             }
+            throw new DownloadGenbankFileException(accession, version);
         }
     }
 
@@ -31,5 +31,5 @@ public abstract class GenbankFileDownloadService {
         return downloadFile(accession, version).getFile();
     }
 
-    public abstract void downloadGenbankFileAndWriteToFile(String accession, String path, String version);
+    public abstract void downloadGenbankFileAndWriteToFile(String accession, String savingPath, String version);
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import static com.plasmidEditor.sputnik.utils.Constants.DEFAULT_VERSION_VALUE;
 import static com.plasmidEditor.sputnik.utils.RequestPath.*;
 
 @RestController
@@ -24,7 +25,7 @@ public class GenbankFileDownloadController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadDNA(@RequestParam String accession,
-                                              @RequestParam(defaultValue = "latest") String version) {
+                                              @RequestParam(defaultValue = DEFAULT_VERSION_VALUE) String version) {
         String dnaFile = dnaFileDownloadService.downloadFileAsString(accession, version);
         return ResponseEntity.ok()
             .header("Download-Status", "File was successfully downloaded")
@@ -35,7 +36,7 @@ public class GenbankFileDownloadController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadProtein(@RequestParam String accession,
-                                                  @RequestParam(defaultValue = "latest") String version) {
+                                                  @RequestParam(defaultValue = DEFAULT_VERSION_VALUE) String version) {
         String proteinFile = proteinFileDownloadService.downloadFileAsString(accession, version);
         return ResponseEntity.ok()
             .header("Download-Status", "File was successfully downloaded")
@@ -47,7 +48,7 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadDNAToFile(@RequestParam String accession,
                                                     @RequestParam String savingPath,
-                                                    @RequestParam(defaultValue = "latest") String version) {
+                                                    @RequestParam(defaultValue = DEFAULT_VERSION_VALUE) String version) {
         dnaFileDownloadService.downloadGenbankFileAndWriteToFile(accession, savingPath, version);
         return ResponseEntity.ok()
                 .header("Download-Status", "File was successfully downloaded")
@@ -59,7 +60,7 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadProteinToFile(@RequestParam String accession,
                                                         @RequestParam String savingPath,
-                                                        @RequestParam(defaultValue = "latest") String version) {
+                                                        @RequestParam(defaultValue = DEFAULT_VERSION_VALUE) String version) {
         proteinFileDownloadService.downloadGenbankFileAndWriteToFile(accession, savingPath, version);
         return ResponseEntity.ok()
                 .header("Download-Status", "File was successfully downloaded")
