@@ -1,8 +1,12 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
-import java.io.InputStream;
+import com.plasmideditor.rocket.genbank.io.protein.FileDNAGenbankManager;
+import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
+import org.biojava.nbio.core.sequence.ProteinSequence;
+import org.springframework.web.multipart.InputStream;
 
-import org.biojava.nbio.core.sequence.DNASequence;
+import java.io.File;
+import java.util.List;
 
 public class DNAFileUploadService implements FileUploadService<DNASequence> {
 
@@ -17,7 +21,7 @@ public class DNAFileUploadService implements FileUploadService<DNASequence> {
             multipartFile.transferTo(file);
 
             // If possible to read then the format is correct
-            sequenceList = new GenBankDNAFileReader().read_sequence(file.getAbsolutePath());
+            sequenceList = new GenBankDNAFileReader().readSequense(file.getAbsolutePath());
             validateListSize(sequenceList);
         } catch (Exception e) {
             throw new FileEditorUploadException(e.getMessage(), e);
