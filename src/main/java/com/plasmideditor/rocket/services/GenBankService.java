@@ -13,10 +13,9 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GenBankService {
 
-    @Autowired
     private final GenBankRepository repository;
 
-    final private GenBankMapper mapper;
+    private final GenBankMapper mapper;
 
     public GenBankData upload(GenBankData data){
         GenBankEntity entity = mapper.map(data, GenBankEntity.class);
