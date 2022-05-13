@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GenbankFileDownloadController {
-    private final GenbankFileDownloadService dnaFileEditorService;
-    private final GenbankFileDownloadService proteinFileEditorService;
+    private final GenbankFileDownloadService dnaFileDownloadService;
+    private final GenbankFileDownloadService proteinFileDownloadService;
 
     @Autowired
-    public GenbankFileDownloadController(DNAFileDownloadService dnaFileEditorService,
-                                         ProteinFileDownloadService proteinFileEditorService) {
-        this.dnaFileEditorService = dnaFileEditorService;
-        this.proteinFileEditorService = proteinFileEditorService;
+    public GenbankFileDownloadController(DNAFileDownloadService dnaFileDownloadService,
+                                         ProteinFileDownloadService proteinFileDownloadService) {
+        this.dnaFileDownloadService = dnaFileDownloadService;
+        this.proteinFileDownloadService = proteinFileDownloadService;
     }
 
     @GetMapping(path = "/genbank/dna",
@@ -22,7 +22,7 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadDNA(@RequestParam String accession,
                                               @RequestParam(defaultValue = "latest") String version) {
-        String dnaFile = dnaFileEditorService.downloadFileAsString(accession, version);
+        String dnaFile = dnaFileDownloadService.downloadFileAsString(accession, version);
         return ResponseEntity.ok()
             .header("Download-Status", "File was successfully downloaded")
             .body(dnaFile);
@@ -33,7 +33,7 @@ public class GenbankFileDownloadController {
     )
     public ResponseEntity<String> downloadProtein(@RequestParam String accession,
                                                   @RequestParam(defaultValue = "latest") String version) {
-        String proteinFile = proteinFileEditorService.downloadFileAsString(accession, version);
+        String proteinFile = proteinFileDownloadService.downloadFileAsString(accession, version);
         return ResponseEntity.ok()
             .header("Download-Status", "File was successfully downloaded")
             .body(proteinFile);
@@ -45,7 +45,7 @@ public class GenbankFileDownloadController {
     public ResponseEntity<String> downloadDNAToFile(@RequestParam String accession,
                                                     @RequestParam String path,
                                                     @RequestParam(defaultValue = "latest") String version) {
-        dnaFileEditorService.downloadGenbakFileAndWriteToFile(accession, path, version);
+        dnaFileDownloadService.downloadGenbakFileAndWriteToFile(accession, path, version);
         return ResponseEntity.ok()
                 .header("Download-Status", "File was successfully downloaded")
                 .build();
@@ -57,7 +57,7 @@ public class GenbankFileDownloadController {
     public ResponseEntity<String> downloadProteinToFile(@RequestParam String accession,
                                                         @RequestParam String path,
                                                         @RequestParam(defaultValue = "latest") String version) {
-        proteinFileEditorService.downloadGenbakFileAndWriteToFile(accession, path, version);
+        proteinFileDownloadService.downloadGenbakFileAndWriteToFile(accession, path, version);
         return ResponseEntity.ok()
                 .header("Download-Status", "File was successfully downloaded")
                 .build();
