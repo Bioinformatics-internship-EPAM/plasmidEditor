@@ -1,8 +1,5 @@
 package com.plasmidEditor.sputnik.exceptions;
 
-import lombok.Getter;
-
-@Getter
 public class DownloadGenbankFileException extends RuntimeException {
 
     public DownloadGenbankFileException(String accession) {
