@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GenBankServiceTests extends PostgresTestContainer{
 
-    @Autowired
     private final GenBankService service;
 
     public GenBankServiceTests(GenBankService service) {
