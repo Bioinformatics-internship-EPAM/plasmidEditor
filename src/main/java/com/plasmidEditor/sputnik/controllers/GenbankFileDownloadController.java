@@ -46,7 +46,9 @@ public class GenbankFileDownloadController {
                                                     @RequestParam String path,
                                                     @RequestParam(defaultValue = "latest") String version) {
         dnaFileEditorService.downloadGenbakFileAndWriteToFile(accession, path, version);
-        return ResponseEntity.ok("File was successfully downloaded");
+        return ResponseEntity.ok()
+                .header("Download-Status", "File was successfully downloaded")
+                .build();
     }
 
     @GetMapping(path = "/genbank/protein/download",
@@ -56,6 +58,8 @@ public class GenbankFileDownloadController {
                                                         @RequestParam String path,
                                                         @RequestParam(defaultValue = "latest") String version) {
         proteinFileEditorService.downloadGenbakFileAndWriteToFile(accession, path, version);
-        return ResponseEntity.ok("File was successfully downloaded");
+        return ResponseEntity.ok()
+                .header("Download-Status", "File was successfully downloaded")
+                .build();
     }
 }
