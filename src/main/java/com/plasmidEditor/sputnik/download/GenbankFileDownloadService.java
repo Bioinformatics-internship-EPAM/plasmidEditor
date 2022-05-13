@@ -5,10 +5,9 @@ import com.plasmidEditor.sputnik.exceptions.*;
 import com.plasmidEditor.sputnik.services.GenBankService;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface GenbankFileDownloadService {
     default GenBankDTO downloadFile(String accession, String version) {
-        GenBankService service = getService();
+        final GenBankService service = getService();
         try {
             if (version.equals("latest")) {
                 return service.getLatestVersion(accession);
@@ -25,8 +24,7 @@ public interface GenbankFileDownloadService {
     }
 
     default String downloadFileAsString(String accession, String version) {
-        GenBankDTO fileDTO = downloadFile(accession, version);
-        return fileDTO.getFile();
+        return downloadFile(accession, version).getFile();
     }
 
     void downloadGenbakFileAndWriteToFile(String accession, String path, String version);

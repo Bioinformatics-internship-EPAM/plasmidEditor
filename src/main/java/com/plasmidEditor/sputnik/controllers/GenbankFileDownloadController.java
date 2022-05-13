@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import static com.plasmidEditor.sputnik.utils.RequestPath.*;
+
+@RestController(GENBANK)
 public class GenbankFileDownloadController {
     private final GenbankFileDownloadService dnaFileDownloadService;
     private final GenbankFileDownloadService proteinFileDownloadService;
@@ -17,7 +19,7 @@ public class GenbankFileDownloadController {
         this.proteinFileDownloadService = proteinFileDownloadService;
     }
 
-    @GetMapping(path = "/genbank/dna",
+    @GetMapping(path = DNA,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadDNA(@RequestParam String accession,
@@ -28,7 +30,7 @@ public class GenbankFileDownloadController {
             .body(dnaFile);
     }
 
-    @GetMapping(path = "/genbank/protein",
+    @GetMapping(path = PROTEIN,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadProtein(@RequestParam String accession,
@@ -39,25 +41,25 @@ public class GenbankFileDownloadController {
             .body(proteinFile);
     }
 
-    @GetMapping(path = "/genbank/dna/download",
+    @GetMapping(path = DNA_DOWNLOAD,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadDNAToFile(@RequestParam String accession,
-                                                    @RequestParam String path,
+                                                    @RequestParam String savingPath,
                                                     @RequestParam(defaultValue = "latest") String version) {
-        dnaFileDownloadService.downloadGenbakFileAndWriteToFile(accession, path, version);
+        dnaFileDownloadService.downloadGenbakFileAndWriteToFile(accession, savingPath, version);
         return ResponseEntity.ok()
                 .header("Download-Status", "File was successfully downloaded")
                 .build();
     }
 
-    @GetMapping(path = "/genbank/protein/download",
+    @GetMapping(path = PROTEIN_DOWNLOAD,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> downloadProteinToFile(@RequestParam String accession,
-                                                        @RequestParam String path,
+                                                        @RequestParam String savingPath,
                                                         @RequestParam(defaultValue = "latest") String version) {
-        proteinFileDownloadService.downloadGenbakFileAndWriteToFile(accession, path, version);
+        proteinFileDownloadService.downloadGenbakFileAndWriteToFile(accession, savingPath, version);
         return ResponseEntity.ok()
                 .header("Download-Status", "File was successfully downloaded")
                 .build();

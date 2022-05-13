@@ -18,7 +18,7 @@ public class DNAFileDownloadService implements GenbankFileDownloadService {
 
     @Override
     public void downloadGenbakFileAndWriteToFile(String accession, String path, String version) {
-        GenBankDTO fileDTO = downloadFile(accession, version);
+        final GenBankDTO fileDTO = downloadFile(accession, version);
         try {
             DNASequence sequence = new DNASequence(fileDTO.getFile());
             sequence.setAccession(new AccessionID(accession));

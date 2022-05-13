@@ -17,7 +17,7 @@ public class ProteinFileDownloadService implements GenbankFileDownloadService {
 
     @Override
     public void downloadGenbakFileAndWriteToFile(String accession, String path, String version) {
-        GenBankDTO fileDTO = downloadFile(accession, version);
+        final GenBankDTO fileDTO = downloadFile(accession, version);
         try {
             ProteinSequence sequence = new ProteinSequence(fileDTO.getFile());
             sequence.setAccession(new AccessionID(accession));
