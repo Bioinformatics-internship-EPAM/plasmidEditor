@@ -3,22 +3,20 @@ package com.plasmideditor.rocket.services;
 import com.plasmideditor.rocket.GenBankData;
 import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
+import com.plasmideditor.rocket.mappers.GenBankMapper;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
-import org.modelmapper.ModelMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class GenBankService {
 
     @Autowired
     private final GenBankRepository repository;
 
-    final private ModelMapper mapper = new ModelMapper();
-
-    public GenBankService(GenBankRepository repository) {
-        this.repository = repository;
-    }
+    final private GenBankMapper mapper;
 
     public GenBankData upload(GenBankData data){
         GenBankEntity entity = mapper.map(data, GenBankEntity.class);
