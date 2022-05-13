@@ -1,32 +1,29 @@
 package com.plasmidEditor.sputnik.download;
 
-import com.plasmidEditor.sputnik.GenBankDTO;
+import com.plasmidEditor.sputnik.*;
 import com.plasmidEditor.sputnik.exceptions.DownloadGenbankFileException;
-import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
-import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
-import org.biojava.nbio.core.sequence.ProteinSequence;
+import com.plasmidEditor.sputnik.services.GenBankService;
+import lombok.Getter;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProteinFileDownloadService implements GenbankFileDownloadService<ProteinSequence> {
+public class ProteinFileDownloadService implements GenbankFileDownloadService {
+    @Getter
     @Autowired
-    GenBankServiceImpl service;
+    GenBankService service;
 
     @Override
-    public GenBankDTO downloadFile(String accession, String version) {
+    public void downloadGenbakFileAndWriteToFile(String accession, String path, String version) {
+        GenBankDTO fileDTO = downloadFile(accession, version);
         try {
-            if (version.equals("latest")) {
-                return service.getLatestVersion(accession);
-            } else {
-                return service.get(accession, version);
-            }
-        } catch (GenBankNotFoundException e) {
-            if (version.equals("latest")) {
-                throw new DownloadGenbankFileException(accession);
-            } else {
-                throw new DownloadGenbankFileException(accession, version);
-            }
+            ProteinSequence sequence = new ProteinSequence(fileDTO.getFile());
+            sequence.setAccession(new AccessionID(accession));
+            new FileProteinGenbankManager().writeSequence(path, sequence);
+        } catch (CompoundNotFoundException e) {
+            throw new DownloadGenbankFileException(accession);
         }
     }
 }

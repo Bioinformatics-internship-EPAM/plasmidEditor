@@ -1,16 +1,20 @@
 package com.plasmidEditor.sputnik.download;
 
 import com.plasmidEditor.sputnik.GenBankDTO;
-import com.plasmidEditor.sputnik.exceptions.DownloadGenbankFileException;
-import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
-import org.biojava.nbio.core.sequence.template.AbstractSequence;
+import com.plasmidEditor.sputnik.exceptions.*;
+import com.plasmidEditor.sputnik.services.GenBankService;
+import org.springframework.stereotype.Service;
 
-public interface GenbankFileDownloadService<T extends AbstractSequence<?>> {
-
-    default String downloadFileAsString(String accession, String version) {
+@Service
+public interface GenbankFileDownloadService {
+    default GenBankDTO downloadFile(String accession, String version) {
+        GenBankService service = getService();
         try {
-            GenBankDTO fileDTO = downloadFile(accession, version);
-            return fileDTO.getFile();
+            if (version.equals("latest")) {
+                return service.getLatestVersion(accession);
+            } else {
+                return service.get(accession, version);
+            }
         } catch (GenBankNotFoundException e) {
             if (version.equals("latest")) {
                 throw new DownloadGenbankFileException(accession);
@@ -20,5 +24,12 @@ public interface GenbankFileDownloadService<T extends AbstractSequence<?>> {
         }
     }
 
-    GenBankDTO downloadFile(String accession, String version);
+    default String downloadFileAsString(String accession, String version) {
+        GenBankDTO fileDTO = downloadFile(accession, version);
+        return fileDTO.getFile();
+    }
+
+    void downloadGenbakFileAndWriteToFile(String accession, String path, String version);
+
+    GenBankService getService();
 }
