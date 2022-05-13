@@ -3,11 +3,13 @@ package com.plasmidEditor.sputnik.download;
 import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.exceptions.*;
 import com.plasmidEditor.sputnik.services.GenBankService;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public interface GenbankFileDownloadService {
-    default GenBankDTO downloadFile(String accession, String version) {
-        final GenBankService service = getService();
+public abstract class GenbankFileDownloadService {
+    @Autowired
+    private GenBankService service;
+
+    public GenBankDTO downloadFile(String accession, String version) {
         try {
             if (version.equals("latest")) {
                 return service.getLatestVersion(accession);
@@ -23,11 +25,9 @@ public interface GenbankFileDownloadService {
         }
     }
 
-    default String downloadFileAsString(String accession, String version) {
+    public String downloadFileAsString(String accession, String version) {
         return downloadFile(accession, version).getFile();
     }
 
-    void downloadGenbakFileAndWriteToFile(String accession, String path, String version);
-
-    GenBankService getService();
+    public abstract void downloadGenbakFileAndWriteToFile(String accession, String path, String version);
 }
