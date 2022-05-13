@@ -4,7 +4,9 @@ import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.exceptions.*;
 import com.plasmidEditor.sputnik.services.GenBankService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public abstract class GenbankFileDownloadService {
     @Autowired
     private GenBankService service;
@@ -29,5 +31,5 @@ public abstract class GenbankFileDownloadService {
         return downloadFile(accession, version).getFile();
     }
 
-    public abstract void downloadGenbakFileAndWriteToFile(String accession, String path, String version);
+    public abstract void downloadGenbankFileAndWriteToFile(String accession, String path, String version);
 }

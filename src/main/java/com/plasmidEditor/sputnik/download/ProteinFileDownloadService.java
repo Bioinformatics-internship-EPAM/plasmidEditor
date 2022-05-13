@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProteinFileDownloadService extends GenbankFileDownloadService {
     @Override
-    public void downloadGenbakFileAndWriteToFile(String accession, String path, String version) {
+    public void downloadGenbankFileAndWriteToFile(String accession, String path, String version) {
         final GenBankDTO fileDTO = downloadFile(accession, version);
         try {
             ProteinSequence sequence = new ProteinSequence(fileDTO.getFile());

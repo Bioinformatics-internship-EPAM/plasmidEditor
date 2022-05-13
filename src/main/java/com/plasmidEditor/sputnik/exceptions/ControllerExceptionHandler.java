@@ -1,7 +1,5 @@
 package com.plasmidEditor.sputnik.exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,12 +15,5 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 new DownloadGenbankFileJsonException("Fail to download file", e.getMessage()),
                 HttpStatus.BAD_REQUEST
         );
-    }
-
-    @Data
-    @AllArgsConstructor
-    private static class DownloadGenbankFileJsonException {
-        private String downloadStatus;
-        private String errorMessage;
     }
 }
