@@ -3,6 +3,7 @@ package com.plasmideditor.rocket.web.controller;
 import com.plasmideditor.rocket.web.service.DNAFileEditorService;
 import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
 import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
+import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +34,7 @@ public class FileUploadController {
             path = DNA_ENDPOINT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> uploadDNAFile(@RequestParam("file") MultipartFile file) throws IOException, FileEditorUploadException {
+    public ResponseEntity<?> uploadDNAFile(@RequestParam("file") MultipartFile file) throws IOException, FileEditorUploadException, SequenceValidationException {
         dnaFileEditorService.uploadFile(file.getInputStream());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -41,10 +42,10 @@ public class FileUploadController {
     }
 
     @PostMapping(
-            path=PROTEIN_ENDPOINT,
+            path = PROTEIN_ENDPOINT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> uploadProteinFile(@RequestParam("file") MultipartFile file) throws IOException, FileEditorUploadException {
+    public ResponseEntity<?> uploadProteinFile(@RequestParam("file") MultipartFile file) throws IOException, FileEditorUploadException, SequenceValidationException {
         proteinFileEditorService.uploadFile(file.getInputStream());
         return ResponseEntity
                 .status(HttpStatus.CREATED)

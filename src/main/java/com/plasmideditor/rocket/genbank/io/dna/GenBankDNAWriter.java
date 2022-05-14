@@ -5,7 +5,9 @@ import com.plasmideditor.rocket.genbank.io.exceptions.GenBankWriterException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.GenbankWriterHelper;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public class GenBankDNAWriter implements GenBankWriter<DNASequence> {

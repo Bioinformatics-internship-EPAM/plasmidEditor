@@ -38,7 +38,7 @@ public class FileEditorServiceUtils<S extends AbstractSequence> {
             default:
                 throw new SequenceValidationException("Upload " +
                         sequences.size() + " sequences at once. " +
-                        "Upload only one sequence per file."
+                        "Please, upload only one sequence per file."
                 );
         }
     }
