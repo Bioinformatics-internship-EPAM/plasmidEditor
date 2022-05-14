@@ -2,53 +2,33 @@ package com.plasmideditor.rocket.web.service;
 
 import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinFileReader;
 import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
+import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.ProteinSequence;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
+@Slf4j
 public class ProteinFileEditorService implements FileEditorService<ProteinSequence> {
 
     @Override
-    public void uploadFile(MultipartFile multipartFile) throws FileEditorUploadException {
+    public void uploadFile(InputStream inputFile) throws FileEditorUploadException {
         List<ProteinSequence> sequenceList;
+        FileEditorServiceUtils<ProteinSequence> serviceUtils = new FileEditorServiceUtils<>();
 
         try {
-            File file = File.createTempFile("protein", ".tmp");
-            file.deleteOnExit();
             // Write to tmp file to get accession and version
-            multipartFile.transferTo(file);
+            File file = serviceUtils.inputStreamToTmpFile(inputFile);
 
             // If possible to read then the format is correct
-            sequenceList = new GenBankProteinFileReader().read_sequence(file.getAbsolutePath());
-            validateListSize(sequenceList);
+            sequenceList = new GenBankProteinFileReader().readSequence(file.getAbsolutePath());
+            serviceUtils.validateSequenceList(sequenceList);
         } catch (Exception e) {
             throw new FileEditorUploadException(e.getMessage(), e);
         }
 
-        for (ProteinSequence sequence : sequenceList) {
-            String accession = sequence.getAccession().getID();
-            int version = sequence.getAccession().getVersion();
-
-//             if (genBankService.getByAccessionVersion(accession, version) == null) {
-//                 genBankService.upload(accession, version, new String(multipartFile.getBytes()));
-//             }
-            System.out.println("Upload " + accession + "." + version);
-        }
-    }
-
-    private void validateListSize(List<ProteinSequence> sequences) throws Exception {
-        switch (sequences.size()) {
-            case 0:
-                throw new Exception("File has invalid format.");
-            case 1:
-                break;
-            default:
-                throw new Exception("Upload " +
-                        sequences.size() + " sequences at once. " +
-                        "Upload only one sequence per file."
-                );
-        }
+        ProteinSequence sequence = sequenceList.get(0);
+        serviceUtils.insertSequence(sequence);
     }
 }

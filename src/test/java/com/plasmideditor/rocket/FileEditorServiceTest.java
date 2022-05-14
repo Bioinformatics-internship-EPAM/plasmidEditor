@@ -4,14 +4,11 @@ import com.plasmideditor.rocket.web.service.DNAFileEditorService;
 import com.plasmideditor.rocket.web.service.FileEditorService;
 import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
 import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -24,46 +21,40 @@ public class FileEditorServiceTest {
 
     @Test
     public void uploadDNAFile() throws IOException, FileEditorUploadException {
-        File file = new File(TEST_DNA_FILE_PATH);
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartFile = getMultipartFile(input, file.getName());
+        FileInputStream inputStream = getInputStreamFromFile(TEST_DNA_FILE_PATH);
 
-        FileEditorService fileEditorService = new DNAFileEditorService();
-        fileEditorService.uploadFile(multipartFile);
+        FileEditorService<DNASequence> fileEditorService = new DNAFileEditorService();
+        fileEditorService.uploadFile(inputStream);
     }
 
     @Test
     public void uploadProteinFile() throws IOException, FileEditorUploadException {
-        File file = new File(TEST_PROTEIN_FILE_PATH);
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartFile = getMultipartFile(input, file.getName());
+        FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 
-        FileEditorService fileEditorService = new ProteinFileEditorService();
-        fileEditorService.uploadFile(multipartFile);
+        FileEditorService<ProteinSequence> fileEditorService = new ProteinFileEditorService();
+        fileEditorService.uploadFile(inputStream);
     }
 
     // DNA negative scenarios
 
     @Test
     public void uploadIncorrectDNAFile() {
-        MultipartFile multipartFile = getMultipartFile("Incorrect DNA file");
+        InputStream inputStream = getInputStreamFromContent("Incorrect DNA file");
 
         assertThrows(
                 FileEditorUploadException.class,
-                ()-> new DNAFileEditorService().uploadFile(multipartFile),
+                ()-> new DNAFileEditorService().uploadFile(inputStream),
                 "File has invalid format."
         );
     }
 
     @Test
     public void uploadProteinInsteadDNAFile() throws IOException {
-        File file = new File(TEST_PROTEIN_FILE_PATH);
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartFile = getMultipartFile(input, file.getName());
+        FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 
         assertThrows(
                 FileEditorUploadException.class,
-                ()-> new DNAFileEditorService().uploadFile(multipartFile),
+                ()-> new DNAFileEditorService().uploadFile(inputStream),
                 "File has invalid format."
         );
     }
@@ -72,43 +63,31 @@ public class FileEditorServiceTest {
 
     @Test
     public void uploadIncorrectProteinFile() {
-        MultipartFile multipartFile = getMultipartFile("Incorrect Protein file");
+        InputStream inputStream = getInputStreamFromContent("Incorrect Protein file");
 
         assertThrows(
                 FileEditorUploadException.class,
-                ()-> new ProteinFileEditorService().uploadFile(multipartFile),
+                ()-> new ProteinFileEditorService().uploadFile(inputStream),
                 "File has invalid format."
         );
     }
 
     @Test
     public void uploadDNAInsteadProteinFile() throws IOException {
-        File file = new File(TEST_DNA_FILE_PATH);
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartFile = getMultipartFile(input, file.getName());
+        FileInputStream inputStream = getInputStreamFromFile(TEST_DNA_FILE_PATH);
 
         assertThrows(
                 FileEditorUploadException.class,
-                ()-> new ProteinFileEditorService().uploadFile(multipartFile),
+                ()-> new ProteinFileEditorService().uploadFile(inputStream),
                 "File has invalid format."
         );
     }
 
-    private MultipartFile getMultipartFile(FileInputStream input, String filename) throws IOException {
-        return new MockMultipartFile(
-                "file",
-                filename,
-                "text/plain",
-                input.readAllBytes()
-        );
+    private FileInputStream getInputStreamFromFile(String filename) throws FileNotFoundException {
+        return new FileInputStream(new File(filename));
     }
 
-    private MultipartFile getMultipartFile(String content) {
-        return new MockMultipartFile(
-                "file",
-                "filename",
-                "text/plain",
-                content.getBytes(StandardCharsets.UTF_8)
-        );
+    private InputStream getInputStreamFromContent(String content) {
+        return new ByteArrayInputStream(content.getBytes());
     }
 }

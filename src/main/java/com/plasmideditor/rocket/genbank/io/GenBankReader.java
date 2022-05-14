@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GenBankReader<T> {
 
-    public List<T> read_sequence(@NonNull String filename) throws GenBankReaderException;
+    public List<T> readSequence(@NonNull String filename) throws GenBankReaderException;
 }

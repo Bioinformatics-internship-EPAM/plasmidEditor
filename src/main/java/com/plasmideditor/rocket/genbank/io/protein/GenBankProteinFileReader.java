@@ -13,7 +13,7 @@ import java.util.List;
 
 public class GenBankProteinFileReader implements GenBankReader<ProteinSequence> {
     @Override
-    public List<ProteinSequence> read_sequence(@NonNull String filename) throws GenBankFileReaderException {
+    public List<ProteinSequence> readSequence(@NonNull String filename) throws GenBankFileReaderException {
         try {
             File protFile = new File(filename);
 

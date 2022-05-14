@@ -2,9 +2,10 @@ package com.plasmideditor.rocket.web.service;
 
 import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 @Service
 public interface FileEditorService<T> {
-    void uploadFile(MultipartFile file) throws FileEditorUploadException;
+    void uploadFile(InputStream file) throws FileEditorUploadException;
 }

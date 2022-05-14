@@ -2,15 +2,22 @@ package com.plasmideditor.rocket.web.controller;
 
 import com.plasmideditor.rocket.web.service.DNAFileEditorService;
 import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
+import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
+import java.io.IOException;
+
+import static com.plasmideditor.rocket.web.config.WebConstants.DNA_ENDPOINT;
+import static com.plasmideditor.rocket.web.config.WebConstants.PROTEIN_ENDPOINT;
+
+@Controller
 public class FileUploadController {
 
     private final DNAFileEditorService dnaFileEditorService;
@@ -23,28 +30,24 @@ public class FileUploadController {
     }
 
     @PostMapping(
-            path="/genbank/dna",
+            path = DNA_ENDPOINT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> uploadDNAFile(@RequestParam("file") MultipartFile file) {
-        try {
-            dnaFileEditorService.uploadFile(file);
-            return ResponseEntity.ok("Successfully upload file");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Upload file unexpected error. Reason: " + e.getMessage());
-        }
+    public ResponseEntity<?> uploadDNAFile(@RequestParam("file") MultipartFile file) throws IOException, FileEditorUploadException {
+        dnaFileEditorService.uploadFile(file.getInputStream());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
     }
 
     @PostMapping(
-            path="/genbank/protein",
+            path=PROTEIN_ENDPOINT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> uploadProteinFile(@RequestParam("file") MultipartFile file) {
-        try {
-            proteinFileEditorService.uploadFile(file);
-            return ResponseEntity.ok("Successfully upload file");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Upload file unexpected error. Reason: " + e.getMessage());
-        }
+    public ResponseEntity<?> uploadProteinFile(@RequestParam("file") MultipartFile file) throws IOException, FileEditorUploadException {
+        proteinFileEditorService.uploadFile(file.getInputStream());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
     }
 }

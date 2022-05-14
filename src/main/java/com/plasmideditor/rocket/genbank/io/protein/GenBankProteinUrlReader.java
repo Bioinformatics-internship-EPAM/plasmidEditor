@@ -17,7 +17,7 @@ public class GenBankProteinUrlReader  implements GenBankReader<ProteinSequence> 
     private final String genbankDirectoryCache = "/tmp";
 
     @Override
-    public List<ProteinSequence> read_sequence(@NonNull String accessionID) throws GenBankUrlReaderException {
+    public List<ProteinSequence> readSequence(@NonNull String accessionID) throws GenBankUrlReaderException {
         try {
             GenbankProxySequenceReader<AminoAcidCompound> genbankProteinReader = new GenbankProxySequenceReader<>(
                     genbankDirectoryCache,

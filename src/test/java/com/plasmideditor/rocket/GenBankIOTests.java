@@ -21,7 +21,7 @@ public class GenBankIOTests {
     public void readDNAFromURLTest() {
         assertDoesNotThrow(() -> {
             /* https://www.ncbi.nlm.nih.gov/nuccore/2XE0_D?report=genbank */
-            List<DNASequence> dnaSequences = new GenBankDNAUrlReader().read_sequence("2XE0_D");
+            List<DNASequence> dnaSequences = new GenBankDNAUrlReader().readSequence("2XE0_D");
             DNASequence dnaSequence = dnaSequences.get(0);
 
             assertEquals("2XE0_D", dnaSequence.getAccession().toString());
@@ -35,7 +35,7 @@ public class GenBankIOTests {
     public void readProteinFromURLTest() {
         assertDoesNotThrow(() -> {
             /* https://www.ncbi.nlm.nih.gov/protein/NP_001317186.1 */
-            List<ProteinSequence> proteinSequences = new GenBankProteinUrlReader().read_sequence("NP_001317186");
+            List<ProteinSequence> proteinSequences = new GenBankProteinUrlReader().readSequence("NP_001317186");
             ProteinSequence proteinSequence = proteinSequences.get(0);
 
             assertEquals("NP_001317186", proteinSequence.getAccession().toString());
@@ -47,7 +47,7 @@ public class GenBankIOTests {
     @Test
     public void readDNAFromFileTest() {
         assertDoesNotThrow(() -> {
-            List<DNASequence> dnaSequences = new GenBankDNAFileReader().read_sequence("src/test/resources/BI431008.gb");
+            List<DNASequence> dnaSequences = new GenBankDNAFileReader().readSequence("src/test/resources/BI431008.gb");
             assertEquals(1, dnaSequences.size());
             DNASequence dnaSequence = dnaSequences.get(0);
 
@@ -61,7 +61,7 @@ public class GenBankIOTests {
     @Test
     public void readProteinFromFileTest() {
         assertDoesNotThrow(() -> {
-            List<ProteinSequence> proteinSequences = new GenBankProteinFileReader().read_sequence("src/test/resources/3MJ8_A.gb");
+            List<ProteinSequence> proteinSequences = new GenBankProteinFileReader().readSequence("src/test/resources/3MJ8_A.gb");
             assertEquals(1, proteinSequences.size());
             ProteinSequence proteinSequence = proteinSequences.get(0);
 
@@ -78,9 +78,9 @@ public class GenBankIOTests {
         String generatedFile = "src/test/resources/generated_BI431008.gb";
 
         assertDoesNotThrow(() -> {
-            List<DNASequence> dnaSequencesInitial = new GenBankDNAFileReader().read_sequence(initialFile);
+            List<DNASequence> dnaSequencesInitial = new GenBankDNAFileReader().readSequence(initialFile);
             new GenBankDNAWriter().writeToFile(dnaSequencesInitial, generatedFile);
-            List<DNASequence> dnaSequencesGenerated = new GenBankDNAFileReader().read_sequence(generatedFile);
+            List<DNASequence> dnaSequencesGenerated = new GenBankDNAFileReader().readSequence(generatedFile);
 
             assertEquals(1, dnaSequencesInitial.size());
             assertEquals(1, dnaSequencesGenerated.size());
@@ -95,9 +95,9 @@ public class GenBankIOTests {
         String generatedFile = "src/test/resources/generated_3MJ8_A.gb";
 
         assertDoesNotThrow(() -> {
-            List<ProteinSequence> proteinSequencesInitial = new GenBankProteinFileReader().read_sequence(initialFile);
+            List<ProteinSequence> proteinSequencesInitial = new GenBankProteinFileReader().readSequence(initialFile);
             new GenBankProteinWriter().writeToFile(proteinSequencesInitial, generatedFile);
-            List<ProteinSequence> proteinSequencesGenerated = new GenBankProteinFileReader().read_sequence(generatedFile);
+            List<ProteinSequence> proteinSequencesGenerated = new GenBankProteinFileReader().readSequence(generatedFile);
 
             assertEquals(1, proteinSequencesInitial.size());
             assertEquals(1, proteinSequencesGenerated.size());
@@ -111,8 +111,8 @@ public class GenBankIOTests {
         assertThrows(GenBankFileReaderException.class,
                 () -> {
                     String nonExistentFile = "nonExistentFile.gb";
-                    new GenBankProteinFileReader().read_sequence(nonExistentFile);
-                    new GenBankDNAFileReader().read_sequence(nonExistentFile);
+                    new GenBankProteinFileReader().readSequence(nonExistentFile);
+                    new GenBankDNAFileReader().readSequence(nonExistentFile);
                 });
     }
 }
