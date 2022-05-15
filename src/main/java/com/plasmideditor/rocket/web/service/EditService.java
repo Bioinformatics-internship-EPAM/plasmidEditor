@@ -30,8 +30,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class EditService {
-    private final String bpRegex = "[atcg]+";
-    private final String aaRegex = "[arndceghilkmfpswyqvt]+";
     private final String UNKNOWN_SEQ_TYPE = "Sequence type is unknown";
 
     private final String AMINO_ACID = "aa";
