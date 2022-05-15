@@ -95,7 +95,7 @@ public class EditServiceTest {
 
     @Test
     public void testValidateIncorrectProteinSequence() {
-        String incorrectSequence = "NOTPROTEINSEQ";
+        String incorrectSequence = "NOTPROTEINSEQ1";
         assertThrows(SequenceValidationException.class,
                 () -> editService.validateSequence(incorrectSequence, ProteinSequence.class));
     }

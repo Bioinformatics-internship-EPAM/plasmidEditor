@@ -25,7 +25,12 @@ public class ModifyModification extends SequenceModification {
     }
 
     @Override
-    <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence, int start, int seqLength, AbstractFeature<AbstractSequence<C>, C> f, int featureStartPosition, int featureEndPosition) {
+    <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
+                                                                                                      int start,
+                                                                                                      int seqLength,
+                                                                                                      AbstractFeature<AbstractSequence<C>, C> f,
+                                                                                                      int featureStartPosition,
+                                                                                                      int featureEndPosition) {
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
