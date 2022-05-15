@@ -28,33 +28,38 @@ public class CutModification extends SequenceModification {
         }
 
         S newSequence = cutFromSequence(startPosition, sequence, cls, storedSequence);
-        modifyFeaturesLocation(sequenceParser, newSequence, startPosition, sequence.length());
+        modifyFeaturesLocation(sequenceParser.getFeatures(), newSequence, startPosition, sequence.length());
 
         return newSequence;
     }
 
     @Override
-    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence, int start, int seqLength, AbstractFeature<AbstractSequence<C>, C> f, int featureStartPosition, int featureEndPosition) {
-        if (featureStartPosition < start) {
-            if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)) {
-                f.setLocation(new SimpleLocation(featureStartPosition, start));
-                newSequence.addFeature(f);
-            }
-            if (isFeaturePositionAfterSequenceEnd(start, seqLength, featureEndPosition)) {
-                f.setLocation(new SimpleLocation(featureStartPosition, featureEndPosition - seqLength));
-                newSequence.addFeature(f);
-            }
-        }
+    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
+                                                                                                             int start,
+                                                                                                             int seqLength,
+                                                                                                             AbstractFeature<AbstractSequence<C>, C> f,
+                                                                                                             int featureStartPosition,
+                                                                                                             int featureEndPosition) {
+        int startPosition = featureStartPosition;
+        int endPosition = featureEndPosition;
         if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureStartPosition)) {
-            if (isFeaturePositionAfterSequenceEnd(start, seqLength, featureEndPosition)) {
-                f.setLocation(new SimpleLocation(start, featureEndPosition - seqLength));
-                newSequence.addFeature(f);
+            if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)){
+                System.out.println(featureStartPosition+" : "+featureEndPosition+", "+start+", "+seqLength+"\n");
+                return;
             }
+            startPosition = start;
         }
         if (isFeaturePositionAfterSequenceEnd(start, seqLength, featureStartPosition)) {
-            f.setLocation(new SimpleLocation(featureStartPosition - seqLength, featureEndPosition - seqLength));
-            newSequence.addFeature(f);
+            startPosition -= seqLength;
         }
+        if (isFeaturePositionAfterSequenceEnd(start, seqLength, featureEndPosition)) {
+            endPosition -= seqLength;
+        }
+        if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)) {
+            endPosition = start;
+        }
+        f.setLocation(new SimpleLocation(startPosition, endPosition));
+        newSequence.addFeature(f);
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> S cutFromSequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {

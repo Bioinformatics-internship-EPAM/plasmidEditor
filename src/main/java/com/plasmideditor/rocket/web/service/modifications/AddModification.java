@@ -23,21 +23,24 @@ public class AddModification extends SequenceModification {
     ) throws GenBankFileEditorException {
 
         S newSequence = addToSequence(startPosition, sequence, cls, storedSequence);
-        modifyFeaturesLocation(sequenceParser, newSequence, startPosition, sequence.length());
+        modifyFeaturesLocation(sequenceParser.getFeatures(), newSequence, startPosition, sequence.length());
 
         return newSequence;
     }
 
     @Override
-    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence, int start, int seqLength, AbstractFeature<AbstractSequence<C>, C> f, int featureStartPosition, int featureEndPosition) {
-        if (featureStartPosition <= start) {
-            f.setLocation(new SimpleLocation(featureStartPosition, featureEndPosition + seqLength));
-            newSequence.addFeature(f);
-        }
+    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
+                                                                                                             int start,
+                                                                                                             int seqLength,
+                                                                                                             AbstractFeature<AbstractSequence<C>, C> f,
+                                                                                                             int featureStartPosition,
+                                                                                                             int featureEndPosition) {
+        int startPosition = featureStartPosition;
         if (featureStartPosition > start) {
-            f.setLocation(new SimpleLocation(featureStartPosition + seqLength, featureEndPosition + seqLength));
-            newSequence.addFeature(f);
+            startPosition += seqLength;
         }
+        f.setLocation(new SimpleLocation(startPosition, featureEndPosition + seqLength));
+        newSequence.addFeature(f);
     }
 
     private <S extends AbstractSequence<C>, C extends Compound> S addToSequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {

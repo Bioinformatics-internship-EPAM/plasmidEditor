@@ -9,8 +9,9 @@ import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationExcepti
 import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
 import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
 import lombok.extern.slf4j.Slf4j;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.*;
+import org.biojava.bio.seq.DNATools;
+import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.io.GenbankWriterHelper;
@@ -93,13 +94,21 @@ public class EditService {
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) throws SequenceValidationException {
-        if (cls == ProteinSequence.class && !sequence.toLowerCase().matches(aaRegex)) {
-            throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence);
+        if (cls == ProteinSequence.class) {
+            try {
+                ProteinTools.createProtein(sequence);
+            } catch (IllegalSymbolException e) {
+                throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence);
+            }
         }
-        if (cls == DNASequence.class && !sequence.toLowerCase().matches(bpRegex)) {
-            throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence);
+        if (cls == DNASequence.class) {
+            try {
+                DNATools.createDNA(sequence);
+            } catch (IllegalSymbolException e) {
+                throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence);
+            }
         }
-        log.info("Sequence validation is successful");
+        log.info("Sequence validation for {} is successful", sequence);
     }
 
     public AbstractSequence modifySequence(ModificationRequest request, SequenceModification service) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {

@@ -13,6 +13,7 @@ import org.biojava.nbio.core.sequence.template.Compound;
 import java.io.BufferedReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public abstract class SequenceModification {
@@ -39,12 +40,6 @@ public abstract class SequenceModification {
         S newSequence = modify(br, startPosition, sequence, cls, storedSequence, sequenceParser);
 
         sequenceParser.getSequenceHeaderParser().parseHeader(sequenceParser.getHeader(), newSequence);
-        List<DBReferenceInfo> dbQualifier = sequenceParser.getDatabaseReferences().get("db_xref");
-        if (dbQualifier != null) {
-            DBReferenceInfo q = dbQualifier.get(0);
-            newSequence.setTaxonomy(new TaxonomyID(q.getDatabase() + ":" + q.getId(), DataSource.GENBANK));
-        }
-
         return newSequence;
     }
 
@@ -61,19 +56,20 @@ public abstract class SequenceModification {
     }
 
     <S extends AbstractSequence<C>, C extends Compound> void modifyFeaturesLocation(
-            GenbankSequenceParser<S, C> sequenceParser,
+            Map<String, List<AbstractFeature<AbstractSequence<C>, C>>> features,
             S newSequence,
             int start,
             int seqLength
     ) {
-        for (String k : sequenceParser.getFeatures().keySet()) {
-            for (AbstractFeature<AbstractSequence<C>, C> f : sequenceParser.getFeatures().get(k)) {
+        for (String k : features.keySet()) {
+            for (AbstractFeature<AbstractSequence<C>, C> f : features.get(k)) {
                 int featureStartPosition = f.getLocations().getStart().getPosition();
                 int featureEndPosition = f.getLocations().getEnd().getPosition();
                 if (featureEndPosition < start) {
                     newSequence.addFeature(f);
+                } else {
+                    updatePositionAfterModificationOperation(newSequence, start, seqLength, f, featureStartPosition, featureEndPosition);
                 }
-                updatePositionAfterModificationOperation(newSequence, start, seqLength, f, featureStartPosition, featureEndPosition);
             }
         }
     }
