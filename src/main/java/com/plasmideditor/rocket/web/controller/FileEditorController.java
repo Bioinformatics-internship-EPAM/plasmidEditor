@@ -1,7 +1,11 @@
 package com.plasmideditor.rocket.web.controller;
 
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
+import com.plasmideditor.rocket.web.service.modifications.AddModification;
+import com.plasmideditor.rocket.web.service.modifications.CutModification;
 import com.plasmideditor.rocket.web.service.EditService;
+import com.plasmideditor.rocket.web.service.modifications.ModifyModification;
+import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
@@ -12,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.io.FileNotFoundException;
 
 import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 
@@ -31,15 +33,17 @@ public class FileEditorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addSequenceToFile(@RequestBody ModificationRequest request) throws GenBankFileEditorException, UnknownSequenceType, GenBankFileNotFound, SequenceValidationException {
-        String response = editService.addGenBankFile(request).getSequenceAsString();
+        SequenceModification service = new AddModification();
+        String response = editService.modifySequence(request, service).getSequenceAsString();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = CUT_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType {
-        String response = editService.cutGenBankFile(request).getSequenceAsString();
+    public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType, SequenceValidationException {
+        SequenceModification service = new CutModification();
+        String response = editService.modifySequence(request, service).getSequenceAsString();
 
         return ResponseEntity.ok(response);
     }
@@ -48,7 +52,8 @@ public class FileEditorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> modifySequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType, SequenceValidationException {
-        String response = editService.modifyGenBankFile(request).getSequenceAsString();
+        SequenceModification service = new ModifyModification();
+        String response = editService.modifySequence(request, service).getSequenceAsString();
 
         return ResponseEntity.ok(response);
     }

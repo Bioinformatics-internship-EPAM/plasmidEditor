@@ -9,6 +9,10 @@ import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorExceptio
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
+import com.plasmideditor.rocket.web.service.modifications.AddModification;
+import com.plasmideditor.rocket.web.service.modifications.CutModification;
+import com.plasmideditor.rocket.web.service.modifications.ModifyModification;
+import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
@@ -19,7 +23,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,22 +46,22 @@ public class EditServiceTest {
     @BeforeAll
     public static void init() throws IOException {
         String testDNAFileContent = Files.readString(Path.of(TEST_DNA_FILE_PATH));
-        GenBankEntity dnaEntity = new GenBankEntity("1", "v1", testDNAFileContent);
+        GenBankEntity dnaEntity = new GenBankEntity("1", "111", testDNAFileContent);
 
         String testProteinFileContent = Files.readString(Path.of(TEST_PROTEIN_FILE_PATH));
-        GenBankEntity proteinEntity = new GenBankEntity("2", "v1", testProteinFileContent);
+        GenBankEntity proteinEntity = new GenBankEntity("2", "111", testProteinFileContent);
 
         GenBankRepository mockGenBankRepository = Mockito.mock(GenBankRepository.class);
-        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("1", "v1")).thenReturn(Optional.of(dnaEntity));
-        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("2", "v1")).thenReturn(Optional.of(proteinEntity));
-        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("11", "v1")).thenReturn(Optional.empty());
+        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("1", "111")).thenReturn(Optional.of(dnaEntity));
+        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("2", "111")).thenReturn(Optional.of(proteinEntity));
+        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("11", "111")).thenReturn(Optional.empty());
         editService = new EditService(mockGenBankRepository);
     }
 
     @Test
     public void testGetFileFromDbSuccessfully() {
         assertDoesNotThrow(() -> {
-            String file = editService.getFileFromDB("1", "v1");
+            String file = editService.getFileFromDB("1", "111");
             assertNotNull(file);
         });
     }
@@ -66,7 +69,7 @@ public class EditServiceTest {
     @Test
     public void testGetFileFromDbWhenFileDoesNotExist() {
         assertThrows(GenBankFileNotFound.class,
-                () -> editService.getFileFromDB("11", "v1"),
+                () -> editService.getFileFromDB("11", "111"),
                 "Expected getFileFromDB() to throw FileNotFoundException, but it didn't"
         );
     }
@@ -117,15 +120,16 @@ public class EditServiceTest {
 
     @Test
     public void testGetUnknownSequenceType() {
-        assertThrows(UnknownSequenceType.class, () -> editService.getSequenceType("some wrong files data\n"));
+        assertThrows(UnknownSequenceType.class, () -> editService.getSequenceType("some really wrong files data\n"));
     }
 
     @Test
     public void testAddDNASequenceToGenBankFile() {
         assertDoesNotThrow(() -> {
             DNASequence initialSequence = new GenBankDNAFileReader().read_sequence(TEST_DNA_FILE_PATH).get(0);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_DNA_SEQUENCE, "1", "v1");
-            DNASequence modifiedFileContent = (DNASequence) editService.addGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_DNA_SEQUENCE, "1", "111");
+            SequenceModification service = new AddModification();
+            DNASequence modifiedFileContent = (DNASequence) editService.modifySequence(request, service);
             String modifiedSequence = modifiedFileContent.getSequenceAsString();
             assertEquals(TEST_SEQUENCE_LENGTH + initialSequence.getLength(), modifiedFileContent.getLength());
             assertEquals(TEST_DNA_SEQUENCE, modifiedSequence.substring(TEST_START_POSITION, TEST_SEQUENCE_LENGTH + TEST_START_POSITION));
@@ -136,8 +140,9 @@ public class EditServiceTest {
     public void testAddProteinSequenceToGenBankFile() {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_PROTEIN_SEQUENCE, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.addGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_PROTEIN_SEQUENCE, "2", "111");
+            SequenceModification service = new AddModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
             String modifiedSequence = modifiedFileContent.getSequenceAsString();
             assertEquals(TEST_SEQUENCE_LENGTH + initialSequence.getLength(), modifiedFileContent.getLength());
             assertEquals(TEST_PROTEIN_SEQUENCE, modifiedSequence.substring(TEST_START_POSITION, TEST_SEQUENCE_LENGTH + TEST_START_POSITION));
@@ -148,8 +153,9 @@ public class EditServiceTest {
     public void testFeaturesModifiedCorrectlyDuringAddSequenceWhenFeatureStartBeforeSequenceStart() {
         assertDoesNotThrow(() -> {
             DNASequence initialSequence = new GenBankDNAFileReader().read_sequence(TEST_DNA_FILE_PATH).get(0);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_DNA_SEQUENCE, "1", "v1");
-            DNASequence modifiedFileContent = (DNASequence) editService.addGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_DNA_SEQUENCE, "1", "111");
+            SequenceModification service = new AddModification();
+            DNASequence modifiedFileContent = (DNASequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -166,8 +172,9 @@ public class EditServiceTest {
         int sequenceStartPosition = 1;
         assertDoesNotThrow(() -> {
             DNASequence initialSequence = new GenBankDNAFileReader().read_sequence(TEST_DNA_FILE_PATH).get(0);
-            ModificationRequest request = new ModificationRequest(sequenceStartPosition, TEST_DNA_SEQUENCE, "1", "v1");
-            DNASequence modifiedFileContent = (DNASequence) editService.addGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(sequenceStartPosition, TEST_DNA_SEQUENCE, "1", "111");
+            SequenceModification service = new AddModification();
+            DNASequence modifiedFileContent = (DNASequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -185,8 +192,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             DNASequence initialSequence = new GenBankDNAFileReader().read_sequence(TEST_DNA_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(TEST_START_POSITION, sequenceEndPosition);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "1", "v1");
-            DNASequence modifiedFileContent = (DNASequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "1", "111");
+            SequenceModification service = new CutModification();
+            DNASequence modifiedFileContent = (DNASequence) editService.modifySequence(request, service);
             String modifiedSequence = modifiedFileContent.getSequenceAsString();
             assertEquals(initialSequence.getLength() - TEST_SEQUENCE_LENGTH, modifiedFileContent.getLength());
             assertEquals(initialSequence.getSequenceAsString().substring(0, TEST_START_POSITION) + initialSequence.getSequenceAsString().substring(sequenceEndPosition),
@@ -200,8 +208,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(TEST_START_POSITION, sequenceEndPosition);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
             String modifiedSequence = modifiedFileContent.getSequenceAsString();
             assertEquals(initialSequence.getLength() - TEST_SEQUENCE_LENGTH, modifiedFileContent.getLength());
             assertEquals(initialSequence.getSequenceAsString().substring(0, TEST_START_POSITION) + initialSequence.getSequenceAsString().substring(sequenceEndPosition),
@@ -211,9 +220,10 @@ public class EditServiceTest {
 
     @Test
     public void testCutSequenceWithIncorrectSequenceToCut() {
-        ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_PROTEIN_SEQUENCE, "2", "v1");
+        ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_PROTEIN_SEQUENCE, "2", "111");
+        SequenceModification service = new CutModification();
         assertThrows(GenBankFileEditorException.class,
-                () -> editService.cutGenBankFile(request)
+                () -> editService.modifySequence(request, service)
         );
     }
 
@@ -223,8 +233,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(sequenceStartPosition, sequenceStartPosition + TEST_SEQUENCE_LENGTH);
-            ModificationRequest request = new ModificationRequest(sequenceStartPosition, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(sequenceStartPosition, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -240,8 +251,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(TEST_START_POSITION, TEST_START_POSITION + TEST_SEQUENCE_LENGTH);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -259,8 +271,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(TEST_START_POSITION, TEST_START_POSITION + TEST_SEQUENCE_LENGTH);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -278,8 +291,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(sequenceStartPosition, sequenceStartPosition + TEST_SEQUENCE_LENGTH);
-            ModificationRequest request = new ModificationRequest(sequenceStartPosition, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(sequenceStartPosition, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -295,8 +309,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(TEST_START_POSITION, TEST_START_POSITION + TEST_SEQUENCE_LENGTH);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -314,8 +329,9 @@ public class EditServiceTest {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
             String sequenceToCut = initialSequence.getSequenceAsString().substring(sequenceStartPosition, sequenceStartPosition + TEST_SEQUENCE_LENGTH);
-            ModificationRequest request = new ModificationRequest(sequenceStartPosition, sequenceToCut, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.cutGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(sequenceStartPosition, sequenceToCut, "2", "111");
+            SequenceModification service = new CutModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
 
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> initialFeatures = initialSequence.getFeatures();
             List<FeatureInterface<AbstractSequence<AminoAcidCompound>, AminoAcidCompound>> modifiedFeatures = modifiedFileContent.getFeatures();
@@ -327,8 +343,9 @@ public class EditServiceTest {
     public void testModifyDNASequenceToGenBankFile() {
         assertDoesNotThrow(() -> {
             DNASequence initialSequence = new GenBankDNAFileReader().read_sequence(TEST_DNA_FILE_PATH).get(0);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_DNA_SEQUENCE, "1", "v1");
-            DNASequence modifiedFileContent = (DNASequence) editService.modifyGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_DNA_SEQUENCE, "1", "111");
+            SequenceModification service = new ModifyModification();
+            DNASequence modifiedFileContent = (DNASequence) editService.modifySequence(request, service);
             String modifiedSequence = modifiedFileContent.getSequenceAsString();
             assertEquals(initialSequence.getLength(), modifiedFileContent.getLength());
             assertEquals(initialSequence.getSequenceAsString().substring(0, TEST_START_POSITION)
@@ -342,8 +359,9 @@ public class EditServiceTest {
     public void testModifyProteinSequenceToGenBankFile() {
         assertDoesNotThrow(() -> {
             ProteinSequence initialSequence = new GenBankProteinFileReader().read_sequence(TEST_PROTEIN_FILE_PATH).get(0);
-            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_PROTEIN_SEQUENCE, "2", "v1");
-            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifyGenBankFile(request);
+            ModificationRequest request = new ModificationRequest(TEST_START_POSITION, TEST_PROTEIN_SEQUENCE, "2", "111");
+            SequenceModification service = new ModifyModification();
+            ProteinSequence modifiedFileContent = (ProteinSequence) editService.modifySequence(request, service);
             String modifiedSequence = modifiedFileContent.getSequenceAsString();
             assertEquals(initialSequence.getLength(), modifiedFileContent.getLength());
             assertEquals(initialSequence.getSequenceAsString().substring(0, TEST_START_POSITION)
@@ -356,10 +374,11 @@ public class EditServiceTest {
     @Test
     public void testModifySequenceWithIncorrectSequenceToModify() {
         int sequenceStartPosition = 210;
-        ModificationRequest request = new ModificationRequest(sequenceStartPosition, TEST_PROTEIN_SEQUENCE, "2", "v1");
+        ModificationRequest request = new ModificationRequest(sequenceStartPosition, TEST_PROTEIN_SEQUENCE, "2", "111");
+        SequenceModification service = new ModifyModification();
         assertDoesNotThrow(() -> {
             assertThrows(GenBankFileEditorException.class,
-                    () ->  editService.modifyGenBankFile(request)
+                    () ->  editService.modifySequence(request, service)
             );
         });
     }
