@@ -44,7 +44,6 @@ public class CutModification extends SequenceModification {
         int endPosition = featureEndPosition;
         if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureStartPosition)) {
             if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)){
-                System.out.println(featureStartPosition+" : "+featureEndPosition+", "+start+", "+seqLength+"\n");
                 return;
             }
             startPosition = start;
