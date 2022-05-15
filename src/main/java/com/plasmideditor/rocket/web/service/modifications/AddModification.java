@@ -1,0 +1,57 @@
+package com.plasmideditor.rocket.web.service.modifications;
+
+import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import lombok.extern.slf4j.Slf4j;
+import org.biojava.nbio.core.sequence.features.AbstractFeature;
+import org.biojava.nbio.core.sequence.io.GenbankSequenceParser;
+import org.biojava.nbio.core.sequence.location.SimpleLocation;
+import org.biojava.nbio.core.sequence.template.AbstractSequence;
+import org.biojava.nbio.core.sequence.template.Compound;
+
+import java.io.BufferedReader;
+import java.lang.reflect.InvocationTargetException;
+
+@Slf4j
+public class AddModification extends SequenceModification {
+    @Override
+    public <S extends AbstractSequence<C>, C extends Compound> S modify(BufferedReader br,
+                                                                        int startPosition,
+                                                                        String sequence,
+                                                                        Class<S> cls,
+                                                                        S storedSequence,
+                                                                        GenbankSequenceParser<S, C> sequenceParser
+    ) throws GenBankFileEditorException {
+
+        S newSequence = addToSequence(startPosition, sequence, cls, storedSequence);
+        modifyFeaturesLocation(sequenceParser, newSequence, startPosition, sequence.length());
+
+        return newSequence;
+    }
+
+    @Override
+    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence, int start, int seqLength, AbstractFeature<AbstractSequence<C>, C> f, int featureStartPosition, int featureEndPosition) {
+        if (featureStartPosition <= start) {
+            f.setLocation(new SimpleLocation(featureStartPosition, featureEndPosition + seqLength));
+            newSequence.addFeature(f);
+        }
+        if (featureStartPosition > start) {
+            f.setLocation(new SimpleLocation(featureStartPosition + seqLength, featureEndPosition + seqLength));
+            newSequence.addFeature(f);
+        }
+    }
+
+    private <S extends AbstractSequence<C>, C extends Compound> S addToSequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
+        S newSequence;
+        try {
+            newSequence = cls.getConstructor(String.class).newInstance(
+                    storedSequence.getSequenceAsString().substring(0, startPosition) +
+                            sequence +
+                            storedSequence.getSequenceAsString().substring(startPosition)
+            );
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
+        }
+        return newSequence;
+    }
+}
