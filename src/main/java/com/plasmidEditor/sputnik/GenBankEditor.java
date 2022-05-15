@@ -32,7 +32,10 @@ public class GenBankEditor {
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> S cut(
-            String subSequence, int position, String genbankContent, Class<S> sequenceClass) {
+            int length, int position, String genbankContent, Class<S> sequenceClass) {
+        String subSequence = "";
+        for (int i = 0; i < length; i++)
+            subSequence += "a";
         return editorMethod(subSequence, position, genbankContent, sequenceClass, EditorType.CUT_METHOD);
     }
 
