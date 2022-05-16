@@ -28,7 +28,7 @@ public class ProteinFileUploadService implements FileUploadService<ProteinSequen
             		file.deleteOnExit();
             		inputStream.transferTo(file);
             		sequence = new FileProteinGenbankManager().readSequense(file.getAbsolutePath());
-			if (sequense instanceof ProteinSequence) {
+			if (sequenсe instanceof ProteinSequence) {
         			String accession = sequence.getAccession().getID();
         			int version = sequence.getAccession().getVersion();
 				String content = new ReaderUtils().readStringFromFile(file.getAbsolutePath());
