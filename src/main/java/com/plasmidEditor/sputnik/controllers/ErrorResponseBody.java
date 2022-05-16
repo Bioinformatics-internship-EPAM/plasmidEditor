@@ -4,7 +4,7 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-public class JsonError {
+public class ErrorResponseBody {
 	private String error;
 	private String message;
 }
