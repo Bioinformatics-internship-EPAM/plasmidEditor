@@ -7,7 +7,7 @@ import org.biojava.nbio.core.sequence.ProteinSequence;
 public class ProteinFileUploadService implements FileUploadService<ProteinSequence> {
 
 	@Override
-    public void uploadFile(MultipartFile multipartFile) throws FileEditorUploadException {
+    public void uploadFile(InputStream inputStream) throws FileEditorUploadException {
         List<ProteinSequence> sequenceList;
 
         try {
@@ -17,7 +17,7 @@ public class ProteinFileUploadService implements FileUploadService<ProteinSequen
             multipartFile.transferTo(file);
 
             // If possible to read then the format is correct
-            sequenceList = new GenBankProteinFileReader().read_sequence(file.getAbsolutePath());
+            sequenceList = new FileProteinGenbankManager().readSequence(file.getAbsolutePath());
             validateListSize(sequenceList);
         } catch (Exception e) {
             throw new FileEditorUploadException(e.getMessage(), e);
