@@ -8,6 +8,7 @@ import com.plasmidEditor.sputnik.repositories.GenBankRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class GenBankServiceImpl implements GenBankService {
     @Override
     public GenBankDTO getLatestVersion(String accession) {
         List<GenBankEntity> descList = repository.findByAccessionOrderByVersionDesc(accession);
-        if (descList.isEmpty()) {
+        if (CollectionUtils.isEmpty(descList)) {
             throw new GenBankNotFoundException(accession);
         }
         return mapper.map(descList.get(0), GenBankDTO.class);
