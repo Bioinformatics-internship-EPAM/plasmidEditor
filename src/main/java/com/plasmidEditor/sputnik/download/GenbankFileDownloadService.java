@@ -3,7 +3,6 @@ package com.plasmidEditor.sputnik.download;
 import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.exceptions.*;
 import com.plasmidEditor.sputnik.services.GenBankService;
-import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,7 @@ public abstract class GenbankFileDownloadService {
         }
     }
 
-    public byte[] covertSequenceToByteArray(GenBankDTO genBankDTO) {
+    public byte[] convertGenbankDTOToByteArray(GenBankDTO genBankDTO) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(genBankDTO);
