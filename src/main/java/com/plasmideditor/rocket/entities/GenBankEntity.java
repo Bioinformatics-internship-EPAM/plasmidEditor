@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(
-        schema = "genbank",
+        schema = EntitiesConst.GENBANK_SCHEMA,
         name = "genbanks"
 )
 @PrimaryKeyJoinColumn(name = "genbank_id")
