@@ -1,8 +1,8 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
-import com.plasmideditor.sputnik.FileDNAGenbankManager;
-import com.plasmideditor.sputnik.exceptions.FileUploadException;
-import com.plasmideditor.sputnik.services.GenBankServiceImpl;
+import com.plasmidEditor.sputnik.FileDNAGenbankManager;
+import com.plasmidEditor.sputnik.exceptions.FileUploadException;
+import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.springframework.beans.factory.annotation.Autowired;
 
