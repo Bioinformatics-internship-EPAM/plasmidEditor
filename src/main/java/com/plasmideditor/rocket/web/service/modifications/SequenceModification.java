@@ -82,4 +82,20 @@ public abstract class SequenceModification {
             int featureStartPosition,
             int featureEndPosition);
 
+    <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
+        S newSequence;
+        try {
+            newSequence = cls.getConstructor(String.class).newInstance(
+                    createNewSequence(startPosition, sequence, storedSequence)
+            );
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
+        }
+        return newSequence;
+    }
+
+    abstract <S extends AbstractSequence<C>, C extends Compound> String createNewSequence(
+            int startPosition, String sequence, S storedSequence);
+
 }
