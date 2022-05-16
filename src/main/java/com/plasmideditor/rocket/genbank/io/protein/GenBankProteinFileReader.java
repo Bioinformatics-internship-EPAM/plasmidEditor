@@ -21,7 +21,6 @@ public class GenBankProteinFileReader implements GenBankReader<ProteinSequence> 
                     GenbankReaderHelper.readGenbankProteinSequence(protFile);
             return new ArrayList<>(protSequences.values());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new GenBankFileReaderException("Failed to read Protein data from file " + filename, e);
         }
     }
