@@ -1,6 +1,5 @@
 package com.plasmidEditor.sputnik.controllers;
 
-import java.io.InputStream;
 import lombok.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.plasmidEditor.sputnik.uploadServices.*;
 
@@ -37,12 +37,12 @@ public class FileUploadController {
 	}
 	
 	@PostMapping(path="/dna", produces=MediaType.APPLICATION_JSON_VALUE)
-	public void uploadDNAFile(@RequestParam("file") InputStream file) {
+	public void uploadDNAFile(@RequestParam("file") MultipartFile file) {
 		dnaFileUploadService.upload(file);
 	}
 	
 	@PostMapping(path="/protein", produces=MediaType.APPLICATION_JSON_VALUE)
-	public void uploadProteinFile(@RequestParam("file") InputStream file) {
+	public void uploadProteinFile(@RequestParam("file") MultipartFile file) {
 		proteinFileUploadService.upload(file);
 	}
 	
