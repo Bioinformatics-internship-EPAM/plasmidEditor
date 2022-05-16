@@ -11,7 +11,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DownloadGenbankFileException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected DownloadGenbankFileErrorMessage handleDownloadGenbankFileException(DownloadGenbankFileException e) {
+    public DownloadGenbankFileErrorMessage handleDownloadGenbankFileException(DownloadGenbankFileException e) {
         return new DownloadGenbankFileErrorMessage("Fail to download file", e.getMessage());
     }
 }
