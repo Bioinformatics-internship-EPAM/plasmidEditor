@@ -1,6 +1,6 @@
 package com.plasmidEditor.sputnik.exceptions;
 
-public class FileUploadException extends Exception {
+public class FileUploadException extends RuntimeException {
   public FileUploadException(String message, Throwable cause) {
     super(message, cause);
   }
