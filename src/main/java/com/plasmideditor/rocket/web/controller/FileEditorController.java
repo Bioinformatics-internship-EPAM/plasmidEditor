@@ -30,8 +30,7 @@ public class FileEditorController {
     }
 
     @PostMapping(path = ADD_SEQ_PATH,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addSequenceToFile(@RequestBody ModificationRequest request) throws GenBankFileEditorException, UnknownSequenceType, GenBankFileNotFound, SequenceValidationException, RequestBodyValidationException {
         SequenceModification service = new AddModification();
         editService.modifySequence(request, service).getSequenceAsString();
@@ -41,8 +40,7 @@ public class FileEditorController {
     }
 
     @PostMapping(path = CUT_SEQ_PATH,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> cutSequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType, SequenceValidationException, RequestBodyValidationException {
         SequenceModification service = new CutModification();
         editService.modifySequence(request, service).getSequenceAsString();
@@ -52,8 +50,7 @@ public class FileEditorController {
     }
 
     @PostMapping(path = MODIFY_SEQ_PATH,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> modifySequence(@RequestBody ModificationRequest request) throws GenBankFileNotFound, GenBankFileEditorException, UnknownSequenceType, SequenceValidationException, RequestBodyValidationException {
         SequenceModification service = new ModifyModification();
         editService.modifySequence(request, service).getSequenceAsString();
