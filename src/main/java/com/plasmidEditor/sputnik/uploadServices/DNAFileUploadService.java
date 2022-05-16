@@ -24,13 +24,13 @@ public class DNAFileUploadService implements FileUploadService<DNASequence> {
 		DNASequence sequence;
 		FileUploadServiceUtils<DNASequence> serviceUtils = new FileUploadServiceUtils<>();
 
-        try {
-            	File file = serviceUtils.writeToTmpFile(inputStream);
-            	sequence = new FileDNAGenbankManager().readSequence(file.getAbsolutePath());
-            	serviceUtils.saveSequenceToDB(sequence, file, genBankServiceImpl);
-        } catch (Exception e) {
-            	throw new FileUploadException(e.getMessage(), e);
-        }
+        	try {
+            		File file = serviceUtils.writeToTmpFile(inputStream);
+            		sequence = new FileDNAGenbankManager().readSequence(file.getAbsolutePath());
+            		serviceUtils.saveSequenceToDB(sequence, file, genBankServiceImpl);
+        	} catch (Exception e) {
+            		throw new FileUploadException(e.getMessage(), e);
+        	}
 		
     }
 
