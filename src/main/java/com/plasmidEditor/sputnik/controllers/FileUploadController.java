@@ -1,11 +1,10 @@
 package com.plasmidEditor.sputnik.controllers;
 
-import lombok.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,12 +21,6 @@ public class FileUploadController {
 	private final DNAFileUploadService dnaFileUploadService;
 	private final ProteinFileUploadService proteinFileUploadService;
 	
-	@Data
-	@AllArgsConstructor
-	private static class JsonError {
-		private String error;
-		private String message;
-	}
 	
 	@Autowired
 	public FileUploadController(DNAFileUploadService dnaFileUploadService, 
@@ -37,13 +30,13 @@ public class FileUploadController {
 	}
 	
 	@PostMapping(path="/dna", produces=MediaType.APPLICATION_JSON_VALUE)
-	public void uploadDNAFile(@RequestParam("file") MultipartFile file) {
-		dnaFileUploadService.upload(file);
+	public void uploadDNAFile(@RequestParam("file") MultipartFile file) throws FileUploadException, IOException {
+		dnaFileUploadService.upload(file.getInputStream());
 	}
 	
 	@PostMapping(path="/protein", produces=MediaType.APPLICATION_JSON_VALUE)
-	public void uploadProteinFile(@RequestParam("file") MultipartFile file) {
-		proteinFileUploadService.upload(file);
+	public void uploadProteinFile(@RequestParam("file") MultipartFile file) throws FileUploadException, IOException {
+		proteinFileUploadService.upload(file.getInputStream());
 	}
 	
 	@ExceptionHandler(Exception.class)
