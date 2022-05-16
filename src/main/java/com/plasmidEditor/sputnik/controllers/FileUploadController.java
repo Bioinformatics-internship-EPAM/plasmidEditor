@@ -41,6 +41,6 @@ public class FileUploadController {
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<JsonError> handleException(Exception e) {
-		return ResponseEntity.badRequest().body(new JsonError("failed to upload genbank file", e.getMessage()));
+		return ResponseEntity.badRequest().body(new ErrorResponseBody("failed to upload genbank file", e.getMessage()));
 	}
 }
