@@ -12,7 +12,7 @@ import java.io.*;
 import static com.plasmidEditor.sputnik.utils.Constants.*;
 
 @Service
-public abstract class GenbankFileDownloadService<T extends AbstractSequence<?>> {
+public abstract class GenbankFileDownloadService {
     @Autowired
     private GenBankService service;
 
@@ -30,15 +30,13 @@ public abstract class GenbankFileDownloadService<T extends AbstractSequence<?>> 
         }
     }
 
-    public byte[] covertSequenceToByteArray(T sequence) {
+    public byte[] covertSequenceToByteArray(GenBankDTO genBankDTO) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(sequence);
+            oos.writeObject(genBankDTO);
             return bos.toByteArray();
         } catch (IOException e) {
-            throw new DownloadGenbankFileException(sequence.getAccession().getID());
+            throw new DownloadGenbankFileException(genBankDTO.getAccession());
         }
     }
-
-    public abstract T downloadGenbankSequence(String accession, String version);
 }
