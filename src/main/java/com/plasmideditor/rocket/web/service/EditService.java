@@ -3,10 +3,7 @@ package com.plasmideditor.rocket.web.service;
 import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.GenBankEntity;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
-import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
-import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
+import com.plasmideditor.rocket.web.service.exceptions.*;
 import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.bio.seq.DNATools;
@@ -26,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -70,7 +68,7 @@ public class EditService {
         // save to DB
         GenBankEntity updatedGenBank = new GenBankEntity();
         updatedGenBank.setAccession(id);
-        String newVersion = updateVersion(version);
+        String newVersion = updateVersion(version, id);
         updatedGenBank.setVersion(newVersion);
         updatedGenBank.setFile(byteArrayOutputStream.toString());
 
@@ -111,7 +109,8 @@ public class EditService {
         log.info("Sequence validation for {} is successful", sequence);
     }
 
-    public AbstractSequence modifySequence(ModificationRequest request, SequenceModification service) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException {
+    public AbstractSequence modifySequence(ModificationRequest request, SequenceModification service) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException, RequestBodyValidationException {
+        validateRequest(request);
         String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
         validateSequence(request.getSequence(), sequenceType);
@@ -121,9 +120,34 @@ public class EditService {
         return newSequence;
     }
 
-    private String updateVersion(String prevVersion) {
-        int version = Integer.parseInt(prevVersion);
-        version += 1;
-        return Integer.toString(version);
+    private void validateRequest(ModificationRequest request) throws RequestBodyValidationException {
+        if (request.getFileId() == null || request.getFileId().isEmpty()) {
+            throw new RequestBodyValidationException("Empty fileId in request body");
+        }
+        if (request.getFileVersion() == null || request.getFileVersion().isEmpty()) {
+            throw new RequestBodyValidationException("Empty FileVersion in request body");
+        }
+        if (request.getSequence() == null || request.getSequence().isEmpty()) {
+            throw new RequestBodyValidationException("Empty sequence in request body");
+        }
+        if (request.getStartPosition() == null) {
+            throw new RequestBodyValidationException("Empty startPosition in request body");
+        }
+    }
+
+    private String updateVersion(String prevVersion, String accessionId) {
+        List<GenBankEntity> allVersions = genBankRepository.findGenBankEntitiesByAccession(accessionId);
+        if (allVersions.isEmpty()) {
+            return "1";
+        }
+        int maxVersion = Integer.parseInt(prevVersion);
+        for (GenBankEntity entity : allVersions) {
+            int entityVersion = Integer.parseInt(entity.getVersion());
+            if (entityVersion > maxVersion) {
+                maxVersion = entityVersion;
+            }
+        }
+        maxVersion += 1;
+        return Integer.toString(maxVersion);
     }
 }

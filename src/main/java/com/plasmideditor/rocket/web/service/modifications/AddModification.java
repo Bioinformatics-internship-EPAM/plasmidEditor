@@ -1,6 +1,7 @@
 package com.plasmideditor.rocket.web.service.modifications;
 
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.features.AbstractFeature;
 import org.biojava.nbio.core.sequence.io.GenbankSequenceParser;
@@ -32,9 +33,9 @@ public class AddModification extends SequenceModification {
     public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
                                                                                                              int start,
                                                                                                              int seqLength,
-                                                                                                             AbstractFeature<AbstractSequence<C>, C> f,
-                                                                                                             int featureStartPosition,
-                                                                                                             int featureEndPosition) {
+                                                                                                             AbstractFeature<AbstractSequence<C>, C> f) {
+        int featureStartPosition = FeatureUtils.getFeatureStart(f);
+        int featureEndPosition = FeatureUtils.getFeatureEnd(f);
         int startPosition = featureStartPosition;
         if (featureStartPosition > start) {
             startPosition += seqLength;
