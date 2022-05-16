@@ -3,25 +3,25 @@ package com.plasmidEditor.sputnik.uploadServices;
 import com.plasmideditor.rocket.genbank.io.protein.FileDNAGenbankManager;
 import com.plasmideditor.rocket.web.service.exceptions.FileEditorUploadException;
 import org.biojava.nbio.core.sequence.ProteinSequence;
-import org.springframework.web.multipart.InputStream;
 
 import java.io.File;
 import java.util.List;
+import java.io.InputStream
 
 public class DNAFileUploadService implements FileUploadService<DNASequence> {
 
 	@Override
-    public void uploadFile(MultipartFile multipartFile) throws FileEditorUploadException {
+    public void uploadFile(InputStream inputstream) throws FileEditorUploadException {
         List<DNASequence> sequenceList;
 
         try {
             File file = File.createTempFile("dna", ".tmp");
             file.deleteOnExit();
             // Write to tmp file to get accession and version
-            multipartFile.transferTo(file);
+            inputStream.transferTo(file);
 
             // If possible to read then the format is correct
-            sequenceList = new GenBankDNAFileReader().readSequense(file.getAbsolutePath());
+            sequenceList = new FileDNAGenbankManager().readSequense(file.getAbsolutePath());
             validateListSize(sequenceList);
         } catch (Exception e) {
             throw new FileEditorUploadException(e.getMessage(), e);
