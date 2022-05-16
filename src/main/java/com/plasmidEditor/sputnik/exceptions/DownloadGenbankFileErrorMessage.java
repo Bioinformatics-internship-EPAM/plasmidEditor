@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DownloadGenbankFileJsonException {
+public class DownloadGenbankFileErrorMessage {
     private String downloadStatus;
     private String errorMessage;
 }
