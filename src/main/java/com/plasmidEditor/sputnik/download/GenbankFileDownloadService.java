@@ -3,13 +3,16 @@ package com.plasmidEditor.sputnik.download;
 import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.exceptions.*;
 import com.plasmidEditor.sputnik.services.GenBankService;
+import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.plasmidEditor.sputnik.utils.Constants.DEFAULT_VERSION_VALUE;
+import java.io.*;
+
+import static com.plasmidEditor.sputnik.utils.Constants.*;
 
 @Service
-public abstract class GenbankFileDownloadService {
+public abstract class GenbankFileDownloadService<T extends AbstractSequence<?>> {
     @Autowired
     private GenBankService service;
 
@@ -27,9 +30,15 @@ public abstract class GenbankFileDownloadService {
         }
     }
 
-    public String downloadFileAsString(String accession, String version) {
-        return downloadFile(accession, version).getFile();
+    public byte[] covertSequenceToByteArray(T sequence) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+            oos.writeObject(sequence);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            throw new DownloadGenbankFileException(sequence.getAccession().getID());
+        }
     }
 
-    public abstract void downloadGenbankFileAndWriteToFile(String accession, String savingPath, String version);
+    public abstract T downloadGenbankSequence(String accession, String version);
 }
