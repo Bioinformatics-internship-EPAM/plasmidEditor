@@ -18,11 +18,8 @@ public class FileUploadServiceUtils<T extends AbstractSequence> {
 	public File writeToTmpFile(InputStream inputStream) throws IOException {
 		File file = File.createTempFile("dna", ".tmp");
 		file.deleteOnExit();
-		Files.copy(
-                inputStream,
-                file.toPath(),
-                StandardCopyOption.REPLACE_EXISTING);
-        IOUtils.closeQuietly(inputStream);
+		Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        	IOUtils.closeQuietly(inputStream);
 		return file;
 	}
 	
