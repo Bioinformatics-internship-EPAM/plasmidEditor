@@ -28,7 +28,7 @@ public class DNAFileUploadService implements FileUploadService<DNASequence> {
             		file.deleteOnExit();
             		inputStream.transferTo(file);
             		sequence = new FileDNAGenbankManager().readSequense(file.getAbsolutePath());
-			if (sequense instanceof DNASequence) {
+			if (sequenсe instanceof DNASequence) {
         			String accession = sequence.getAccession().getID();
         			int version = sequence.getAccession().getVersion();
 				String content = new ReaderUtils().readStringFromFile(file.getAbsolutePath());
