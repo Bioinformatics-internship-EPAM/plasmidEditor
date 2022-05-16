@@ -1,32 +1,35 @@
 package com.plasmideditor.rocket;
 
 import com.plasmideditor.rocket.services.GenBankService;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GenBankServiceTests extends PostgresTestContainer{
 
     private final GenBankService service;
+
+    private GenBankData uploadObj1;
+
+    private GenBankData uploadObj2;
 
     public GenBankServiceTests(GenBankService service) {
         this.service = service;
     }
 
-    @Test
-    @Order(1)
-    void uploadTest() {
-        GenBankData uploadObj1 = service.upload(new GenBankData(1L, "test_accession",
+    @Before
+    public void setUp() {
+        this.uploadObj1 = service.upload(new GenBankData(1L, "test_accession",
                 "test_version", "test_file"));
-        GenBankData uploadObj2 = service.upload(new GenBankData(2L, "test_accession_2",
+        this.uploadObj2 = service.upload(new GenBankData(2L, "test_accession_2",
                 "test_version_2", "test_file_2"));
+    }
 
+    @Test
+    void uploadTest() {
         assertNotNull(uploadObj1);
         assertEquals(uploadObj1.getAccession(), "test_accession");
         assertEquals(uploadObj1.getVersion(), "test_version");
@@ -39,7 +42,6 @@ public class GenBankServiceTests extends PostgresTestContainer{
     }
 
     @Test
-    @Order(2)
     void getTest() {
         GenBankData getObj1 = service.get("test_accession", "test_version");
         GenBankData getObj2 = service.get("test_accession_2", "test_version_2");
@@ -56,7 +58,6 @@ public class GenBankServiceTests extends PostgresTestContainer{
     }
 
     @Test
-    @Order(3)
     void updateTest() {
         GenBankData getObj = service.get("test_accession", "test_version");
         getObj.setFile("new_test_file");
@@ -64,6 +65,12 @@ public class GenBankServiceTests extends PostgresTestContainer{
 
         GenBankData updatedObj = service.get("test_accession", "test_version");
         assertEquals(getObj.getFile(), updatedObj.getFile());
+    }
+
+    @After
+    public void tearDown() {
+        service.delete(1L);
+        service.delete(2L);
     }
 
 }

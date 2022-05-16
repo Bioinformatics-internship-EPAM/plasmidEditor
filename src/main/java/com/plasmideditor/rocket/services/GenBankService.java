@@ -6,7 +6,6 @@ import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
 import com.plasmideditor.rocket.mappers.GenBankMapper;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,6 +31,10 @@ public class GenBankService {
         return repository.findByAccessionAndVersion(accession, version)
                 .map(x -> mapper.map(x, GenBankData.class))
                 .orElseThrow(() -> new GenBankFileNotFoundException(accession, version));
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
 }
