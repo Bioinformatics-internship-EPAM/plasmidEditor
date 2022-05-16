@@ -17,6 +17,7 @@ import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.io.GenbankWriterHelper;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ public class EditService {
 
     private final GenBankRepository genBankRepository;
 
+    @Autowired
     public EditService(GenBankRepository genBankRepository) {
         this.genBankRepository = genBankRepository;
     }
@@ -103,7 +105,7 @@ public class EditService {
             try {
                 DNATools.createDNA(sequence);
             } catch (IllegalSymbolException e) {
-                throw new SequenceValidationException("Illegal nucleotide base pair in sequence " + sequence);
+                throw new SequenceValidationException("Unknown nucleotide in sequence " + sequence);
             }
         }
         log.info("Sequence validation for {} is successful", sequence);

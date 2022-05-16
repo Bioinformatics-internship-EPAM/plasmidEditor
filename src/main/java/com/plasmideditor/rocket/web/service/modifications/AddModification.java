@@ -22,7 +22,7 @@ public class AddModification extends SequenceModification {
                                                                         GenbankSequenceParser<S, C> sequenceParser
     ) throws GenBankFileEditorException {
 
-        S newSequence = addToSequence(startPosition, sequence, cls, storedSequence);
+        S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);
         modifyFeaturesLocation(sequenceParser.getFeatures(), newSequence, startPosition, sequence.length());
 
         return newSequence;
@@ -43,18 +43,11 @@ public class AddModification extends SequenceModification {
         newSequence.addFeature(f);
     }
 
-    private <S extends AbstractSequence<C>, C extends Compound> S addToSequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
-        S newSequence;
-        try {
-            newSequence = cls.getConstructor(String.class).newInstance(
-                    storedSequence.getSequenceAsString().substring(0, startPosition) +
-                            sequence +
-                            storedSequence.getSequenceAsString().substring(startPosition)
-            );
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
-        }
-        return newSequence;
+    @Override
+    <S extends AbstractSequence<C>, C extends Compound> String createNewSequence(
+            int startPosition, String sequence, S storedSequence) {
+        return storedSequence.getSequenceAsString().substring(0, startPosition) +
+                sequence +
+                storedSequence.getSequenceAsString().substring(startPosition);
     }
 }

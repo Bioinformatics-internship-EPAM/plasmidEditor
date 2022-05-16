@@ -33,18 +33,11 @@ public class ModifyModification extends SequenceModification {
                                                                                                       int featureEndPosition) {
     }
 
-    private <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
-        S newSequence;
-        try {
-            newSequence = cls.getConstructor(String.class).newInstance(
-                    storedSequence.getSequenceAsString().substring(0, startPosition) +
-                            sequence +
-                            storedSequence.getSequenceAsString().substring(startPosition + sequence.length())
-            );
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
-        }
-        return newSequence;
+    @Override
+    <S extends AbstractSequence<C>, C extends Compound> String createNewSequence(
+            int startPosition, String sequence, S storedSequence) {
+        return storedSequence.getSequenceAsString().substring(0, startPosition) +
+                sequence +
+                storedSequence.getSequenceAsString().substring(startPosition + sequence.length());
     }
 }
