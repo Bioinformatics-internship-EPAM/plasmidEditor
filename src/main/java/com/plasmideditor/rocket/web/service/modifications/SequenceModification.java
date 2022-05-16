@@ -1,6 +1,7 @@
 package com.plasmideditor.rocket.web.service.modifications;
 
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.DataSource;
 import org.biojava.nbio.core.sequence.TaxonomyID;
@@ -63,12 +64,10 @@ public abstract class SequenceModification {
     ) {
         for (String k : features.keySet()) {
             for (AbstractFeature<AbstractSequence<C>, C> f : features.get(k)) {
-                int featureStartPosition = f.getLocations().getStart().getPosition();
-                int featureEndPosition = f.getLocations().getEnd().getPosition();
-                if (featureEndPosition < start) {
+                if (FeatureUtils.getFeatureEnd(f) < start) {
                     newSequence.addFeature(f);
                 } else {
-                    updatePositionAfterModificationOperation(newSequence, start, seqLength, f, featureStartPosition, featureEndPosition);
+                    updatePositionAfterModificationOperation(newSequence, start, seqLength, f);
                 }
             }
         }
@@ -78,9 +77,7 @@ public abstract class SequenceModification {
             S newSequence,
             int start,
             int seqLength,
-            AbstractFeature<AbstractSequence<C>, C> f,
-            int featureStartPosition,
-            int featureEndPosition);
+            AbstractFeature<AbstractSequence<C>, C> f);
 
     <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
         S newSequence;

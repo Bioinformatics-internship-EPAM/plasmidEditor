@@ -28,9 +28,7 @@ public class ModifyModification extends SequenceModification {
     <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
                                                                                                       int start,
                                                                                                       int seqLength,
-                                                                                                      AbstractFeature<AbstractSequence<C>, C> f,
-                                                                                                      int featureStartPosition,
-                                                                                                      int featureEndPosition) {
+                                                                                                      AbstractFeature<AbstractSequence<C>, C> f) {
     }
 
     @Override

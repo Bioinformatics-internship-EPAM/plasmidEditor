@@ -184,8 +184,7 @@ public class FileEditorControllerTest {
         this.mockMvc.perform(post(EDIT_FILE_PATH + path)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk())
-                .andExpect(content().string(sequenceForModification));
+                .andExpect(status().isCreated());
     }
 
     private void checkResponseIsBadRequest(String path, String json, String content) throws Exception {
