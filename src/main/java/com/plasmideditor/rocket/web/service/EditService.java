@@ -1,7 +1,7 @@
 package com.plasmideditor.rocket.web.service;
 
-import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
-import com.plasmideditor.rocket.web.domains.GenBankEntity;
+import com.plasmideditor.rocket.entities.GenBankEntity;
+import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.service.exceptions.*;
 import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
@@ -44,7 +44,7 @@ public class EditService {
     }
 
     public String getFileFromDB(String id, String version) {
-        Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionIdAndVersion(id, version);
+        Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionAndVersion(id, version);
         if (genBankFile.isPresent()) {
             return genBankFile.get().getFile();
         } else {
@@ -66,11 +66,12 @@ public class EditService {
             throw new GenBankFileEditorException("Cannot write sequence", e);
         }
         // save to DB
-        GenBankEntity updatedGenBank = new GenBankEntity();
-        updatedGenBank.setAccession(id);
         String newVersion = updateVersion(version, id);
-        updatedGenBank.setVersion(newVersion);
-        updatedGenBank.setFile(byteArrayOutputStream.toString());
+        GenBankEntity updatedGenBank = GenBankEntity.builder()
+                .accession(id)
+                .version(newVersion)
+                .file(byteArrayOutputStream.toString())
+                .build();
 
         genBankRepository.save(updatedGenBank);
     }

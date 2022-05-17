@@ -1,9 +1,9 @@
 package com.plasmideditor.rocket.web.service;
 
+import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.genbank.io.dna.GenBankDNAFileReader;
 import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinFileReader;
-import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
-import com.plasmideditor.rocket.web.domains.GenBankEntity;
+import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
@@ -50,15 +50,22 @@ public class EditServiceTest {
     @BeforeAll
     public static void init() throws IOException {
         String testDNAFileContent = Files.readString(Path.of(TEST_DNA_FILE_PATH));
-        GenBankEntity dnaEntity = new GenBankEntity(DNA_ACCESSION_ID, FILE_VERSION, testDNAFileContent);
-
         String testProteinFileContent = Files.readString(Path.of(TEST_PROTEIN_FILE_PATH));
-        GenBankEntity proteinEntity = new GenBankEntity(PROTEIN_ACCESSION_ID, FILE_VERSION, testProteinFileContent);
+        GenBankEntity dnaEntity = GenBankEntity.builder()
+                .accession(DNA_ACCESSION_ID)
+                .version(FILE_VERSION)
+                .file(testDNAFileContent)
+                .build();
+        GenBankEntity proteinEntity = GenBankEntity.builder()
+                .accession(PROTEIN_ACCESSION_ID)
+                .version(FILE_VERSION)
+                .file(testProteinFileContent)
+                .build();
 
         GenBankRepository mockGenBankRepository = Mockito.mock(GenBankRepository.class);
-        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion(DNA_ACCESSION_ID, FILE_VERSION)).thenReturn(Optional.of(dnaEntity));
-        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion(PROTEIN_ACCESSION_ID, FILE_VERSION)).thenReturn(Optional.of(proteinEntity));
-        Mockito.when(mockGenBankRepository.findByAccessionIdAndVersion("11", FILE_VERSION)).thenReturn(Optional.empty());
+        Mockito.when(mockGenBankRepository.findByAccessionAndVersion(DNA_ACCESSION_ID, FILE_VERSION)).thenReturn(Optional.of(dnaEntity));
+        Mockito.when(mockGenBankRepository.findByAccessionAndVersion(PROTEIN_ACCESSION_ID, FILE_VERSION)).thenReturn(Optional.of(proteinEntity));
+        Mockito.when(mockGenBankRepository.findByAccessionAndVersion("11", FILE_VERSION)).thenReturn(Optional.empty());
         editService = new EditService(mockGenBankRepository);
     }
 
