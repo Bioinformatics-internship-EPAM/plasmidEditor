@@ -11,9 +11,13 @@ import java.io.*;
 import static com.plasmidEditor.sputnik.utils.Constants.*;
 
 @Service
-public abstract class GenbankFileDownloadService {
+public class GenbankFileDownloadService {
+    private final GenBankService service;
+
     @Autowired
-    private GenBankService service;
+    public GenbankFileDownloadService(GenBankService service) {
+        this.service = service;
+    }
 
     public GenBankDTO downloadFile(String accession, String version) {
         try {

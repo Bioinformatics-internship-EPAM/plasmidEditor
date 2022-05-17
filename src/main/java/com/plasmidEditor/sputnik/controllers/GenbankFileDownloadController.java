@@ -23,7 +23,7 @@ public class GenbankFileDownloadController {
                 produces = MediaType.APPLICATION_JSON_VALUE
     )
     public byte[] downloadGenbankFile(@RequestParam String accession,
-                               @RequestParam(defaultValue = DEFAULT_VERSION_VALUE) String version) {
+                                      @RequestParam(defaultValue = DEFAULT_VERSION_VALUE) String version) {
         GenBankDTO genBankDTO = genbankFileDownloadService.downloadFile(accession, version);
         return genbankFileDownloadService.convertGenbankDTOToByteArray(genBankDTO);
     }
