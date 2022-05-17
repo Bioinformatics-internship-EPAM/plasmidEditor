@@ -23,7 +23,9 @@ dependencies {
 	implementation('org.postgresql:postgresql')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	implementation 'org.biojava:biojava-core:6.0.5'
-	implementation 'org.projectlombok:lombok:1.18.24'
+    implementation 'org.biojava:sequencing:1.9.5'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 	testImplementation 'org.testcontainers:postgresql:1.17.1'
 	testImplementation 'org.testcontainers:testcontainers:1.17.1'
