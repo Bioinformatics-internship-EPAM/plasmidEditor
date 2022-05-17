@@ -2,17 +2,15 @@ package com.plasmideditor.rocket.web.service.modifications;
 
 import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
+import com.plasmideditor.rocket.web.service.utils.SequenceFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.biojava.nbio.core.sequence.DataSource;
-import org.biojava.nbio.core.sequence.TaxonomyID;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.features.AbstractFeature;
-import org.biojava.nbio.core.sequence.features.DBReferenceInfo;
 import org.biojava.nbio.core.sequence.io.GenbankSequenceParser;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 
 import java.io.BufferedReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,14 +25,14 @@ public abstract class SequenceModification {
                                                                           Class<S> cls,
                                                                           S storedSequence,
                                                                           GenbankSequenceParser<S, C> sequenceParser
-    ) throws GenBankFileEditorException;
+    );
 
 
     public <S extends AbstractSequence<C>, C extends Compound> S runModificationProcess(BufferedReader br,
                                                                                         int startPosition,
                                                                                         String sequence,
                                                                                         Class<S> cls
-    ) throws GenBankFileEditorException {
+    ) {
         GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
         S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
@@ -45,12 +43,11 @@ public abstract class SequenceModification {
     }
 
 
-    <S extends AbstractSequence<C>, C extends Compound> S createSequence(Class<S> cls, String sequenceParser) throws GenBankFileEditorException {
+    <S extends AbstractSequence<C>, C extends Compound> S createSequence(Class<S> cls, String sequence) {
         S storedSequence;
         try {
-            storedSequence = cls.getConstructor(String.class).newInstance(sequenceParser);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+            storedSequence = (S) SequenceFactory.create(cls.getSimpleName(), sequence);
+        } catch (CompoundNotFoundException e) {
             throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
         }
         return storedSequence;
@@ -79,14 +76,12 @@ public abstract class SequenceModification {
             int seqLength,
             AbstractFeature<AbstractSequence<C>, C> f);
 
-    <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) throws GenBankFileEditorException {
+    <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) {
         S newSequence;
         try {
-            newSequence = cls.getConstructor(String.class).newInstance(
-                    createNewSequence(startPosition, sequence, storedSequence)
-            );
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+            newSequence = (S) SequenceFactory.create(cls.getSimpleName(),
+                    createNewSequence(startPosition, sequence, storedSequence));
+        } catch (CompoundNotFoundException e) {
             throw new GenBankFileEditorException(CAN_NOT_CREATE_SEQ, e);
         }
         return newSequence;

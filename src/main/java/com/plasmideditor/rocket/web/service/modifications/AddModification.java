@@ -1,6 +1,5 @@
 package com.plasmideditor.rocket.web.service.modifications;
 
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.features.AbstractFeature;
@@ -10,7 +9,6 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 
 import java.io.BufferedReader;
-import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 public class AddModification extends SequenceModification {
@@ -21,7 +19,7 @@ public class AddModification extends SequenceModification {
                                                                         Class<S> cls,
                                                                         S storedSequence,
                                                                         GenbankSequenceParser<S, C> sequenceParser
-    ) throws GenBankFileEditorException {
+    ) {
 
         S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);
         modifyFeaturesLocation(sequenceParser.getFeatures(), newSequence, startPosition, sequence.length());

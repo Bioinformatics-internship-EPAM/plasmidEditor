@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.exceptions;
 
-public class UnknownSequenceType  extends Exception {
+public class UnknownSequenceType  extends RuntimeException {
     public UnknownSequenceType(String msg) {
         super(msg);
     }

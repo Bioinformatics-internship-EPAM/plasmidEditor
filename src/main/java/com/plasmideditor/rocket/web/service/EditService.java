@@ -43,7 +43,7 @@ public class EditService {
         this.genBankRepository = genBankRepository;
     }
 
-    public String getFileFromDB(String id, String version) throws GenBankFileNotFound {
+    public String getFileFromDB(String id, String version) {
         Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionIdAndVersion(id, version);
         if (genBankFile.isPresent()) {
             return genBankFile.get().getFile();
@@ -53,7 +53,7 @@ public class EditService {
     }
 
     @Transactional
-    public <S extends AbstractSequence<C>, C extends Compound> void saveSequenceToDB(String id, String version, S newSequence) throws GenBankFileEditorException {
+    public <S extends AbstractSequence<C>, C extends Compound> void saveSequenceToDB(String id, String version, S newSequence) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             if (newSequence.getClass() == ProteinSequence.class) {
@@ -75,7 +75,7 @@ public class EditService {
         genBankRepository.save(updatedGenBank);
     }
 
-    public Class getSequenceType(String file) throws UnknownSequenceType {
+    public Class getSequenceType(String file) {
         String[] locusStringContent = file.split("\n")[0].split(" +");
         String lengthUnits = locusStringContent[3];
         String type = locusStringContent[4];
@@ -91,7 +91,7 @@ public class EditService {
         }
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) throws SequenceValidationException {
+    public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) {
         if (cls == ProteinSequence.class) {
             try {
                 ProteinTools.createProtein(sequence);
@@ -109,7 +109,7 @@ public class EditService {
         log.info("Sequence validation for {} is successful", sequence);
     }
 
-    public AbstractSequence modifySequence(ModificationRequest request, SequenceModification service) throws GenBankFileEditorException, GenBankFileNotFound, UnknownSequenceType, SequenceValidationException, RequestBodyValidationException {
+    public AbstractSequence modifySequence(ModificationRequest request, SequenceModification service) {
         validateRequest(request);
         String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
@@ -120,7 +120,7 @@ public class EditService {
         return newSequence;
     }
 
-    private void validateRequest(ModificationRequest request) throws RequestBodyValidationException {
+    private void validateRequest(ModificationRequest request) {
         if (request.getFileId() == null || request.getFileId().isEmpty()) {
             throw new RequestBodyValidationException("Empty fileId in request body");
         }

@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.exceptions;
 
-public class GenBankFileEditorException extends Exception {
+public class GenBankFileEditorException extends RuntimeException {
     public GenBankFileEditorException(String msg) {
         super(msg);
     }
