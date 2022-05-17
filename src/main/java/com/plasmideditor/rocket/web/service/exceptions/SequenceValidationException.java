@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.exceptions;
 
-public class SequenceValidationException extends Exception {
+public class SequenceValidationException extends RuntimeException {
 
     public SequenceValidationException(String msg) {
         super(msg);

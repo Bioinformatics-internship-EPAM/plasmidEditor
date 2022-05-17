@@ -10,7 +10,6 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 
 import java.io.BufferedReader;
-import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 public class CutModification extends SequenceModification {
@@ -22,7 +21,7 @@ public class CutModification extends SequenceModification {
                                                                         Class<S> cls,
                                                                         S storedSequence,
                                                                         GenbankSequenceParser<S, C> sequenceParser
-    ) throws GenBankFileEditorException {
+    ) {
 
         if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence.toLowerCase(), startPosition)) {
             String illegualStartPosition = ILLEGAL_START_POSITION + startPosition + ", " + sequence;

@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.exceptions;
 
-public class RequestBodyValidationException extends Exception {
+public class RequestBodyValidationException extends RuntimeException {
 
     public RequestBodyValidationException(String msg) {
         super(msg);

@@ -8,14 +8,18 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 
 import java.io.BufferedReader;
-import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 public class ModifyModification extends SequenceModification {
     private final String SEQ_LEN_OUT_OF_RANGE = "Modified sequence is out of range";
 
     @Override
-    <S extends AbstractSequence<C>, C extends Compound> S modify(BufferedReader br, int startPosition, String sequence, Class<S> cls, S storedSequence, GenbankSequenceParser<S, C> sequenceParser) throws GenBankFileEditorException {
+    <S extends AbstractSequence<C>, C extends Compound> S modify(BufferedReader br,
+                                                                 int startPosition,
+                                                                 String sequence,
+                                                                 Class<S> cls,
+                                                                 S storedSequence,
+                                                                 GenbankSequenceParser<S, C> sequenceParser) {
         if (startPosition + sequence.length() > storedSequence.getLength()) {
             log.error(SEQ_LEN_OUT_OF_RANGE);
             throw new GenBankFileEditorException(SEQ_LEN_OUT_OF_RANGE);
