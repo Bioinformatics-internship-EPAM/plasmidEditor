@@ -24,7 +24,7 @@ public class FileUploadServiceUtils<T extends AbstractSequence> {
 	}
 	
 	public void saveSequenceToDB(T sequence, File file, GenBankServiceImpl genBankServiceImpl) throws IllegalArgumentException {
-		if (sequence instanceof DNASequence) {
+		if (sequence instanceof T) {
 			String accession = sequence.getAccession().getID();
 			int version = sequence.getAccession().getVersion();
 			String content = ReaderUtils.readStringFromFile(file.getAbsolutePath());
