@@ -29,7 +29,7 @@ public class DNAFileUploadService implements FileUploadService<DNASequence> {
         	try {
             		Map<String, DNASequence> sequences = GenbankReaderHelper.readGenbankDNASequence(inputStream);
             		sequence = serviceUtils.validateSequence(sequences);
-            		serviceUtils.saveSequenceToDB(sequence, file, genBankServiceImpl);
+            		serviceUtils.saveSequenceToDB(sequence, inputStream, genBankServiceImpl);
         	} catch (Exception e) {
             		throw new FileUploadException(e.getMessage(), e);
         	}
