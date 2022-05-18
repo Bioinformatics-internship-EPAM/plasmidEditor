@@ -1,26 +1,27 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.StandardCopyOption;
+import java.util.Map;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 
-import java.nio.file.Files;
 import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
-import com.plasmidEditor.sputnik.utils.ReaderUtils;
+import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
+import com.plasmidEditor.sputnik.exceptions.RepeatFileUploadingException;
+import com.plasmidEditor.sputnik.exceptions.SequenceValidateException;
 
-public class FileUploadServiceUtils<T extends AbstractSequence> {
-	public File writeToTmpFile(InputStream inputStream) throws IOException {
-		File file = File.createTempFile("dna", ".tmp");
-		file.deleteOnExit();
-		Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        	IOUtils.closeQuietly(inputStream);
-		return file;
+public class FileUploadServiceUtils<T extends AbstractSequence<?>> {
+	public T validateSequence(Map<String, T> sequences) {
+		switch(sequences.size()) {
+			case 0:
+				throw new SequenceValidateException("File has invalid format");
+			case 1:
+				return sequences.values().iterator().next();
+			default:
+				throw new SequenceValidateException("Upload more than one sequence in file");
+		}
 	}
 	
 	public void saveSequenceToDB(T sequence, File file, GenBankServiceImpl genBankServiceImpl) throws IllegalArgumentException {
@@ -28,7 +29,12 @@ public class FileUploadServiceUtils<T extends AbstractSequence> {
 			String accession = sequence.getAccession().getID();
 			int version = sequence.getAccession().getVersion();
 			String content = ReaderUtils.readStringFromFile(file.getAbsolutePath());
-			genBankServiceImpl.save(new GenBankDTO(accession, String.valueOf(version), content));
+			try {
+				genBankServiceImpl.get(accession, String.valueOf(version));
+				throw new RepeatFileUploadingException("File with accession" + accession +" and version" + String.valueOf(version) + " already exists");
+			} catch (GenBankNotFoundException e) {
+				genBankServiceImpl.save(new GenBankDTO(accession, String.valueOf(version), content));
+			}	
 		}
 		else {
 			throw new IllegalArgumentException("Sequence has invalid type");
