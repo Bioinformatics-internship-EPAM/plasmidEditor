@@ -24,14 +24,16 @@ public class FileUploadServiceUtils<T extends AbstractSequence<?>> {
 		}
 	}
 	
-	public void saveSequenceToDB(T sequence, File file, GenBankServiceImpl genBankServiceImpl) throws IllegalArgumentException {
+	public void saveSequenceToDB(T sequence, InputStream inputStream, GenBankServiceImpl genBankServiceImpl) throws IllegalArgumentException, 
+	IOException, GenBankNotFoundException, RepeatFileUploadingException{
 		if (sequence instanceof T) {
 			String accession = sequence.getAccession().getID();
 			int version = sequence.getAccession().getVersion();
-			String content = ReaderUtils.readStringFromFile(file.getAbsolutePath());
+			String content = new String(inputStream.readAllBytes());
 			try {
 				genBankServiceImpl.get(accession, String.valueOf(version));
-				throw new RepeatFileUploadingException("File with accession" + accession +" and version" + String.valueOf(version) + " already exists");
+				throw new RepeatFileUploadingException("File with accession" + accession +" and version" 
+								       + String.valueOf(version) + " already exists");
 			} catch (GenBankNotFoundException e) {
 				genBankServiceImpl.save(new GenBankDTO(accession, String.valueOf(version), content));
 			}	
