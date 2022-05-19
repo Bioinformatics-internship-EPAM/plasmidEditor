@@ -1,7 +1,8 @@
 package com.plasmideditor.rocket.web.service.modifications;
 
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
+import com.plasmideditor.rocket.web.service.utils.GenbankSequenceParserFactory;
 import com.plasmideditor.rocket.web.service.utils.SequenceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
@@ -15,25 +16,25 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public abstract class SequenceModification {
+public abstract class SequenceModification<S extends AbstractSequence<C>, C extends Compound> {
 
     final String CAN_NOT_CREATE_SEQ = "Cannot create a sequence";
 
-    abstract <S extends AbstractSequence<C>, C extends Compound> S modify(BufferedReader br,
-                                                                          int startPosition,
-                                                                          String sequence,
-                                                                          Class<S> cls,
-                                                                          S storedSequence,
-                                                                          GenbankSequenceParser<S, C> sequenceParser
+    abstract S modify(BufferedReader br,
+                      int startPosition,
+                      String sequence,
+                      Class<S> cls,
+                      S storedSequence,
+                      GenbankSequenceParser<S, C> sequenceParser
     );
 
 
-    public <S extends AbstractSequence<C>, C extends Compound> S runModificationProcess(BufferedReader br,
-                                                                                        int startPosition,
-                                                                                        String sequence,
-                                                                                        Class<S> cls
+    public S runModificationProcess(BufferedReader br,
+                                    int startPosition,
+                                    String sequence,
+                                    Class<S> cls
     ) {
-        GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
+        GenbankSequenceParser<S, C> sequenceParser = GenbankSequenceParserFactory.createGenbankSequenceParser(cls.getSimpleName());
         S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         S newSequence = modify(br, startPosition, sequence, cls, storedSequence, sequenceParser);
@@ -43,7 +44,7 @@ public abstract class SequenceModification {
     }
 
 
-    <S extends AbstractSequence<C>, C extends Compound> S createSequence(Class<S> cls, String sequence) {
+    S createSequence(Class<S> cls, String sequence) {
         S storedSequence;
         try {
             storedSequence = (S) SequenceFactory.create(cls.getSimpleName(), sequence);
@@ -53,7 +54,7 @@ public abstract class SequenceModification {
         return storedSequence;
     }
 
-    <S extends AbstractSequence<C>, C extends Compound> void modifyFeaturesLocation(
+    void modifyFeaturesLocation(
             Map<String, List<AbstractFeature<AbstractSequence<C>, C>>> features,
             S newSequence,
             int start,
@@ -70,13 +71,13 @@ public abstract class SequenceModification {
         }
     }
 
-    abstract <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(
+    abstract void updatePositionAfterModificationOperation(
             S newSequence,
             int start,
             int seqLength,
             AbstractFeature<AbstractSequence<C>, C> f);
 
-    <S extends AbstractSequence<C>, C extends Compound> S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) {
+    S modifySequence(int startPosition, String sequence, Class<S> cls, S storedSequence) {
         S newSequence;
         try {
             newSequence = (S) SequenceFactory.create(cls.getSimpleName(),
@@ -87,7 +88,6 @@ public abstract class SequenceModification {
         return newSequence;
     }
 
-    abstract <S extends AbstractSequence<C>, C extends Compound> String createNewSequence(
-            int startPosition, String sequence, S storedSequence);
+    abstract String createNewSequence(int startPosition, String sequence, S storedSequence);
 
 }

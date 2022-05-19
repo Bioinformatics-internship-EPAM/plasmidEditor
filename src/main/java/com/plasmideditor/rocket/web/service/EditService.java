@@ -3,7 +3,7 @@ package com.plasmideditor.rocket.web.service;
 import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
-import com.plasmideditor.rocket.web.service.exceptions.*;
+import com.plasmideditor.rocket.web.exceptions.*;
 import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.bio.seq.DNATools;
@@ -110,13 +110,13 @@ public class EditService {
         log.info("Sequence validation for {} is successful", sequence);
     }
 
-    public AbstractSequence modifySequence(ModificationRequest request, SequenceModification service) {
+    public <S extends AbstractSequence<C>, C extends Compound> S modifySequence(ModificationRequest request, SequenceModification service) {
         validateRequest(request);
         String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
         validateSequence(request.getSequence(), sequenceType);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        AbstractSequence newSequence = service.runModificationProcess(br, request.getStartPosition(), request.getSequence(), sequenceType);
+        S newSequence = (S) service.runModificationProcess(br, request.getStartPosition(), request.getSequence(), sequenceType);
         saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
         return newSequence;
     }

@@ -11,14 +11,14 @@ import org.biojava.nbio.core.sequence.template.Compound;
 import java.io.BufferedReader;
 
 @Slf4j
-public class AddModification extends SequenceModification {
+public class AddModification<S extends AbstractSequence<C>, C extends Compound> extends SequenceModification<S, C> {
     @Override
-    public <S extends AbstractSequence<C>, C extends Compound> S modify(BufferedReader br,
-                                                                        int startPosition,
-                                                                        String sequence,
-                                                                        Class<S> cls,
-                                                                        S storedSequence,
-                                                                        GenbankSequenceParser<S, C> sequenceParser
+    public S modify(BufferedReader br,
+                    int startPosition,
+                    String sequence,
+                    Class<S> cls,
+                    S storedSequence,
+                    GenbankSequenceParser<S, C> sequenceParser
     ) {
 
         S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);
@@ -28,10 +28,10 @@ public class AddModification extends SequenceModification {
     }
 
     @Override
-    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
-                                                                                                             int start,
-                                                                                                             int seqLength,
-                                                                                                             AbstractFeature<AbstractSequence<C>, C> f) {
+    public void updatePositionAfterModificationOperation(S newSequence,
+                                                         int start,
+                                                         int seqLength,
+                                                         AbstractFeature<AbstractSequence<C>, C> f) {
         int featureStartPosition = FeatureUtils.getFeatureStart(f);
         int featureEndPosition = FeatureUtils.getFeatureEnd(f);
         int startPosition = featureStartPosition;
@@ -43,8 +43,7 @@ public class AddModification extends SequenceModification {
     }
 
     @Override
-    <S extends AbstractSequence<C>, C extends Compound> String createNewSequence(
-            int startPosition, String sequence, S storedSequence) {
+    String createNewSequence(int startPosition, String sequence, S storedSequence) {
         return storedSequence.getSequenceAsString().substring(0, startPosition) +
                 sequence +
                 storedSequence.getSequenceAsString().substring(startPosition);

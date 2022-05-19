@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.modifications;
 
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.features.AbstractFeature;
@@ -12,15 +12,16 @@ import org.biojava.nbio.core.sequence.template.Compound;
 import java.io.BufferedReader;
 
 @Slf4j
-public class CutModification extends SequenceModification {
+public class CutModification<S extends AbstractSequence<C>, C extends Compound> extends SequenceModification<S, C> {
     private final String ILLEGAL_START_POSITION = "Illegal start position or sequence to delete:";
+
     @Override
-    public <S extends AbstractSequence<C>, C extends Compound> S modify(BufferedReader br,
-                                                                        int startPosition,
-                                                                        String sequence,
-                                                                        Class<S> cls,
-                                                                        S storedSequence,
-                                                                        GenbankSequenceParser<S, C> sequenceParser
+    public S modify(BufferedReader br,
+                    int startPosition,
+                    String sequence,
+                    Class<S> cls,
+                    S storedSequence,
+                    GenbankSequenceParser<S, C> sequenceParser
     ) {
 
         if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence.toLowerCase(), startPosition)) {
@@ -36,16 +37,16 @@ public class CutModification extends SequenceModification {
     }
 
     @Override
-    public <S extends AbstractSequence<C>, C extends Compound> void updatePositionAfterModificationOperation(S newSequence,
-                                                                                                             int start,
-                                                                                                             int seqLength,
-                                                                                                             AbstractFeature<AbstractSequence<C>, C> f) {
+    public void updatePositionAfterModificationOperation(S newSequence,
+                                                         int start,
+                                                         int seqLength,
+                                                         AbstractFeature<AbstractSequence<C>, C> f) {
         int featureStartPosition = FeatureUtils.getFeatureStart(f);
         int featureEndPosition = FeatureUtils.getFeatureEnd(f);
         int startPosition = featureStartPosition;
         int endPosition = featureEndPosition;
         if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureStartPosition)) {
-            if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)){
+            if (isFeaturePositionBetweenSequenceStartAndEnd(start, seqLength, featureEndPosition)) {
                 return;
             }
             startPosition = start;
@@ -64,7 +65,7 @@ public class CutModification extends SequenceModification {
     }
 
     @Override
-    <S extends AbstractSequence<C>, C extends Compound> String createNewSequence(
+    String createNewSequence(
             int startPosition, String sequence, S storedSequence) {
         return storedSequence.getSequenceAsString().substring(0, startPosition) +
                 storedSequence.getSequenceAsString().substring(startPosition + sequence.length());
