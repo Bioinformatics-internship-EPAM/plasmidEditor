@@ -1,13 +1,15 @@
 package com.plasmideditor.rocket.web.service.utils;
 
+import com.plasmideditor.rocket.web.exceptions.FactoryUnknownOption;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 
+import static com.plasmideditor.rocket.web.service.utils.CompoundNames.DNA_CLASS;
+import static com.plasmideditor.rocket.web.service.utils.CompoundNames.PROTEIN_CLASS;
+
 public class SequenceFactory {
-    private static final String PROTEIN_CLASS = "ProteinSequence";
-    private static final String DNA_CLASS = "DNASequence";
 
     public static AbstractSequence create(String type, String sequence) throws CompoundNotFoundException {
         if (type.equals(PROTEIN_CLASS)) {
@@ -16,6 +18,6 @@ public class SequenceFactory {
         if (type.equals(DNA_CLASS)) {
             return new DNASequence(sequence);
         }
-        return null;
+        throw new FactoryUnknownOption("Unknown option for SequenceFactory");
     }
 }

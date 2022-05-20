@@ -1,7 +1,7 @@
-package com.plasmideditor.rocket.web.configuration;
+package com.plasmideditor.rocket.web.controller;
 
+import com.plasmideditor.rocket.web.exceptions.*;
 import com.plasmideditor.rocket.web.response.ErrorResponse;
-import com.plasmideditor.rocket.web.service.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +43,13 @@ public class RocketExceptionHandler {
     @ExceptionHandler(RequestBodyValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleSGenBankFileNotFound(RequestBodyValidationException e) {
+        String response = e.getMessage();
+        return new ErrorResponse(response);
+    }
+
+    @ExceptionHandler(FactoryUnknownOption.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleFactoryUnknownOption(RequestBodyValidationException e) {
         String response = e.getMessage();
         return new ErrorResponse(response);
     }

@@ -3,14 +3,11 @@ package com.plasmideditor.rocket.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFound;
+import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
+import com.plasmideditor.rocket.web.exceptions.UnknownSequenceType;
 import com.plasmideditor.rocket.web.service.EditService;
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileEditorException;
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileNotFound;
-import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
-import com.plasmideditor.rocket.web.service.exceptions.UnknownSequenceType;
-import com.plasmideditor.rocket.web.service.modifications.AddModification;
-import com.plasmideditor.rocket.web.service.modifications.CutModification;
-import com.plasmideditor.rocket.web.service.modifications.ModifyModification;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,9 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
+import static com.plasmideditor.rocket.web.service.utils.Operations.*;
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,7 +56,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testSuccessfulResponseDuringAddOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(AddModification.class)))
+        when(editService.modifySequence(request, ADD))
                 .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(ADD_SEQ_PATH, json);
@@ -68,7 +64,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testSuccessfulResponseDuringCutOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(CutModification.class)))
+        when(editService.modifySequence(request, CUT))
                 .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(CUT_SEQ_PATH, json);
@@ -76,7 +72,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testSuccessfulResponseDuringModifyOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(ModifyModification.class)))
+        when(editService.modifySequence(request, MODIFY))
                 .thenReturn(new DNASequence(sequenceForModification));
 
         checkResponseIsOk(MODIFY_SEQ_PATH, json);
@@ -84,7 +80,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(AddModification.class)))
+        when(editService.modifySequence(request, ADD))
                 .thenThrow(GenBankFileNotFound.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, FILE_DOES_NOT_EXISTS);
@@ -92,14 +88,14 @@ public class FileEditorControllerTest {
 
     @Test
     public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(CutModification.class))).thenThrow(GenBankFileNotFound.class);
+        when(editService.modifySequence(request, CUT)).thenThrow(GenBankFileNotFound.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, FILE_DOES_NOT_EXISTS);
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(ModifyModification.class)))
+        when(editService.modifySequence(request, MODIFY))
                 .thenThrow(GenBankFileNotFound.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, FILE_DOES_NOT_EXISTS);
@@ -107,7 +103,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testUnknownSequenceTypeDuringAddOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(AddModification.class)))
+        when(editService.modifySequence(request, ADD))
                 .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, UNKNOWN_SEQ_TYPE);
@@ -115,7 +111,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testUnknownSequenceTypeDuringCutOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(CutModification.class)))
+        when(editService.modifySequence(request, CUT))
                 .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, UNKNOWN_SEQ_TYPE);
@@ -123,7 +119,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testUnknownSequenceTypeDuringModifyOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(ModifyModification.class)))
+        when(editService.modifySequence(request, MODIFY))
                 .thenThrow(UnknownSequenceType.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, UNKNOWN_SEQ_TYPE);
@@ -135,7 +131,7 @@ public class FileEditorControllerTest {
         String json = createRequest(testWrongSequence);
         ModificationRequest request = new ModificationRequest(3, testWrongSequence, DNA_FILE_ID, FILE_VERSION);
 
-        doThrow(SequenceValidationException.class).when(editService).modifySequence(eq(request), any(AddModification.class));
+        doThrow(SequenceValidationException.class).when(editService).modifySequence(request, ADD);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, NOT_SUITABLE_SEQ);
     }
@@ -145,14 +141,14 @@ public class FileEditorControllerTest {
         String testWrongSequence = "Wrong";
         String json = createRequest(testWrongSequence);
         ModificationRequest request = new ModificationRequest(3, testWrongSequence, DNA_FILE_ID, FILE_VERSION);
-        doThrow(SequenceValidationException.class).when(editService).modifySequence(eq(request), any(ModifyModification.class));
+        doThrow(SequenceValidationException.class).when(editService).modifySequence(request, MODIFY);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, NOT_SUITABLE_SEQ);
     }
 
     @Test
     public void testErrorWithGenBankFileDuringAddOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(AddModification.class)))
+        when(editService.modifySequence(request, ADD))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsInternalServerError(ADD_SEQ_PATH, json, INTERNAL_ERR);
@@ -160,7 +156,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testErrorWithGenBankFileDuringCutOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(CutModification.class)))
+        when(editService.modifySequence(request, CUT))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsInternalServerError(CUT_SEQ_PATH, json, INTERNAL_ERR);
@@ -168,7 +164,7 @@ public class FileEditorControllerTest {
 
     @Test
     public void testErrorWithGenBankFileDuringModifyOperation() throws Exception {
-        when(editService.modifySequence(eq(request), any(ModifyModification.class)))
+        when(editService.modifySequence(request, MODIFY))
                 .thenThrow(GenBankFileEditorException.class);
 
         checkResponseIsInternalServerError(MODIFY_SEQ_PATH, json, INTERNAL_ERR);
