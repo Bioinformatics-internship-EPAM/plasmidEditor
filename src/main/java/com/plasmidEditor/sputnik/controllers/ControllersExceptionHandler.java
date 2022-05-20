@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ControllersExceptionHandler {
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<JsonError> handleException(Exception e) {
+	public ResponseEntity<ErrorResponseBody> handleException(Exception e) {
 		return ResponseEntity.badRequest().body(new ErrorResponseBody("invalid file", e.getMessage()));
 	}
 }
