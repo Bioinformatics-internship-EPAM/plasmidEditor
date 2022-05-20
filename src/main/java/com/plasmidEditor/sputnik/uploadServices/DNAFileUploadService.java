@@ -1,7 +1,7 @@
 package com.plasmidEditor.sputnik.uploadServices;
 
 import com.plasmidEditor.sputnik.exceptions.FileUploadException;
-import com.plasmidEditor.sputnik.services.GenBankServiceImpl;
+import com.plasmidEditor.sputnik.services.GenBankService;
 
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.GenbankReaderHelper;
@@ -14,11 +14,11 @@ import java.util.Map;
 @Service
 public class DNAFileUploadService implements FileUploadService<DNASequence> {
 
-	private final GenBankServiceImpl genBankServiceImpl;
+	private final GenBankService genBankService;
 	
 	@Autowired
-	public DNAFileUploadService(GenBankServiceImpl genBankServiceImpl) {
-		this.genBankServiceImpl = genBankServiceImpl;
+	public DNAFileUploadService(GenBankService genBankService) {
+		this.genBankService = genBankService;
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class DNAFileUploadService implements FileUploadService<DNASequence> {
         	try {
             		Map<String, DNASequence> sequences = GenbankReaderHelper.readGenbankDNASequence(inputStream);
             		sequence = serviceUtils.validateSequence(sequences);
-            		serviceUtils.saveSequenceToDB(sequence, inputStream, genBankServiceImpl);
+            		serviceUtils.saveSequenceToDB(sequence, inputStream, genBankService);
         	} catch (Exception e) {
             		throw new FileUploadException(e.getMessage(), e);
         	}
