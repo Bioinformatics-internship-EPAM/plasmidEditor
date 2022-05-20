@@ -4,7 +4,10 @@ import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.exceptions.*;
+import com.plasmideditor.rocket.web.service.modifications.AddModification;
 import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
+import com.plasmideditor.rocket.web.service.utils.ModificationFactory;
+import com.plasmideditor.rocket.web.service.utils.Operations;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
@@ -110,18 +113,19 @@ public class EditService {
         log.info("Sequence validation for {} is successful", sequence);
     }
 
-    public <S extends AbstractSequence<C>, C extends Compound> S modifySequence(ModificationRequest request, SequenceModification service) {
+    public <S extends AbstractSequence<C>, C extends Compound> S modifySequence(ModificationRequest request, Operations operation) {
         validateRequest(request);
         String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
         validateSequence(request.getSequence(), sequenceType);
         BufferedReader br = new BufferedReader(new StringReader(fileContent));
+        SequenceModification service = ModificationFactory.getOperation(operation, sequenceType);
         S newSequence = (S) service.runModificationProcess(br, request.getStartPosition(), request.getSequence(), sequenceType);
         saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
         return newSequence;
     }
 
-    private void validateRequest(ModificationRequest request) {
+    public void validateRequest(ModificationRequest request) {
         if (request.getFileId() == null || request.getFileId().isEmpty()) {
             throw new RequestBodyValidationException("Empty fileId in request body");
         }

@@ -2,7 +2,6 @@ package com.plasmideditor.rocket.web.service.modifications;
 
 import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.service.utils.FeatureUtils;
-import com.plasmideditor.rocket.web.service.utils.GenbankSequenceParserFactory;
 import com.plasmideditor.rocket.web.service.utils.SequenceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
@@ -34,7 +33,7 @@ public abstract class SequenceModification<S extends AbstractSequence<C>, C exte
                                     String sequence,
                                     Class<S> cls
     ) {
-        GenbankSequenceParser<S, C> sequenceParser = GenbankSequenceParserFactory.createGenbankSequenceParser(cls.getSimpleName());
+        GenbankSequenceParser<S, C> sequenceParser = new GenbankSequenceParser<>();
         S storedSequence = createSequence(cls, sequenceParser.getSequence(br, 0));
 
         S newSequence = modify(br, startPosition, sequence, cls, storedSequence, sequenceParser);
