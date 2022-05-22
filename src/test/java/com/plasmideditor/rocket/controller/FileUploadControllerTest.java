@@ -3,12 +3,12 @@ package com.plasmideditor.rocket.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plasmideditor.rocket.web.controller.ControllersExceptionHandler;
 import com.plasmideditor.rocket.web.controller.FileUploadController;
-import com.plasmideditor.rocket.web.exceptions.FileEditorUploadException;
-import com.plasmideditor.rocket.web.exceptions.GenBankFileAlreadyExistsException;
+import com.plasmideditor.rocket.web.exceptions.FileUploadException;
+import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.response.ErrorResponse;
-import com.plasmideditor.rocket.web.service.DNAFileEditorService;
-import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
+import com.plasmideditor.rocket.web.service.DNAFileUploadService;
+import com.plasmideditor.rocket.web.service.ProteinFileUploadService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,13 +36,13 @@ public class FileUploadControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private DNAFileEditorService dnaFileEditorService;
+    private DNAFileUploadService dnaFileEditorService;
     @MockBean
-    private ProteinFileEditorService proteinFileEditorService;
+    private ProteinFileUploadService proteinFileEditorService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private MockMultipartFile multipartFile = getMultipartFileFromString("Gen bank file example");
+    private final MockMultipartFile multipartFile = getMultipartFileFromString("Gen bank file example");
 
     public FileUploadControllerTest() throws IOException {
     }
@@ -67,7 +67,7 @@ public class FileUploadControllerTest {
     @Test
     public void testFiledToUploadFileEditorUploadException() throws Exception {
         String fileEditorUploadExceptionMsg = "Failed to upload GenBank file";
-        mockServicesWithException(new FileEditorUploadException(fileEditorUploadExceptionMsg));
+        mockServicesWithException(new FileUploadException(fileEditorUploadExceptionMsg));
 
         ErrorResponse expectedErrorResponse = new ErrorResponse(
                 ControllersExceptionHandler.FILE_EDITOR_UPLOAD_EXCEPTION_MSG + fileEditorUploadExceptionMsg);
@@ -93,7 +93,7 @@ public class FileUploadControllerTest {
     @Test
     public void testFiledToUploadGenBankFileAlreadyExistsException() throws Exception {
         String genBankFileAlreadyExistsExceptionMsg = "Sequence is invalid";
-        mockServicesWithException(new GenBankFileAlreadyExistsException(genBankFileAlreadyExistsExceptionMsg));
+        mockServicesWithException(new FileAlreadyExistsException(genBankFileAlreadyExistsExceptionMsg));
 
         ErrorResponse expectedErrorResponse = new ErrorResponse(genBankFileAlreadyExistsExceptionMsg);
         String expectedResponseBody = objectMapper.writeValueAsString(expectedErrorResponse);
@@ -112,7 +112,7 @@ public class FileUploadControllerTest {
         );
     }
 
-    private void mockServicesWithException(Exception exception) throws FileEditorUploadException, SequenceValidationException, GenBankFileAlreadyExistsException {
+    private void mockServicesWithException(Exception exception) throws FileUploadException, SequenceValidationException, FileAlreadyExistsException {
         doThrow(exception).when(dnaFileEditorService).uploadFile(any());
         doThrow(exception).when(proteinFileEditorService).uploadFile(any());
     }

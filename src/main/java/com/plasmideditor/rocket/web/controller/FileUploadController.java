@@ -1,10 +1,10 @@
 package com.plasmideditor.rocket.web.controller;
 
-import com.plasmideditor.rocket.web.exceptions.FileEditorUploadException;
-import com.plasmideditor.rocket.web.exceptions.GenBankFileAlreadyExistsException;
+import com.plasmideditor.rocket.web.exceptions.FileUploadException;
+import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
-import com.plasmideditor.rocket.web.service.DNAFileEditorService;
-import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
+import com.plasmideditor.rocket.web.service.DNAFileUploadService;
+import com.plasmideditor.rocket.web.service.ProteinFileUploadService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +25,9 @@ import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 public class FileUploadController {
 
     @Autowired
-    private DNAFileEditorService dnaFileEditorService;
+    private DNAFileUploadService dnaFileEditorService;
     @Autowired
-    private ProteinFileEditorService proteinFileEditorService;
+    private ProteinFileUploadService proteinFileEditorService;
 
     @PostMapping(
             path = DNA_ENDPOINT,
@@ -35,9 +35,9 @@ public class FileUploadController {
     )
     public ResponseEntity<?> uploadDNAFile(@RequestBody @NonNull MultipartFile file) throws
             IOException,
-            FileEditorUploadException,
+            FileUploadException,
             SequenceValidationException,
-            GenBankFileAlreadyExistsException
+            FileAlreadyExistsException
     {
         dnaFileEditorService.uploadFile(file.getInputStream());
         return ResponseEntity
@@ -51,9 +51,9 @@ public class FileUploadController {
     )
     public ResponseEntity<?> uploadProteinFile(@RequestBody MultipartFile file) throws
             IOException,
-            FileEditorUploadException,
+            FileUploadException,
             SequenceValidationException,
-            GenBankFileAlreadyExistsException
+            FileAlreadyExistsException
     {
         proteinFileEditorService.uploadFile(file.getInputStream());
         return ResponseEntity

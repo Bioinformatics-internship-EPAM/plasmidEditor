@@ -2,7 +2,7 @@ package com.plasmideditor.rocket.web.service;
 
 import com.plasmideditor.rocket.database.entities.GenBankEntity;
 import com.plasmideditor.rocket.database.repositories.GenBankRepository;
-import com.plasmideditor.rocket.web.exceptions.GenBankFileAlreadyExistsException;
+import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class FileEditorServiceUtils<S extends AbstractSequence> {
+public class FileUploadServiceUtils<S extends AbstractSequence> {
 
     public void validateSequenceList(@NonNull List<S> sequences) throws SequenceValidationException {
         switch (sequences.size()) {
@@ -31,11 +31,11 @@ public class FileEditorServiceUtils<S extends AbstractSequence> {
     }
 
     public void insertSequence(@NonNull GenBankRepository genBankRepository, String accession, int version, String content)
-            throws GenBankFileAlreadyExistsException {
+            throws FileAlreadyExistsException {
         Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionAndVersion(accession, String.valueOf(version));
         if (genBankFile.isPresent()) {
             String msg = String.format("GenBank file with accession %s and version %d already exists", accession, version);
-            throw new GenBankFileAlreadyExistsException(msg);
+            throw new FileAlreadyExistsException(msg);
         }
 
         GenBankEntity updatedGenBank = GenBankEntity.builder()

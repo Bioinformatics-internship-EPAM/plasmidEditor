@@ -2,11 +2,11 @@ package com.plasmideditor.rocket.service;
 
 import com.plasmideditor.rocket.database.entities.GenBankEntity;
 import com.plasmideditor.rocket.database.repositories.GenBankRepository;
-import com.plasmideditor.rocket.web.exceptions.GenBankFileAlreadyExistsException;
+import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
-import com.plasmideditor.rocket.web.service.DNAFileEditorService;
-import com.plasmideditor.rocket.web.service.FileEditorService;
-import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
+import com.plasmideditor.rocket.web.service.DNAFileUploadService;
+import com.plasmideditor.rocket.web.service.FileUploadService;
+import com.plasmideditor.rocket.web.service.ProteinFileUploadService;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class FileEditorServiceTest {
+public class FileUploadServiceTest {
     private static final String TEST_DNA_ACCESSION = "BI431008";
     private static final String TEST_PROTEIN_ACCESSION = "3MJ8_A";
     private static final int TEST_DNA_VERSION = 1;
@@ -57,7 +57,7 @@ public class FileEditorServiceTest {
     public void testSuccessfullyUploadDnaFile() throws IOException {
         FileInputStream inputStream = getInputStreamFromFile(TEST_DNA_FILE_PATH);
 
-        FileEditorService<DNASequence> fileEditorService = new DNAFileEditorService(mockGenBankRepository);
+        FileUploadService<DNASequence> fileEditorService = new DNAFileUploadService(mockGenBankRepository);
         assertDoesNotThrow(() -> fileEditorService.uploadFile(inputStream));
     }
 
@@ -65,7 +65,7 @@ public class FileEditorServiceTest {
     public void testSuccessfullyUploadProteinFile() throws IOException {
         FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 
-        FileEditorService<ProteinSequence> fileEditorService = new ProteinFileEditorService(mockGenBankRepository);
+        FileUploadService<ProteinSequence> fileEditorService = new ProteinFileUploadService(mockGenBankRepository);
         assertDoesNotThrow(() -> fileEditorService.uploadFile(inputStream));
     }
 
@@ -75,7 +75,7 @@ public class FileEditorServiceTest {
 
         assertThrows(
                 SequenceValidationException.class,
-                ()-> new DNAFileEditorService(mockGenBankRepository).uploadFile(inputStream)
+                ()-> new DNAFileUploadService(mockGenBankRepository).uploadFile(inputStream)
         );
     }
 
@@ -85,7 +85,7 @@ public class FileEditorServiceTest {
 
         assertThrows(
                 SequenceValidationException.class,
-                ()-> new DNAFileEditorService(mockGenBankRepository).uploadFile(inputStream),
+                ()-> new DNAFileUploadService(mockGenBankRepository).uploadFile(inputStream),
                 "File has invalid format."
         );
     }
@@ -96,7 +96,7 @@ public class FileEditorServiceTest {
 
         assertThrows(
                 SequenceValidationException.class,
-                ()-> new ProteinFileEditorService(mockGenBankRepository).uploadFile(inputStream)
+                ()-> new ProteinFileUploadService(mockGenBankRepository).uploadFile(inputStream)
         );
     }
 
@@ -104,7 +104,7 @@ public class FileEditorServiceTest {
     public void testDNAInsteadProteinFileUploadSuccessfully() throws IOException {
         FileInputStream inputStream = getInputStreamFromFile(TEST_DNA_FILE_PATH);
 
-        assertDoesNotThrow(()-> new ProteinFileEditorService(mockGenBankRepository).uploadFile(inputStream));
+        assertDoesNotThrow(()-> new ProteinFileUploadService(mockGenBankRepository).uploadFile(inputStream));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class FileEditorServiceTest {
 
         assertThrows(
                 SequenceValidationException.class,
-                ()-> new DNAFileEditorService(mockGenBankRepository).uploadFile(inputStream)
+                ()-> new DNAFileUploadService(mockGenBankRepository).uploadFile(inputStream)
         );
     }
 
@@ -123,7 +123,7 @@ public class FileEditorServiceTest {
 
         assertThrows(
                 SequenceValidationException.class,
-                ()-> new ProteinFileEditorService(mockGenBankRepository).uploadFile(inputStream)
+                ()-> new ProteinFileUploadService(mockGenBankRepository).uploadFile(inputStream)
         );
     }
 
@@ -140,8 +140,8 @@ public class FileEditorServiceTest {
         FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 
         assertThrows(
-                GenBankFileAlreadyExistsException.class,
-                ()-> new ProteinFileEditorService(mockGenBankRepository).uploadFile(inputStream)
+                FileAlreadyExistsException.class,
+                ()-> new ProteinFileUploadService(mockGenBankRepository).uploadFile(inputStream)
         );
     }
 
