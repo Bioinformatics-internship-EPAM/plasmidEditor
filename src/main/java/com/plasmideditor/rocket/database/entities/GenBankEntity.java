@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.entities;
+package com.plasmideditor.rocket.database.entities;
 
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +28,4 @@ public class GenBankEntity {
 
     @Column(name = "file")
     private String file;
-
 }

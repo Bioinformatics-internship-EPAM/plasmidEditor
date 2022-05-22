@@ -1,7 +1,7 @@
 package com.plasmideditor.rocket.service;
 
-import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
-import com.plasmideditor.rocket.genbank.repository.domains.GenBankEntity;
+import com.plasmideditor.rocket.database.entities.GenBankEntity;
+import com.plasmideditor.rocket.database.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.DNAFileEditorService;
@@ -44,8 +44,12 @@ public class FileEditorServiceTest {
 
     @BeforeEach
     public void init() {
-        Mockito.when(mockGenBankRepository.findByAccessionAndVersion(TEST_DNA_ACCESSION, TEST_DNA_VERSION)).thenReturn(Optional.empty());
-        Mockito.when(mockGenBankRepository.findByAccessionAndVersion(TEST_PROTEIN_ACCESSION, TEST_PROTEIN_VERSION)).thenReturn(Optional.empty());
+        Mockito.when(mockGenBankRepository
+                .findByAccessionAndVersion(TEST_DNA_ACCESSION, String.valueOf(TEST_DNA_VERSION)))
+                .thenReturn(Optional.empty());
+        Mockito.when(mockGenBankRepository
+                .findByAccessionAndVersion(TEST_PROTEIN_ACCESSION, String.valueOf(TEST_PROTEIN_VERSION)))
+                .thenReturn(Optional.empty());
     }
 
 
@@ -125,10 +129,13 @@ public class FileEditorServiceTest {
 
     @Test
     public void testUploadProteinFileWithExistingAccessionAndVersion() throws FileNotFoundException {
-        GenBankEntity proteinEntity = new GenBankEntity();
-        proteinEntity.setAccession(TEST_PROTEIN_ACCESSION);
-        proteinEntity.setVersion(TEST_PROTEIN_VERSION);
-        Mockito.when(mockGenBankRepository.findByAccessionAndVersion(TEST_PROTEIN_ACCESSION, TEST_PROTEIN_VERSION)).thenReturn(Optional.of(proteinEntity));
+        GenBankEntity proteinEntity = GenBankEntity.builder()
+                .accession(TEST_PROTEIN_ACCESSION)
+                .version(String.valueOf(TEST_PROTEIN_VERSION))
+                .build();
+        Mockito.when(mockGenBankRepository
+                .findByAccessionAndVersion(TEST_PROTEIN_ACCESSION, String.valueOf(TEST_PROTEIN_VERSION)))
+                .thenReturn(Optional.of(proteinEntity));
 
         FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 

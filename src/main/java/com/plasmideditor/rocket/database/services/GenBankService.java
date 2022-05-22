@@ -1,10 +1,10 @@
-package com.plasmideditor.rocket.services;
+package com.plasmideditor.rocket.database.services;
 
 import com.plasmideditor.rocket.GenBankData;
-import com.plasmideditor.rocket.entities.GenBankEntity;
-import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
-import com.plasmideditor.rocket.mappers.GenBankMapper;
-import com.plasmideditor.rocket.repositories.GenBankRepository;
+import com.plasmideditor.rocket.database.entities.GenBankEntity;
+import com.plasmideditor.rocket.database.exceptions.GenBankFileNotFoundException;
+import com.plasmideditor.rocket.database.mappers.GenBankMapper;
+import com.plasmideditor.rocket.database.repositories.GenBankRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
