@@ -5,7 +5,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 
-public interface GenBankReader<T> {
+public interface GenBankReader<T, F> {
 
-    public List<T> readSequence(@NonNull String filename) throws GenBankReaderException;
+    public List<T> readSequence(@NonNull F input) throws GenBankReaderException;
 }

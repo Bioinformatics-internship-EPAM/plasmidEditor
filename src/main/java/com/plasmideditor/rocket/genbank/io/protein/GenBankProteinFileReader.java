@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class GenBankProteinFileReader implements GenBankReader<ProteinSequence> {
+public class GenBankProteinFileReader implements GenBankReader<ProteinSequence, String> {
     @Override
     public List<ProteinSequence> readSequence(@NonNull String filename) throws GenBankFileReaderException {
         try {

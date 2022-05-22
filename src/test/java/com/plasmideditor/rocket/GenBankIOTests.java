@@ -1,16 +1,21 @@
 package com.plasmideditor.rocket;
 
 import com.plasmideditor.rocket.genbank.io.dna.GenBankDNAFileReader;
+import com.plasmideditor.rocket.genbank.io.dna.GenBankDNAInputStreamReader;
 import com.plasmideditor.rocket.genbank.io.dna.GenBankDNAUrlReader;
 import com.plasmideditor.rocket.genbank.io.dna.GenBankDNAWriter;
 import com.plasmideditor.rocket.genbank.io.exceptions.GenBankFileReaderException;
 import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinFileReader;
+import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinInputStreamReader;
 import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinUrlReader;
 import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinWriter;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,9 +64,43 @@ public class GenBankIOTests {
     }
 
     @Test
+    public void readDNAFromInputStreamTest() {
+        assertDoesNotThrow(() -> {
+            File initialFile = new File("src/test/resources/BI431008.gb");
+            InputStream inputStream = new FileInputStream(initialFile);
+
+            List<DNASequence> dnaSequences = new GenBankDNAInputStreamReader().readSequence(inputStream);
+            assertEquals(1, dnaSequences.size());
+            DNASequence dnaSequence = dnaSequences.get(0);
+
+            assertEquals("BI431008", dnaSequence.getAccession().toString());
+            assertEquals(212, dnaSequence.getLength());
+            assertEquals("GTGACTGCGC", dnaSequence.getSequenceAsString().substring(0, 10));
+            assertEquals("Mesocricetus auratus", dnaSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+        });
+    }
+
+    @Test
     public void readProteinFromFileTest() {
         assertDoesNotThrow(() -> {
             List<ProteinSequence> proteinSequences = new GenBankProteinFileReader().readSequence("src/test/resources/3MJ8_A.gb");
+            assertEquals(1, proteinSequences.size());
+            ProteinSequence proteinSequence = proteinSequences.get(0);
+
+            assertEquals("3MJ8_A", proteinSequence.getAccession().toString());
+            assertEquals(213, proteinSequence.getLength());
+            assertEquals("SYTLTQPPLV", proteinSequence.getSequenceAsString().substring(0, 10));
+            assertEquals("Cricetulus migratorius", proteinSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+        });
+    }
+
+    @Test
+    public void readProteinFromInputStreamTest() {
+        assertDoesNotThrow(() -> {
+            File initialFile = new File("src/test/resources/3MJ8_A.gb");
+            InputStream inputStream = new FileInputStream(initialFile);
+
+            List<ProteinSequence> proteinSequences = new GenBankProteinInputStreamReader().readSequence(inputStream);
             assertEquals(1, proteinSequences.size());
             ProteinSequence proteinSequence = proteinSequences.get(0);
 

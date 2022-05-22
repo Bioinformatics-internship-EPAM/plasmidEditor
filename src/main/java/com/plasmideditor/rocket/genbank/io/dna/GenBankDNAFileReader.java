@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class GenBankDNAFileReader implements GenBankReader<DNASequence> {
+public class GenBankDNAFileReader implements GenBankReader<DNASequence, String> {
 
     @Override
     public List<DNASequence> readSequence(@NonNull String filename) throws GenBankFileReaderException {

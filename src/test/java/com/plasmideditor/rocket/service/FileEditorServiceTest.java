@@ -1,12 +1,12 @@
-package com.plasmideditor.rocket;
+package com.plasmideditor.rocket.service;
 
 import com.plasmideditor.rocket.genbank.repository.GenBankRepository;
 import com.plasmideditor.rocket.genbank.repository.domains.GenBankEntity;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileAlreadyExistsException;
+import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.service.DNAFileEditorService;
 import com.plasmideditor.rocket.web.service.FileEditorService;
 import com.plasmideditor.rocket.web.service.ProteinFileEditorService;
-import com.plasmideditor.rocket.web.service.exceptions.GenBankFileAlreadyExists;
-import com.plasmideditor.rocket.web.service.exceptions.SequenceValidationException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,7 +50,7 @@ public class FileEditorServiceTest {
 
 
     @Test
-    public void testDnaFileUploadSuccessfully() throws IOException {
+    public void testSuccessfullyUploadDnaFile() throws IOException {
         FileInputStream inputStream = getInputStreamFromFile(TEST_DNA_FILE_PATH);
 
         FileEditorService<DNASequence> fileEditorService = new DNAFileEditorService(mockGenBankRepository);
@@ -58,7 +58,7 @@ public class FileEditorServiceTest {
     }
 
     @Test
-    public void testProteinFileUploadSuccessfully() throws IOException {
+    public void testSuccessfullyUploadProteinFile() throws IOException {
         FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 
         FileEditorService<ProteinSequence> fileEditorService = new ProteinFileEditorService(mockGenBankRepository);
@@ -133,7 +133,7 @@ public class FileEditorServiceTest {
         FileInputStream inputStream = getInputStreamFromFile(TEST_PROTEIN_FILE_PATH);
 
         assertThrows(
-                GenBankFileAlreadyExists.class,
+                GenBankFileAlreadyExistsException.class,
                 ()-> new ProteinFileEditorService(mockGenBankRepository).uploadFile(inputStream)
         );
     }

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class GenBankDNAUrlReader implements GenBankReader<DNASequence> {
+public class GenBankDNAUrlReader implements GenBankReader<DNASequence, String> {
     private final String genbankDirectoryCache = "/tmp";
 
     @Override

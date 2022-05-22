@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class GenBankProteinUrlReader  implements GenBankReader<ProteinSequence> {
+public class GenBankProteinUrlReader  implements GenBankReader<ProteinSequence, String> {
     private final String genbankDirectoryCache = "/tmp";
 
     @Override
