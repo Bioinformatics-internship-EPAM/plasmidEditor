@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket;
 
-import com.plasmideditor.rocket.database.services.GenBankService;
+import com.plasmideditor.rocket.services.GenBankService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.database.entities;
+package com.plasmideditor.rocket.entities;
 
 import lombok.Builder;
 import lombok.Data;

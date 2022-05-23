@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.database.exceptions;
+package com.plasmideditor.rocket.exceptions;
 
 public class GenBankFileNotFoundException extends RuntimeException{
 

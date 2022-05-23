@@ -1,4 +1,4 @@
-package com.plasmideditor.rocket.database.mappers;
+package com.plasmideditor.rocket.mappers;
 
 import org.mapstruct.Mapper;
 import org.modelmapper.ModelMapper;

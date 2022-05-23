@@ -1,7 +1,7 @@
 package com.plasmideditor.rocket.web.service;
 
-import com.plasmideditor.rocket.database.entities.GenBankEntity;
-import com.plasmideditor.rocket.database.repositories.GenBankRepository;
+import com.plasmideditor.rocket.entities.GenBankEntity;
+import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import lombok.NonNull;

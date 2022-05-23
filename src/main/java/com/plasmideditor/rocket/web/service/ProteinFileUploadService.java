@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service;
 
-import com.plasmideditor.rocket.database.repositories.GenBankRepository;
+import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.genbank.io.exceptions.GenBankReaderException;
 import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinInputStreamReader;
 import com.plasmideditor.rocket.web.exceptions.FileUploadException;
