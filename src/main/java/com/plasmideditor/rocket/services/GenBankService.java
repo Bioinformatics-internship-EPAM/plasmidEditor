@@ -33,6 +33,12 @@ public class GenBankService {
                 .orElseThrow(() -> new GenBankFileNotFoundException(accession, version));
     }
 
+    public GenBankData getLatest(String accession){
+        return repository.findByAccessionOrderByVersionDesc(accession)
+                .map(x -> mapper.map(x, GenBankData.class))
+                .orElseThrow(() -> new GenBankFileNotFoundException(accession));
+    }
+
     public void delete(Long id) {
         repository.deleteById(id);
     }
