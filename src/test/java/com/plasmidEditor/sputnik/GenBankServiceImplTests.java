@@ -16,6 +16,9 @@ class GenBankServiceImplTests extends PostgreSQLTestContainer {
     @Autowired
     private transient GenBankServiceImpl service;
 
+    private final transient String FILE1 = "file1";
+    private final transient String FILE2 = "file2";
+
     @Test
     @Order(1)
     void createTest() {
@@ -25,7 +28,7 @@ class GenBankServiceImplTests extends PostgreSQLTestContainer {
         assertNotNull(savedObj1);
         assertEquals(savedObj1.getAccession(), "a");
         assertEquals(savedObj1.getVersion(), "1");
-        assertEquals(savedObj1.getFile(), "file1");
+        assertEquals(savedObj1.getFile(), FILE1);
 
         assertNotNull(savedObj2);
         assertEquals(savedObj2.getAccession(), "b");
@@ -42,12 +45,12 @@ class GenBankServiceImplTests extends PostgreSQLTestContainer {
         assertNotNull(readObj1);
         assertEquals(readObj1.getAccession(), "a");
         assertEquals(readObj1.getVersion(), "1");
-        assertEquals(readObj1.getFile(), "file1");
+        assertEquals(readObj1.getFile(), FILE1);
 
         assertNotNull(readObj2);
         assertEquals(readObj2.getAccession(), "b");
         assertEquals(readObj2.getVersion(), "1");
-        assertEquals(readObj2.getFile(), "file2");
+        assertEquals(readObj2.getFile(), FILE2);
     }
 
     @Test
@@ -63,14 +66,15 @@ class GenBankServiceImplTests extends PostgreSQLTestContainer {
 
     @Test
     void getLatestVersionTest() {
-        service.save(new GenBankDTO("NM_000266", "NM_000266.1", "file1"));
-        service.save(new GenBankDTO("NM_000266", "NM_000266.5", "file5"));
-        service.save(new GenBankDTO("NM_000266", "NM_000266.2", "file2"));
+        String ACCEESSION = "NM_000266";
+        service.save(new GenBankDTO(ACCEESSION, "NM_000266.1", FILE1));
+        service.save(new GenBankDTO(ACCEESSION, "NM_000266.5", "file5"));
+        service.save(new GenBankDTO(ACCEESSION, "NM_000266.2", FILE2));
 
-        GenBankDTO readObj = service.getLatestVersion("NM_000266");
+        GenBankDTO readObj = service.getLatestVersion(ACCEESSION);
 
         assertNotNull(readObj);
-        assertEquals(readObj.getAccession(), "NM_000266");
+        assertEquals(readObj.getAccession(), ACCEESSION);
         assertEquals(readObj.getVersion(), "NM_000266.5");
         assertEquals(readObj.getFile(), "file5");
     }

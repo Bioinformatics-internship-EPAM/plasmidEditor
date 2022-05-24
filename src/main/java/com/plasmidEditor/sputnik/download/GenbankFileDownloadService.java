@@ -12,7 +12,7 @@ import static com.plasmidEditor.sputnik.utils.Constants.*;
 
 @Service
 public class GenbankFileDownloadService {
-    private final GenBankService service;
+    private transient final GenBankService service;
 
     @Autowired
     public GenbankFileDownloadService(GenBankService service) {
