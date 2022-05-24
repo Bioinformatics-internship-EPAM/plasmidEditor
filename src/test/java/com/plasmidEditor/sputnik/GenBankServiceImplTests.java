@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GenBankServiceImplTests extends PostgreSQLTestContainer {
     @Autowired
-    private GenBankServiceImpl service;
+    private transient GenBankServiceImpl service;
 
     @Test
     @Order(1)

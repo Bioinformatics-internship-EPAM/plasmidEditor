@@ -2,10 +2,9 @@ package com.plasmidEditor.sputnik.exceptions;
 
 import lombok.Getter;
 
-import java.io.IOException;
-
 @Getter
 public class ReadGenbankUrlException extends RuntimeException {
+    private static final long serialVersionUID = 1003L;
     private final String accession;
 
     public ReadGenbankUrlException(String accession, Exception e) {

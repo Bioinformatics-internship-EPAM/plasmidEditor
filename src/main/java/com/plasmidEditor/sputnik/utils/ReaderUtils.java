@@ -8,9 +8,10 @@ public class ReaderUtils {
     public static String readStringFromFile(String path) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
+            String line = br.readLine();
+            while (line != null) {
                 sb.append(line);
+                line = br.readLine();
             }
             return sb.toString();
         } catch (IOException e) {

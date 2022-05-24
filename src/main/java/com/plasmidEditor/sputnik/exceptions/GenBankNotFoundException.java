@@ -1,6 +1,8 @@
 package com.plasmidEditor.sputnik.exceptions;
 
 public class GenBankNotFoundException extends RuntimeException {
+    private static final long serialVersionUID = 1001L;
+
     public GenBankNotFoundException(Long id) {
         super(String.format("GenBank with id '%d' not found", id));
     }

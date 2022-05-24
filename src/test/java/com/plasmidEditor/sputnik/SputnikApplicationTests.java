@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootTest
 class SputnikApplicationTests {
 	@Value("${spring.application.name}")
-	private String appName;
+	private transient String appName;
 
 	@Test
 	void applicationPropertiesLoads() {
