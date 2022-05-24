@@ -1,5 +1,6 @@
 package com.plasmideditor.rocket.web.service;
 
+import com.google.common.base.Strings;
 import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
@@ -130,13 +131,13 @@ public class EditService {
     }
 
     public void validateRequest(ModificationRequest request) {
-        if (request.getFileId() == null || request.getFileId().isEmpty()) {
+        if (Strings.isNullOrEmpty(request.getFileId())) {
             throw new RequestBodyValidationException("Empty fileId in request body");
         }
-        if (request.getFileVersion() == null || request.getFileVersion().isEmpty()) {
+        if (Strings.isNullOrEmpty(request.getFileVersion())) {
             throw new RequestBodyValidationException("Empty FileVersion in request body");
         }
-        if (request.getSequence() == null || request.getSequence().isEmpty()) {
+        if (Strings.isNullOrEmpty(request.getSequence())) {
             throw new RequestBodyValidationException("Empty sequence in request body");
         }
         if (request.getStartPosition() == null) {
