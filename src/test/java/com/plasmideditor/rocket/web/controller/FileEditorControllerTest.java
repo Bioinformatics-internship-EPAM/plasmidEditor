@@ -6,7 +6,7 @@ import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
-import com.plasmideditor.rocket.web.exceptions.UnknownSequenceType;
+import com.plasmideditor.rocket.web.exceptions.UnknownSequenceTypeException;
 import com.plasmideditor.rocket.web.service.EditService;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.junit.jupiter.api.BeforeAll;
@@ -104,7 +104,7 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringAddOperation() throws Exception {
         when(editService.modifySequence(request, ADD))
-                .thenThrow(UnknownSequenceType.class);
+                .thenThrow(UnknownSequenceTypeException.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, UNKNOWN_SEQ_TYPE);
     }
@@ -112,7 +112,7 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringCutOperation() throws Exception {
         when(editService.modifySequence(request, CUT))
-                .thenThrow(UnknownSequenceType.class);
+                .thenThrow(UnknownSequenceTypeException.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, UNKNOWN_SEQ_TYPE);
     }
@@ -120,7 +120,7 @@ public class FileEditorControllerTest {
     @Test
     public void testUnknownSequenceTypeDuringModifyOperation() throws Exception {
         when(editService.modifySequence(request, MODIFY))
-                .thenThrow(UnknownSequenceType.class);
+                .thenThrow(UnknownSequenceTypeException.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, UNKNOWN_SEQ_TYPE);
     }

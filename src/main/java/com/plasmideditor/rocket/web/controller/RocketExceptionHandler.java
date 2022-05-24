@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseBody
 public class RocketExceptionHandler {
 
-    @ExceptionHandler(UnknownSequenceType.class)
+    @ExceptionHandler(UnknownSequenceTypeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUnknownSequenceException(UnknownSequenceType e) {
+    public ErrorResponse handleUnknownSequenceException(UnknownSequenceTypeException e) {
         String response = "Sequence type is unknown";
         return new ErrorResponse(response);
     }

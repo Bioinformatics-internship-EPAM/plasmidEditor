@@ -4,7 +4,6 @@ import com.plasmideditor.rocket.entities.GenBankEntity;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.exceptions.*;
-import com.plasmideditor.rocket.web.service.modifications.AddModification;
 import com.plasmideditor.rocket.web.service.modifications.SequenceModification;
 import com.plasmideditor.rocket.web.service.utils.ModificationFactory;
 import com.plasmideditor.rocket.web.service.utils.Operations;
@@ -24,10 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static com.plasmideditor.rocket.web.service.utils.CompoundNames.DNA_CLASS;
+import static com.plasmideditor.rocket.web.service.utils.CompoundNames.PROTEIN_CLASS;
 
 @Service
 @Slf4j
@@ -50,20 +49,21 @@ public class EditService {
         Optional<GenBankEntity> genBankFile = genBankRepository.findByAccessionAndVersion(id, version);
         if (genBankFile.isPresent()) {
             return genBankFile.get().getFile();
-        } else {
-            throw new GenBankFileNotFound();
         }
+        throw new GenBankFileNotFound();
     }
 
     @Transactional
     public <S extends AbstractSequence<C>, C extends Compound> void saveSequenceToDB(String id, String version, S newSequence) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            if (newSequence.getClass() == ProteinSequence.class) {
-                GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, (Collection<ProteinSequence>) Collections.singleton(newSequence));
-            }
-            if (newSequence.getClass() == DNASequence.class) {
-                GenbankWriterHelper.writeNucleotideSequence(byteArrayOutputStream, (Collection<DNASequence>) Collections.singleton(newSequence));
+            switch (newSequence.getClass().getSimpleName()) {
+                case PROTEIN_CLASS:
+                    GenbankWriterHelper.writeProteinSequence(byteArrayOutputStream, (Collection<ProteinSequence>) Collections.singleton(newSequence));
+                    break;
+                case DNA_CLASS:
+                    GenbankWriterHelper.writeNucleotideSequence(byteArrayOutputStream, (Collection<DNASequence>) Collections.singleton(newSequence));
+                    break;
             }
         } catch (Exception e) {
             throw new GenBankFileEditorException("Cannot write sequence", e);
@@ -83,32 +83,36 @@ public class EditService {
         String[] locusStringContent = file.split("\n")[0].split(" +");
         String lengthUnits = locusStringContent[3];
         String type = locusStringContent[4];
-        if (lengthUnits.equalsIgnoreCase(AMINO_ACID)) {
-            log.debug("Sequence type is protein");
-            return ProteinSequence.class;
-        } else if (lengthUnits.equalsIgnoreCase(BASE_PAIR) && type.equalsIgnoreCase(BASE_PAIR_TYPE)) {
-            log.debug("Sequence type is DNA");
-            return DNASequence.class;
-        } else {
-            log.error(UNKNOWN_SEQ_TYPE);
-            throw new UnknownSequenceType(UNKNOWN_SEQ_TYPE);
+        switch (lengthUnits.toLowerCase()) {
+            case AMINO_ACID:
+                log.debug("Sequence type is protein");
+                return ProteinSequence.class;
+            case BASE_PAIR:
+                if (type.equalsIgnoreCase(BASE_PAIR_TYPE)) {
+                    log.debug("Sequence type is DNA");
+                    return DNASequence.class;
+                }
+            default:
+                log.error(UNKNOWN_SEQ_TYPE);
+                throw new UnknownSequenceTypeException(UNKNOWN_SEQ_TYPE);
         }
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> void validateSequence(String sequence, Class<S> cls) {
-        if (cls == ProteinSequence.class) {
-            try {
-                ProteinTools.createProtein(sequence);
-            } catch (IllegalSymbolException e) {
-                throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence);
-            }
-        }
-        if (cls == DNASequence.class) {
-            try {
-                DNATools.createDNA(sequence);
-            } catch (IllegalSymbolException e) {
-                throw new SequenceValidationException("Unknown nucleotide in sequence " + sequence);
-            }
+        switch (cls.getSimpleName()) {
+            case PROTEIN_CLASS:
+                try {
+                    ProteinTools.createProtein(sequence);
+                } catch (IllegalSymbolException e) {
+                    throw new SequenceValidationException("Illegal amino acid residues in sequence " + sequence);
+                }
+                break;
+            case DNA_CLASS:
+                try {
+                    DNATools.createDNA(sequence);
+                } catch (IllegalSymbolException e) {
+                    throw new SequenceValidationException("Unknown nucleotide in sequence " + sequence);
+                }
         }
         log.info("Sequence validation for {} is successful", sequence);
     }

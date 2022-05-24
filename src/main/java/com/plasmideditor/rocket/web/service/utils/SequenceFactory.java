@@ -12,12 +12,13 @@ import static com.plasmideditor.rocket.web.service.utils.CompoundNames.PROTEIN_C
 public class SequenceFactory {
 
     public static AbstractSequence create(String type, String sequence) throws CompoundNotFoundException {
-        if (type.equals(PROTEIN_CLASS)) {
-            return new ProteinSequence(sequence);
+        switch (type) {
+            case PROTEIN_CLASS:
+                return new ProteinSequence(sequence);
+            case DNA_CLASS:
+                return new DNASequence(sequence);
+            default:
+                throw new FactoryUnknownOption("Unknown option for SequenceFactory");
         }
-        if (type.equals(DNA_CLASS)) {
-            return new DNASequence(sequence);
-        }
-        throw new FactoryUnknownOption("Unknown option for SequenceFactory");
     }
 }

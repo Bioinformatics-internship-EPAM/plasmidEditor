@@ -17,33 +17,33 @@ import static com.plasmideditor.rocket.web.service.utils.CompoundNames.PROTEIN_C
 
 public class ModificationFactory {
     public static <T extends AbstractSequence<C>, C extends Compound> SequenceModification<T, C> getOperation(Operations operation, Class<T> cls) {
-        if (operation.equals(Operations.ADD)) {
-            if (cls.getSimpleName().equals(DNA_CLASS)) {
-                return (SequenceModification<T, C>) new AddModification<DNASequence, NucleotideCompound>();
-            } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
-                return (SequenceModification<T, C>) new AddModification<ProteinSequence, AminoAcidCompound>();
-            } else {
-                throw new FactoryUnknownOption("Unknown Abstract Sequence type");
-            }
+        switch (operation) {
+            case ADD:
+                if (cls.getSimpleName().equals(DNA_CLASS)) {
+                    return (SequenceModification<T, C>) new AddModification<DNASequence, NucleotideCompound>();
+                } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
+                    return (SequenceModification<T, C>) new AddModification<ProteinSequence, AminoAcidCompound>();
+                } else {
+                    throw new FactoryUnknownOption("Unknown Abstract Sequence type");
+                }
+            case CUT:
+                if (cls.getSimpleName().equals(DNA_CLASS)) {
+                    return (SequenceModification<T, C>) new CutModification<DNASequence, NucleotideCompound>();
+                } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
+                    return (SequenceModification<T, C>) new CutModification<ProteinSequence, AminoAcidCompound>();
+                } else {
+                    throw new FactoryUnknownOption("Unknown Abstract Sequence type");
+                }
+            case MODIFY:
+                if (cls.getSimpleName().equals(DNA_CLASS)) {
+                    return (SequenceModification<T, C>) new ModifyModification<DNASequence, NucleotideCompound>();
+                } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
+                    return (SequenceModification<T, C>) new ModifyModification<ProteinSequence, AminoAcidCompound>();
+                } else {
+                    throw new FactoryUnknownOption("Unknown Abstract Sequence type");
+                }
+            default:
+                throw new FactoryUnknownOption("Unknown option for ModificationFactory");
         }
-        if (operation.equals(Operations.CUT)) {
-            if (cls.getSimpleName().equals(DNA_CLASS)) {
-                return (SequenceModification<T, C>) new CutModification<DNASequence, NucleotideCompound>();
-            } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
-                return (SequenceModification<T, C>) new CutModification<ProteinSequence, AminoAcidCompound>();
-            } else {
-                throw new FactoryUnknownOption("Unknown Abstract Sequence type");
-            }
-        }
-        if (operation.equals(Operations.MODIFY)) {
-            if (cls.getSimpleName().equals(DNA_CLASS)) {
-                return (SequenceModification<T, C>) new ModifyModification<DNASequence, NucleotideCompound>();
-            } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
-                return (SequenceModification<T, C>) new ModifyModification<ProteinSequence, AminoAcidCompound>();
-            } else {
-                throw new FactoryUnknownOption("Unknown Abstract Sequence type");
-            }
-        }
-        throw new FactoryUnknownOption("Unknown option for ModificationFactory");
     }
 }

@@ -8,7 +8,7 @@ import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFound;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
-import com.plasmideditor.rocket.web.exceptions.UnknownSequenceType;
+import com.plasmideditor.rocket.web.exceptions.UnknownSequenceTypeException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
@@ -128,7 +128,7 @@ public class EditServiceTest {
 
     @Test
     public void testGetUnknownSequenceType() {
-        assertThrows(UnknownSequenceType.class, () -> editService.getSequenceType("some really wrong files data\n"));
+        assertThrows(UnknownSequenceTypeException.class, () -> editService.getSequenceType("some really wrong files data\n"));
     }
 
     @Test
