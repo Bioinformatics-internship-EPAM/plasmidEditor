@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.plasmideditor.rocket.web.service.FileDownloadService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
+import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
 
 import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 
@@ -24,7 +25,11 @@ public class FileDownloadController {
     @ResponseBody
     public GenBankData downloadFile(@RequestBody String accession,
                                     @RequestBody String version) {
-        GenBankData genBankData = fileDownloadService.downloadFile(accession, version);
-        return genBankData;
+        try {
+            GenBankData genBankData = fileDownloadService.downloadFile(accession, version);
+            return genBankData;
+        } catch (GenBankFileNotFoundException exception) {
+            return null;
+        }
     }
 }
