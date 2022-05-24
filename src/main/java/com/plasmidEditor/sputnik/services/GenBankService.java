@@ -7,4 +7,5 @@ public interface GenBankService {
     GenBankDTO get(Long id);
     GenBankDTO get(String accession, String version);
     boolean isExists(String accession, String version);
+    GenBankDTO getLatestVersion(String accession);
 }
