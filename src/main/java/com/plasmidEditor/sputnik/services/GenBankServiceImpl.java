@@ -9,6 +9,10 @@ import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+
 @Getter
 @Service
 public class GenBankServiceImpl implements GenBankService {
@@ -35,5 +39,14 @@ public class GenBankServiceImpl implements GenBankService {
         return repository.findByAccessionAndVersion(accession, version)
                 .map(x -> mapper.map(x, GenBankDTO.class))
                 .orElseThrow(() -> new GenBankNotFoundException(accession, version));
+    }
+
+    @Override
+    public GenBankDTO getLatestVersion(String accession) {
+        List<GenBankEntity> descList = repository.findByAccessionOrderByVersionDesc(accession);
+        if (CollectionUtils.isEmpty(descList)) {
+            throw new GenBankNotFoundException(accession);
+        }
+        return mapper.map(descList.get(0), GenBankDTO.class);
     }
 }

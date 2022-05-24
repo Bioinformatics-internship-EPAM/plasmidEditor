@@ -10,7 +10,7 @@ public class ReaderUtils {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
             while (line != null) {
-                sb.append(line);
+                sb.append("\n" + line);
                 line = br.readLine();
             }
             return sb.toString();

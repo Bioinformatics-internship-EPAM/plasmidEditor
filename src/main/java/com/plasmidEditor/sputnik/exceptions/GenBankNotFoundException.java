@@ -10,4 +10,8 @@ public class GenBankNotFoundException extends RuntimeException {
     public GenBankNotFoundException(String accession, String version) {
         super(String.format("GenBank with accession '%s' version '%s' not found", accession, version));
     }
+
+    public GenBankNotFoundException(String accession) {
+        super(String.format("GenBank with accession '%s' not found", accession));
+    }
 }

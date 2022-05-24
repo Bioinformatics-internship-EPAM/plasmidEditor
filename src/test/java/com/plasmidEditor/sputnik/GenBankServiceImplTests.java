@@ -60,4 +60,18 @@ class GenBankServiceImplTests extends PostgreSQLTestContainer {
         GenBankDTO updatedObj = service.get("a", "1");
         assertEquals(readObj.getFile(), updatedObj.getFile());
     }
+
+    @Test
+    void getLatestVersionTest() {
+        service.save(new GenBankDTO("NM_000266", "NM_000266.1", "file1"));
+        service.save(new GenBankDTO("NM_000266", "NM_000266.5", "file5"));
+        service.save(new GenBankDTO("NM_000266", "NM_000266.2", "file2"));
+
+        GenBankDTO readObj = service.getLatestVersion("NM_000266");
+
+        assertNotNull(readObj);
+        assertEquals(readObj.getAccession(), "NM_000266");
+        assertEquals(readObj.getVersion(), "NM_000266.5");
+        assertEquals(readObj.getFile(), "file5");
+    }
 }
