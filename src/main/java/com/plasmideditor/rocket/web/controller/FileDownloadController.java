@@ -1,21 +1,20 @@
 package com.plasmideditor.rocket.web.controller;
 
 import com.plasmideditor.rocket.GenBankData;
-import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.plasmideditor.rocket.web.service.FileDownloadService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-import com.plasmideditor.rocket.web.exceptions.*;
+
 import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 
 @RestController
 @RequestMapping(path = ROOT_ENDPOINT)
-public class FileDownladController {
+public class FileDownloadController {
     private final FileDownloadService fileDownloadService;
 
     @Autowired
-    public FileDownladController(FileDownloadService fileDownloadService) {
+    public FileDownloadController(FileDownloadService fileDownloadService) {
         this.fileDownloadService = fileDownloadService;
     }
 
@@ -23,8 +22,8 @@ public class FileDownladController {
                 produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public byte[] downloadFile(@RequestBody String accession,
-                               @RequestBody String version) {
+    public GenBankData downloadFile(@RequestBody String accession,
+                                    @RequestBody String version) {
         GenBankData genBankData = fileDownloadService.downloadFile(accession, version);
         return genBankData;
     }

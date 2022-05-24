@@ -2,13 +2,12 @@ package com.plasmideditor.rocket.web.service;
 
 import org.springframework.stereotype.Service;
 import com.plasmideditor.rocket.GenBankData;
-import com.plasmideditor.rocket.web.exceptions.*;
 import com.plasmideditor.rocket.services.*;
 import com.plasmideditor.rocket.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
-public class FileDownladService {
+public class FileDownloadService {
     private final GenBankService genBankService;
 
     @Autowired
