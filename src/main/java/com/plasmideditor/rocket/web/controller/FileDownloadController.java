@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
@@ -36,7 +37,7 @@ public class FileDownloadController {
             oos.close();
             baos.close();
             return response;
-        } catch (GenBankFileNotFoundException exception) {
+        } catch (GenBankFileNotFoundException | IOException exception) {
             return null;
         }
     }
