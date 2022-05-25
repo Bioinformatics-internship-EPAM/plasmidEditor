@@ -9,6 +9,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class GenBankData implements Serializable {
 
+    private static final long serialVersionUID = -5725433555425134935L;
+
     private Long genbankId;
 
     private String accession;
