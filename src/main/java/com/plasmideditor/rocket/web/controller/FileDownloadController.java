@@ -6,7 +6,6 @@ import com.plasmideditor.rocket.web.service.FileDownloadService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import com.plasmideditor.rocket.exceptions.GenBankFileNotFoundException;
-import org.apache.commons.io.IOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 
@@ -33,7 +32,7 @@ public class FileDownloadController {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(genBankData);
-            byte[] response = IOUtils.toByteArray(baos);
+            byte[] response = baos.toByteArray();
             oos.close();
             baos.close();
             return response;
