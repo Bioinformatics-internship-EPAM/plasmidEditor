@@ -8,6 +8,7 @@ import org.biojava.nbio.core.sequence.features.FeatureInterface;
 import org.biojava.nbio.core.sequence.io.GenbankSequenceParser;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -17,132 +18,150 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GenBankEditorTests {
-    private final String DNA_FILE_PATH = "src\\test\\resources\\X81322.gb";
-    private final String DNA_SEQUENCE = "AAATTTGGG";
-    private final int POSITION = 55;
-    private final int CUT_SIZE = 9;
-    private final GenBankEditor editor = new GenBankEditor();
+    private static final String DNA_SEQUENCE = "AAATTTGGG";
+    private static final int DNA_SEQUENCE_LENGTH = 9;
+    private static final int POSITION = 55;
+    private static final int CUT_SIZE = 9;
+
+    private static final String DNA_FILE_PATH = "src\\test\\resources\\X81322.gb";
+    private static String DNA_FILE_CONTENT;
+    private static String INIT_DNA_SEQUENCE;
+
+    private static GenbankSequenceParser<AbstractSequence<Compound>, Compound> parser;
+    private static GenBankEditor editor;
+
+    @BeforeAll
+    public static void init() throws IOException {
+        editor = new GenBankEditor();
+        DNA_FILE_CONTENT = Files.readString(Path.of(DNA_FILE_PATH));
+
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(DNA_FILE_CONTENT));
+        parser = new GenbankSequenceParser<>();
+        INIT_DNA_SEQUENCE = parser.getSequence(bufferedReader, 0);
+    }
 
     @Test
-    void addDNASequenceTest()  throws IOException {
-        String DNAFile = Files.readString(Path.of(DNA_FILE_PATH));
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(DNAFile));
-        GenbankSequenceParser<AbstractSequence<Compound>, Compound> parser = new GenbankSequenceParser<>();
-        String initSequence = parser.getSequence(bufferedReader, 0);
-        DNASequence newSequence = editor.add(DNA_SEQUENCE, POSITION, DNAFile);
+    public void addDNASequenceTest() {
+        DNASequence newSequence = editor.add(DNA_SEQUENCE, POSITION, DNA_FILE_CONTENT);
+        checkCorrectDNASequenceInsert(newSequence);
+        checkDNASequenceLocationsAfterInsert(newSequence);
+    }
 
-        assertEquals(initSequence.length(), newSequence.getLength() - DNA_SEQUENCE.length());
-        assertEquals(
-                DNA_SEQUENCE,
-                newSequence.getSequenceAsString().substring(POSITION - 1, POSITION - 1 + DNA_SEQUENCE.length())
-        );
-        assertEquals(
-                initSequence,
-                newSequence.getSequenceAsString().substring(0, POSITION - 1) + newSequence.getSequenceAsString()
-                        .substring(POSITION - 1 + DNA_SEQUENCE.length(), newSequence.getLength())
-        );
+    @Test
+    public void modifyDNASequenceTest() {
+        DNASequence newSequence = editor.modify(DNA_SEQUENCE, POSITION, DNA_FILE_CONTENT);
+        checkCorrectDNASequenceModify(newSequence);
+        checkDNASequenceLocationsAfterModify(newSequence);
+    }
 
+    @Test
+    public void cutDNASequenceTest() {
+        DNASequence newSequence = editor.cut(POSITION, CUT_SIZE, DNA_FILE_CONTENT);
+        checkCorrectDNASequenceCut(newSequence);
+        checkDNASequenceLocationsAfterCut(newSequence);
+    }
+
+    private void checkCorrectDNASequenceInsert(DNASequence newSequence) {
+        String newSequenceString = newSequence.getSequenceAsString();
+        int newSequenceLength = newSequence.getLength();
+
+        assertEquals(INIT_DNA_SEQUENCE.length(), newSequence.getLength() - DNA_SEQUENCE_LENGTH);
+        assertEquals(DNA_SEQUENCE, newSequenceString.substring(POSITION - 1, POSITION - 1 + DNA_SEQUENCE_LENGTH));
+        assertEquals(
+                INIT_DNA_SEQUENCE,
+                newSequenceString.substring(0, POSITION - 1)
+                        + newSequenceString.substring(POSITION - 1 + DNA_SEQUENCE_LENGTH, newSequenceLength)
+        );
+    }
+
+    private void checkCorrectDNASequenceModify(DNASequence newSequence) {
+        String newSequenceString = newSequence.getSequenceAsString();
+        int newSequenceLength = newSequence.getLength();
+
+        assertEquals(INIT_DNA_SEQUENCE.length(), newSequenceLength);
+        assertEquals(DNA_SEQUENCE, newSequenceString.substring(POSITION - 1, POSITION - 1 + DNA_SEQUENCE_LENGTH));
+        assertEquals(
+                INIT_DNA_SEQUENCE.substring(0, POSITION - 1)
+                        + INIT_DNA_SEQUENCE.substring(POSITION - 1 + DNA_SEQUENCE_LENGTH),
+                newSequenceString.substring(0, POSITION - 1)
+                        + newSequenceString.substring(POSITION - 1 + DNA_SEQUENCE_LENGTH, newSequenceLength)
+        );
+    }
+
+    private void checkCorrectDNASequenceCut(DNASequence newSequence) {
+        String newSequenceString = newSequence.getSequenceAsString();
+        int newSequenceLength = newSequence.getLength();
+
+        assertEquals(INIT_DNA_SEQUENCE.length() - DNA_SEQUENCE_LENGTH, newSequenceLength);
+        assertEquals(
+                INIT_DNA_SEQUENCE.substring(0, POSITION - 1)
+                        + INIT_DNA_SEQUENCE.substring(POSITION - 1 + DNA_SEQUENCE_LENGTH),
+                newSequenceString);
+    }
+
+    private void checkDNASequenceLocationsAfterInsert(DNASequence newSequence) {
         Map<String, List<AbstractFeature<AbstractSequence<Compound>, Compound>>> initFeatures = parser.getFeatures();
         List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> newFeatures = newSequence.getFeatures();
 
         assertEquals(initFeatures.size(), newFeatures.size());
 
-        for (var f: newFeatures) {
-            FeatureInterface<AbstractSequence<Compound>, Compound> temp = initFeatures.get(f.getDescription()).get(0);
-            if (f.getDescription().equals("source")) {
-                assertEquals(
-                        temp.getLocations().getStart().getPosition(),
-                        f.getLocations().getStart().getPosition()
-                );
-                assertEquals(
-                        temp.getLocations().getEnd().getPosition() + DNA_SEQUENCE.length(),
-                        f.getLocations().getEnd().getPosition()
-                );
-            }
-            else {
-                assertEquals(
-                        temp.getLocations().getStart().getPosition() + DNA_SEQUENCE.length(),
-                        f.getLocations().getStart().getPosition()
-                );
-                assertEquals(
-                        temp.getLocations().getEnd().getPosition() + DNA_SEQUENCE.length(),
-                        f.getLocations().getEnd().getPosition()
-                );
-            }
+        for (var newF: newFeatures) {
+            FeatureInterface<AbstractSequence<Compound>, Compound> initF = initFeatures.get(newF.getDescription()).get(0);
+            int initFStart = initF.getLocations().getStart().getPosition();
+            int initFEnd = initF.getLocations().getEnd().getPosition();
+            int newFStart = newF.getLocations().getStart().getPosition();
+            int newFEnd = newF.getLocations().getEnd().getPosition();
+
+            if (newF.getDescription().equals("source"))
+                assertEquals(initFStart, newFStart);
+            else
+                assertEquals(initFStart + DNA_SEQUENCE_LENGTH, newFStart);
+
+            assertEquals(initFEnd + DNA_SEQUENCE_LENGTH, newFEnd);
         }
     }
 
-    @Test
-    void modifyDNASequenceTest() throws IOException {
-        String DNAFile = Files.readString(Path.of(DNA_FILE_PATH));
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(DNAFile));
-        GenbankSequenceParser<AbstractSequence<Compound>, Compound> parser = new GenbankSequenceParser<>();
-        String initSequence = parser.getSequence(bufferedReader, 0);
-        DNASequence sequence = editor.modify(DNA_SEQUENCE, POSITION, DNAFile);
-
-        assertEquals(initSequence.length(), sequence.getLength());
-        assertEquals(
-                DNA_SEQUENCE,
-                sequence.getSequenceAsString().substring(POSITION - 1, POSITION - 1 + DNA_SEQUENCE.length())
-        );
-        assertEquals(
-                initSequence.substring(0, POSITION - 1) + initSequence.substring(POSITION - 1 + DNA_SEQUENCE.length()),
-                sequence.getSequenceAsString().substring(0, POSITION - 1) + sequence.getSequenceAsString()
-                        .substring(POSITION - 1 + DNA_SEQUENCE.length(), sequence.getLength())
-        );
-
+    private void checkDNASequenceLocationsAfterModify(DNASequence newSequence) {
         Map<String, List<AbstractFeature<AbstractSequence<Compound>, Compound>>> initFeatures = parser.getFeatures();
-        List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> newFeatures = sequence.getFeatures();
+        List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> newFeatures = newSequence.getFeatures();
 
         assertEquals(initFeatures.size(), newFeatures.size());
 
-        for (var f: newFeatures) {
-            FeatureInterface<AbstractSequence<Compound>, Compound> temp = initFeatures.get(f.getDescription()).get(0);
-            assertEquals(temp.getLocations().getStart().getPosition(), f.getLocations().getStart().getPosition());
-            assertEquals(temp.getLocations().getEnd().getPosition(), f.getLocations().getEnd().getPosition());
+        for (var newF: newFeatures) {
+            FeatureInterface<AbstractSequence<Compound>, Compound> initF = initFeatures.get(newF.getDescription()).get(0);
+            int initFStart = initF.getLocations().getStart().getPosition();
+            int initFEnd = initF.getLocations().getEnd().getPosition();
+            int newFStart = newF.getLocations().getStart().getPosition();
+            int newFEnd = newF.getLocations().getEnd().getPosition();
+
+            assertEquals(initFStart, newFStart);
+            assertEquals(initFEnd, newFEnd);
         }
     }
 
-    @Test
-    void cutDNASequenceTest() throws IOException {
-        GenBankEditor editor = new GenBankEditor();
-        String DNAFile = Files.readString(Path.of(DNA_FILE_PATH));
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(DNAFile));
-        GenbankSequenceParser<AbstractSequence<Compound>, Compound> parser = new GenbankSequenceParser<>();
-        String initSequence = parser.getSequence(bufferedReader, 0);
-        DNASequence sequenceAdd = editor.cut(POSITION, CUT_SIZE, DNAFile);
-
-        assertEquals(initSequence.length() - DNA_SEQUENCE.length(), sequenceAdd.getLength());
-        assertEquals(
-                initSequence.substring(0, POSITION - 1) + initSequence.substring(POSITION - 1 + DNA_SEQUENCE.length()),
-                sequenceAdd.getSequenceAsString()
-        );
-
+    private void checkDNASequenceLocationsAfterCut(DNASequence newSequence) {
         Map<String, List<AbstractFeature<AbstractSequence<Compound>, Compound>>> initFeatures = parser.getFeatures();
-        List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> newFeatures = sequenceAdd.getFeatures();
+        List<FeatureInterface<AbstractSequence<NucleotideCompound>, NucleotideCompound>> newFeatures = newSequence.getFeatures();
 
         assertEquals(initFeatures.size(), newFeatures.size());
-        for (var f: newFeatures) {
-            FeatureInterface<AbstractSequence<Compound>, Compound> temp = initFeatures.get(f.getDescription()).get(0);
-            if (Objects.equals(f.getDescription(), "source")) {
-                assertEquals(temp.getLocations().getStart().getPosition(), f.getLocations().getStart().getPosition());
-                assertEquals(
-                        temp.getLocations().getEnd().getPosition() - DNA_SEQUENCE.length(),
-                        f.getLocations().getEnd().getPosition()
-                );
-            }
-            else {
-                assertEquals(POSITION, f.getLocations().getStart().getPosition());
-                assertEquals(
-                        temp.getLocations().getEnd().getPosition() - DNA_SEQUENCE.length(),
-                        f.getLocations().getEnd().getPosition()
-                );
-            }
+
+        for (var newF: newFeatures) {
+            FeatureInterface<AbstractSequence<Compound>, Compound> initF = initFeatures.get(newF.getDescription()).get(0);
+            int initFStart = initF.getLocations().getStart().getPosition();
+            int initFEnd = initF.getLocations().getEnd().getPosition();
+            int newFStart = newF.getLocations().getStart().getPosition();
+            int newFEnd = newF.getLocations().getEnd().getPosition();
+
+            if (newF.getDescription().equals("source"))
+                assertEquals(initFStart, newFStart);
+            else
+                assertEquals(POSITION, newFStart);
+
+            assertEquals(initFEnd - DNA_SEQUENCE_LENGTH, newFEnd);
         }
     }
 }
