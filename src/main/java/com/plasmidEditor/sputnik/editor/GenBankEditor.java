@@ -13,6 +13,8 @@ public class GenBankEditor {
     }
 
     public <S extends AbstractSequence<C>, C extends Compound> S cut(int position, int size, String file) {
-        return new CutMethod().edit(new EditorParameters("", position, file, size));
+        return new CutMethod().edit(new EditorParameters(null, position, file, size));
     }
+
+
 }
