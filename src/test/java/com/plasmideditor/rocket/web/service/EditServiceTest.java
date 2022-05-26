@@ -6,7 +6,7 @@ import com.plasmideditor.rocket.genbank.io.protein.GenBankProteinFileReader;
 import com.plasmideditor.rocket.repositories.GenBankRepository;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
-import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFound;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFoundException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.exceptions.UnknownSequenceTypeException;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -76,7 +76,7 @@ public class EditServiceTest {
 
     @Test
     public void testGetFileFromDbWhenFileDoesNotExist() {
-        assertThrows(GenBankFileNotFound.class,
+        assertThrows(GenBankFileNotFoundException.class,
                 () -> editService.getFileFromDB("11", FILE_VERSION),
                 "Expected getFileFromDB() to throw FileNotFoundException, but it didn't"
         );

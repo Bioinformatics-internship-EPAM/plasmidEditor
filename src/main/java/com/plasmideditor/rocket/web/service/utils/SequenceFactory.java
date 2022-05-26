@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.utils;
 
-import com.plasmideditor.rocket.web.exceptions.FactoryUnknownOption;
+import com.plasmideditor.rocket.web.exceptions.FactoryUnknownOptionException;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
@@ -18,7 +18,7 @@ public class SequenceFactory {
             case DNA_CLASS:
                 return new DNASequence(sequence);
             default:
-                throw new FactoryUnknownOption("Unknown option for SequenceFactory");
+                throw new FactoryUnknownOptionException("Unknown option for SequenceFactory");
         }
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plasmideditor.rocket.web.domains.request.ModificationRequest;
 import com.plasmideditor.rocket.web.exceptions.GenBankFileEditorException;
-import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFound;
+import com.plasmideditor.rocket.web.exceptions.GenBankFileNotFoundException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import com.plasmideditor.rocket.web.exceptions.UnknownSequenceTypeException;
 import com.plasmideditor.rocket.web.service.EditService;
@@ -81,14 +81,14 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringAddOperation() throws Exception {
         when(editService.modifySequence(request, ADD))
-                .thenThrow(GenBankFileNotFound.class);
+                .thenThrow(GenBankFileNotFoundException.class);
 
         checkResponseIsBadRequest(ADD_SEQ_PATH, json, FILE_DOES_NOT_EXISTS);
     }
 
     @Test
     public void testFileNotFoundInDatabaseDuringCutOperation() throws Exception {
-        when(editService.modifySequence(request, CUT)).thenThrow(GenBankFileNotFound.class);
+        when(editService.modifySequence(request, CUT)).thenThrow(GenBankFileNotFoundException.class);
 
         checkResponseIsBadRequest(CUT_SEQ_PATH, json, FILE_DOES_NOT_EXISTS);
     }
@@ -96,7 +96,7 @@ public class FileEditorControllerTest {
     @Test
     public void testFileNotFoundInDatabaseDuringModifyOperation() throws Exception {
         when(editService.modifySequence(request, MODIFY))
-                .thenThrow(GenBankFileNotFound.class);
+                .thenThrow(GenBankFileNotFoundException.class);
 
         checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, FILE_DOES_NOT_EXISTS);
     }

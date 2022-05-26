@@ -51,7 +51,7 @@ public class EditService {
         if (genBankFile.isPresent()) {
             return genBankFile.get().getFile();
         }
-        throw new GenBankFileNotFound();
+        throw new GenBankFileNotFoundException();
     }
 
     @Transactional
@@ -70,10 +70,10 @@ public class EditService {
             throw new GenBankFileEditorException("Cannot write sequence", e);
         }
         // save to DB
-        String newVersion = updateVersion(version, id);
+        int newVersion = determineNewVersion(version, id);
         GenBankEntity updatedGenBank = GenBankEntity.builder()
                 .accession(id)
-                .version(newVersion)
+                .version(String.valueOf(newVersion))
                 .file(byteArrayOutputStream.toString())
                 .build();
 
@@ -145,11 +145,17 @@ public class EditService {
         }
     }
 
-    private String updateVersion(String prevVersion, String accessionId) {
+    private int determineNewVersion(String prevVersion, String accessionId) {
         List<GenBankEntity> allVersions = genBankRepository.findGenBankEntitiesByAccession(accessionId);
         if (allVersions.isEmpty()) {
-            return "1";
+            return 1;
         }
+        int maxVersion = getMaxVersion(prevVersion, allVersions);
+        maxVersion += 1;
+        return maxVersion;
+    }
+
+    private int getMaxVersion(String prevVersion, List<GenBankEntity> allVersions) {
         int maxVersion = Integer.parseInt(prevVersion);
         for (GenBankEntity entity : allVersions) {
             int entityVersion = Integer.parseInt(entity.getVersion());
@@ -157,7 +163,6 @@ public class EditService {
                 maxVersion = entityVersion;
             }
         }
-        maxVersion += 1;
-        return Integer.toString(maxVersion);
+        return maxVersion;
     }
 }

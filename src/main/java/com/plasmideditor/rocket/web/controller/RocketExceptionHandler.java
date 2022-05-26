@@ -33,9 +33,9 @@ public class RocketExceptionHandler {
         return new ErrorResponse(response);
     }
 
-    @ExceptionHandler(GenBankFileNotFound.class)
+    @ExceptionHandler(GenBankFileNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleSGenBankFileNotFound(GenBankFileNotFound e) {
+    public ErrorResponse handleSGenBankFileNotFound(GenBankFileNotFoundException e) {
         String response = "Requested file does not exist in database";
         return new ErrorResponse(response);
     }
@@ -47,7 +47,7 @@ public class RocketExceptionHandler {
         return new ErrorResponse(response);
     }
 
-    @ExceptionHandler(FactoryUnknownOption.class)
+    @ExceptionHandler(FactoryUnknownOptionException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleFactoryUnknownOption(RequestBodyValidationException e) {
         String response = e.getMessage();

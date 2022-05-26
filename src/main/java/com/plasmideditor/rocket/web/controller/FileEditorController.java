@@ -24,18 +24,21 @@ public class FileEditorController {
 
     @PostMapping(path = ADD_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public void addSequenceToFile(@RequestBody ModificationRequest request) {
         editService.modifySequence(request, ADD).getSequenceAsString();
     }
 
     @PostMapping(path = CUT_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public void cutSequence(@RequestBody ModificationRequest request) {
         editService.modifySequence(request, CUT).getSequenceAsString();
     }
 
     @PostMapping(path = MODIFY_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public void modifySequence(@RequestBody ModificationRequest request) {
         editService.modifySequence(request, MODIFY).getSequenceAsString();
     }

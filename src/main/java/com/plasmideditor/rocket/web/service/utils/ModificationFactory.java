@@ -1,6 +1,6 @@
 package com.plasmideditor.rocket.web.service.utils;
 
-import com.plasmideditor.rocket.web.exceptions.FactoryUnknownOption;
+import com.plasmideditor.rocket.web.exceptions.FactoryUnknownOptionException;
 import com.plasmideditor.rocket.web.service.modifications.AddModification;
 import com.plasmideditor.rocket.web.service.modifications.CutModification;
 import com.plasmideditor.rocket.web.service.modifications.ModifyModification;
@@ -24,7 +24,7 @@ public class ModificationFactory {
                 } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
                     return (SequenceModification<T, C>) new AddModification<ProteinSequence, AminoAcidCompound>();
                 } else {
-                    throw new FactoryUnknownOption("Unknown Abstract Sequence type");
+                    throw new FactoryUnknownOptionException("Unknown Abstract Sequence type");
                 }
             case CUT:
                 if (cls.getSimpleName().equals(DNA_CLASS)) {
@@ -32,7 +32,7 @@ public class ModificationFactory {
                 } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
                     return (SequenceModification<T, C>) new CutModification<ProteinSequence, AminoAcidCompound>();
                 } else {
-                    throw new FactoryUnknownOption("Unknown Abstract Sequence type");
+                    throw new FactoryUnknownOptionException("Unknown Abstract Sequence type");
                 }
             case MODIFY:
                 if (cls.getSimpleName().equals(DNA_CLASS)) {
@@ -40,10 +40,10 @@ public class ModificationFactory {
                 } else if (cls.getSimpleName().equals(PROTEIN_CLASS)) {
                     return (SequenceModification<T, C>) new ModifyModification<ProteinSequence, AminoAcidCompound>();
                 } else {
-                    throw new FactoryUnknownOption("Unknown Abstract Sequence type");
+                    throw new FactoryUnknownOptionException("Unknown Abstract Sequence type");
                 }
             default:
-                throw new FactoryUnknownOption("Unknown option for ModificationFactory");
+                throw new FactoryUnknownOptionException("Unknown option for ModificationFactory");
         }
     }
 }
