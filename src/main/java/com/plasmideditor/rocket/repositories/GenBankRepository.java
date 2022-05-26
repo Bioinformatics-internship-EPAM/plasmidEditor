@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface GenBankRepository extends JpaRepository<GenBankEntity, Long> {
     Optional<GenBankEntity> findByAccessionAndVersion(String accession, String version);
+
     Optional<GenBankEntity> findByAccessionOrderByVersionDesc(String accession);
 
     List<GenBankEntity> findGenBankEntitiesByAccession(String accession);
