@@ -45,3 +45,9 @@ configurations {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+pmd {
+	toolVersion = "6.46.0"
+	ruleSetFiles = files("pmd-rules.xml")
+	ruleSets = []
+}
