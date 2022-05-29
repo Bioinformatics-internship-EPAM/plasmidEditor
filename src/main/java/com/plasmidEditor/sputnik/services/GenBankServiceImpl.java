@@ -27,18 +27,22 @@ public class GenBankServiceImpl implements GenBankService {
     }
 
     @Override
-    public GenBankDTO get(Long id) throws GenBankNotFoundException{
+    public GenBankDTO get(Long id) throws GenBankNotFoundException {
         return repository.findById(id)
-                .map(x -> mapper.map(x, GenBankDTO.class))
-                .orElseThrow(() -> new GenBankNotFoundException(id));
-
+            .map(x -> mapper.map(x, GenBankDTO.class))
+            .orElseThrow(() -> new GenBankNotFoundException(id));
     }
 
     @Override
-    public GenBankDTO get(String accession, String version) throws GenBankNotFoundException{
+    public GenBankDTO get(String accession, String version) throws GenBankNotFoundException {
         return repository.findByAccessionAndVersion(accession, version)
-                .map(x -> mapper.map(x, GenBankDTO.class))
-                .orElseThrow(() -> new GenBankNotFoundException(accession, version));
+            .map(x -> mapper.map(x, GenBankDTO.class))
+            .orElseThrow(() -> new GenBankNotFoundException(accession, version));
+    }
+
+    @Override
+    public boolean isExists(String accession, String version) {
+        return repository.findByAccessionAndVersion(accession, version).isPresent();
     }
 
     @Override
