@@ -2,6 +2,7 @@ package com.plasmidEditor.sputnik.controllers;
 
 import java.io.IOException;
 
+import com.plasmidEditor.sputnik.exceptions.ErrorResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,17 +35,20 @@ public class FileUploadController {
 	}
 	
 	@PostMapping(path=UploadPathsConstants.DNA_UPLOAD_PATH, produces=MediaType.APPLICATION_JSON_VALUE)
-	public void uploadDNAFile(@RequestParam("file") MultipartFile file) throws FileUploadException, IOException {
-		dnaFileUploadService.upload(file.getInputStream());
+	public void uploadDNAFile(@RequestParam("file") MultipartFile file) throws FileUploadException {
+		try {
+			dnaFileUploadService.upload(file.getInputStream());
+		} catch(IOException e) {
+			throw new FileUploadException(e.getMessage(), e);
+		}
 	}
 	
 	@PostMapping(path=UploadPathsConstants.PROTEIN_UPLOAD_PATH, produces=MediaType.APPLICATION_JSON_VALUE)
-	public void uploadProteinFile(@RequestParam("file") MultipartFile file) throws FileUploadException, IOException {
-		proteinFileUploadService.upload(file.getInputStream());
-	}
-	
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorResponseBody> handleException(Exception e) {
-		return ResponseEntity.badRequest().body(new ErrorResponseBody("failed to upload genbank file", e.getMessage()));
+	public void uploadProteinFile(@RequestParam("file") MultipartFile file) throws FileUploadException {
+		try {
+			proteinFileUploadService.upload(file.getInputStream());
+		} catch(IOException e) {
+			throw new FileUploadException(e.getMessage(), e);
+		}
 	}
 }

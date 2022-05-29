@@ -1,4 +1,4 @@
-package com.plasmidEditor.sputnik.controllers;
+package com.plasmidEditor.sputnik.exceptions;
 
 import lombok.*;
 
