@@ -22,8 +22,8 @@ import com.plasmidEditor.sputnik.utils.UploadPathsConstants;
 @RequestMapping(value = UploadPathsConstants.ROOT_UPLOAD_PATH)
 @ResponseStatus(HttpStatus.CREATED)
 public class FileUploadController {
-	private final DNAFileUploadService dnaFileUploadService;
-	private final ProteinFileUploadService proteinFileUploadService;
+	private transient final DNAFileUploadService dnaFileUploadService;
+	private transient final ProteinFileUploadService proteinFileUploadService;
 	
 	
 	@Autowired

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public abstract class FileUploadService<T extends AbstractSequence<?>> {
     @Autowired
-	private GenBankService genBankService;
+	private transient GenBankService genBankService;
     
     public abstract void upload(InputStream inputStream) throws FileUploadException;
 

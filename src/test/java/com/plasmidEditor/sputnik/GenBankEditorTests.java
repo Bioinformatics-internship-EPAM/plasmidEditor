@@ -42,6 +42,7 @@ public class GenBankEditorTests {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(DNA_FILE_CONTENT));
         parser = new GenbankSequenceParser<>();
         INIT_DNA_SEQUENCE = parser.getSequence(bufferedReader, 0);
+        bufferedReader.close();
     }
 
     @Test

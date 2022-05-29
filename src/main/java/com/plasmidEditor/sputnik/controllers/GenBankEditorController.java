@@ -18,7 +18,7 @@ import static com.plasmidEditor.sputnik.utils.RequestEditorPath.*;
 @ResponseStatus(HttpStatus.CREATED)
 public class GenBankEditorController {
     @Autowired
-    private GenBankEditor editor;
+    private transient GenBankEditor editor;
     @PostMapping(path = ADD_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public void addSequence(@RequestBody EditorParameters request) {
