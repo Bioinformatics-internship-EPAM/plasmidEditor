@@ -4,6 +4,7 @@ import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.exceptions.*;
 import com.plasmidEditor.sputnik.services.GenBankService;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.Map;
