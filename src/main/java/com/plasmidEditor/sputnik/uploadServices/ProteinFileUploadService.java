@@ -5,6 +5,7 @@ import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.io.GenbankReaderHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -13,9 +14,10 @@ public class ProteinFileUploadService extends FileUploadService<ProteinSequence>
     @Override
     public void upload(InputStream inputStream) throws FileUploadException {
         try {
-            Map<String, ProteinSequence> sequences = GenbankReaderHelper.readGenbankProteinSequence(inputStream);
+        	byte[] cachedInputStream = inputStream.readAllBytes();
+            Map<String, ProteinSequence> sequences = GenbankReaderHelper.readGenbankProteinSequence(new ByteArrayInputStream(cachedInputStream));
             ProteinSequence sequence = validateSequence(sequences);
-            saveSequenceToDB(sequence, inputStream);
+            saveSequenceToDB(sequence, cachedInputStream);
         } catch (Exception e) {
             throw new FileUploadException(e.getMessage(), e);
         }
