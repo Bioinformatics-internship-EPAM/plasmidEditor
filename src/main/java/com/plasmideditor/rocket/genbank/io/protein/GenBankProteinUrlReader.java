@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class GenBankProteinUrlReader  implements GenBankReader<ProteinSequence, String> {
-    private final String genbankDirectoryCache = "/tmp";
 
     @Override
     public List<ProteinSequence> readSequence(@NonNull String accessionID) throws GenBankUrlReaderException {
         try {
+            String genbankDirectoryCache = "/tmp";
             GenbankProxySequenceReader<AminoAcidCompound> genbankProteinReader = new GenbankProxySequenceReader<>(
                     genbankDirectoryCache,
                     accessionID,

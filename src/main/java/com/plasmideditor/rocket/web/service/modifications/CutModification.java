@@ -10,10 +10,12 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 
 import java.io.BufferedReader;
+import java.util.Locale;
 
 @Slf4j
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public class CutModification<S extends AbstractSequence<C>, C extends Compound> extends SequenceModification<S, C> {
-    private final String ILLEGAL_START_POSITION = "Illegal start position or sequence to delete:";
+    private static final String ILLEGAL_START_POSITION = "Illegal start position or sequence to delete:";
 
     @Override
     public S modify(BufferedReader br,
@@ -24,10 +26,10 @@ public class CutModification<S extends AbstractSequence<C>, C extends Compound> 
                     GenbankSequenceParser<S, C> sequenceParser
     ) {
 
-        if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence.toLowerCase(), startPosition)) {
-            String illegualStartPosition = ILLEGAL_START_POSITION + startPosition + ", " + sequence;
-            log.error(illegualStartPosition);
-            throw new GenBankFileEditorException(illegualStartPosition);
+        if (!storedSequence.getSequenceAsString().toLowerCase().startsWith(sequence.toLowerCase(Locale.ROOT), startPosition)) {
+            String illegalStartPosition = ILLEGAL_START_POSITION + startPosition + ", " + sequence;
+            log.error(illegalStartPosition);
+            throw new GenBankFileEditorException(illegalStartPosition);
         }
 
         S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);

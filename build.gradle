@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 	id 'com.palantir.docker' version '0.22.1'
 	id 'com.palantir.docker-run' version '0.22.1'
+	id 'pmd'
 }
 
 group = 'com.example'
@@ -60,4 +61,9 @@ configurations {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+pmd {
+	toolVersion = "6.21.0"
+	ignoreFailures = true
 }

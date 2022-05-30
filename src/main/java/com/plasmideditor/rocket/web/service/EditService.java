@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.io.IOException;
 import java.util.*;
 
 import static com.plasmideditor.rocket.web.service.utils.CompoundNames.DNA_CLASS;
@@ -31,15 +32,16 @@ import static com.plasmideditor.rocket.web.service.utils.CompoundNames.PROTEIN_C
 
 @Service
 @Slf4j
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public class EditService {
-    private final String UNKNOWN_SEQ_TYPE = "Sequence type is unknown";
+    private static final String UNKNOWN_SEQ_TYPE = "Sequence type is unknown";
 
-    private final String AMINO_ACID = "aa";
+    private static final String AMINO_ACID = "aa";
 
-    private final String BASE_PAIR = "bp";
-    private final String BASE_PAIR_TYPE = "DNA";
+    private static final String BASE_PAIR = "bp";
+    private static final String BASE_PAIR_TYPE = "DNA";
 
-    private final GenBankRepository genBankRepository;
+    private transient final GenBankRepository genBankRepository;
 
     @Autowired
     public EditService(GenBankRepository genBankRepository) {
@@ -84,7 +86,7 @@ public class EditService {
         String[] locusStringContent = file.split("\n")[0].split(" +");
         String lengthUnits = locusStringContent[3];
         String type = locusStringContent[4];
-        switch (lengthUnits.toLowerCase()) {
+        switch (lengthUnits.toLowerCase(Locale.ROOT)) {
             case AMINO_ACID:
                 log.debug("Sequence type is protein");
                 return ProteinSequence.class;
@@ -123,11 +125,16 @@ public class EditService {
         String fileContent = getFileFromDB(request.getFileId(), request.getFileVersion());
         Class sequenceType = getSequenceType(fileContent);
         validateSequence(request.getSequence(), sequenceType);
-        BufferedReader br = new BufferedReader(new StringReader(fileContent));
-        SequenceModification service = ModificationFactory.getOperation(operation, sequenceType);
-        S newSequence = (S) service.runModificationProcess(br, request.getStartPosition(), request.getSequence(), sequenceType);
-        saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
-        return newSequence;
+        try(BufferedReader br = new BufferedReader(new StringReader(fileContent))) {
+            SequenceModification service = ModificationFactory.getOperation(operation, sequenceType);
+            S newSequence = (S) service.runModificationProcess(br, request.getStartPosition(), request.getSequence(), sequenceType);
+            saveSequenceToDB(request.getFileId(), request.getFileVersion(), newSequence);
+            return newSequence;
+        }
+        catch (IOException e)
+        {
+            throw new FailedRequestHandleException("Failed to read content for modification");
+        }
     }
 
     public void validateRequest(ModificationRequest request) {

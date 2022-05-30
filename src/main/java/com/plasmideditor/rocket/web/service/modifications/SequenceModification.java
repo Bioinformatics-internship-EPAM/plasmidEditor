@@ -15,9 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public abstract class SequenceModification<S extends AbstractSequence<C>, C extends Compound> {
 
-    final String CAN_NOT_CREATE_SEQ = "Cannot create a sequence";
+    final static String CAN_NOT_CREATE_SEQ = "Cannot create a sequence";
 
     abstract S modify(BufferedReader br,
                       int startPosition,

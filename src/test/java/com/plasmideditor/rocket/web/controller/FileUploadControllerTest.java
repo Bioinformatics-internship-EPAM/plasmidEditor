@@ -1,8 +1,6 @@
 package com.plasmideditor.rocket.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.plasmideditor.rocket.web.controller.RocketExceptionHandler;
-import com.plasmideditor.rocket.web.controller.FileUploadController;
 import com.plasmideditor.rocket.web.exceptions.FileAlreadyExistsException;
 import com.plasmideditor.rocket.web.exceptions.FileUploadException;
 import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
@@ -31,15 +29,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FileUploadController.class)
+
 public class FileUploadControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private transient MockMvc mockMvc;
 
     @MockBean
-    private DNAFileUploadService dnaFileEditorService;
+    private transient DNAFileUploadService dnaFileEditorService;
     @MockBean
-    private ProteinFileUploadService proteinFileEditorService;
+    private transient ProteinFileUploadService proteinFileEditorService;
 
     private final static ObjectMapper objectMapper = new ObjectMapper();
 

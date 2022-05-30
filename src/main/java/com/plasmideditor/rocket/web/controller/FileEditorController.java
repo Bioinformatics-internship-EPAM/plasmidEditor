@@ -20,7 +20,7 @@ import static com.plasmideditor.rocket.web.service.utils.Operations.*;
 public class FileEditorController {
 
     @Autowired
-    private EditService editService;
+    private transient EditService editService;
 
     @PostMapping(path = ADD_SEQ_PATH,
             consumes = MediaType.APPLICATION_JSON_VALUE)

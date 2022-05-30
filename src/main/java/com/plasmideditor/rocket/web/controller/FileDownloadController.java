@@ -15,7 +15,7 @@ import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 @RestController
 @RequestMapping(path = ROOT_ENDPOINT)
 public class FileDownloadController {
-    private final FileDownloadService fileDownloadService;
+    private transient final FileDownloadService fileDownloadService;
 
     @Autowired
     public FileDownloadController(FileDownloadService fileDownloadService) {

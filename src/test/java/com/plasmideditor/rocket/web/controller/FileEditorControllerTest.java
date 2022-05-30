@@ -27,14 +27,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FileEditorController.class)
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
 public class FileEditorControllerTest {
     private final static String testSequence = "AAAAA";
     private final static String sequenceForModification = "ATGAAAAAC";
 
-    private final String FILE_DOES_NOT_EXISTS = "Requested file does not exist in database";
-    private final String UNKNOWN_SEQ_TYPE = "Sequence type is unknown";
-    private final String NOT_SUITABLE_SEQ = "Sequence not suitable for file";
-    private final String INTERNAL_ERR = "Internal modification error";
+    private final static String FILE_DOES_NOT_EXISTS = "Requested file does not exist in database";
+    private final static String UNKNOWN_SEQ_TYPE = "Sequence type is unknown";
+    private final static String NOT_SUITABLE_SEQ = "Sequence not suitable for file";
+    private final static String INTERNAL_ERR = "Internal modification error";
 
     private final static String DNA_FILE_ID = "1";
     private final static String FILE_VERSION = "v1";

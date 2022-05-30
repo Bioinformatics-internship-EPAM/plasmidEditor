@@ -21,18 +21,22 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GenBankIOTests {
+    private static final String ACCESSION_ID_1 = "2XE0_D";
+    private static final String ACCESSION_ID_2 = "NP_001317186";
+
+    private static final String ORGANISM = "organism";
 
     @Test
     public void readDNAFromURLTest() {
         assertDoesNotThrow(() -> {
             /* https://www.ncbi.nlm.nih.gov/nuccore/2XE0_D?report=genbank */
-            List<DNASequence> dnaSequences = new GenBankDNAUrlReader().readSequence("2XE0_D");
+            List<DNASequence> dnaSequences = new GenBankDNAUrlReader().readSequence(ACCESSION_ID_1);
             DNASequence dnaSequence = dnaSequences.get(0);
 
-            assertEquals("2XE0_D", dnaSequence.getAccession().toString());
+            assertEquals(ACCESSION_ID_1, dnaSequence.getAccession().toString());
             assertEquals(24, dnaSequence.getLength());
             assertEquals("TCTGGCTGAG", dnaSequence.getSequenceAsString().substring(0, 10));
-            assertEquals("Homo sapiens", dnaSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+            assertEquals("Homo sapiens", dnaSequence.getFeatures().get(0).getQualifiers().get(ORGANISM).get(0).getValue());
         });
     }
 
@@ -40,10 +44,10 @@ public class GenBankIOTests {
     public void readProteinFromURLTest() {
         assertDoesNotThrow(() -> {
             /* https://www.ncbi.nlm.nih.gov/protein/NP_001317186.1 */
-            List<ProteinSequence> proteinSequences = new GenBankProteinUrlReader().readSequence("NP_001317186");
+            List<ProteinSequence> proteinSequences = new GenBankProteinUrlReader().readSequence(ACCESSION_ID_2);
             ProteinSequence proteinSequence = proteinSequences.get(0);
 
-            assertEquals("NP_001317186", proteinSequence.getAccession().toString());
+            assertEquals(ACCESSION_ID_2, proteinSequence.getAccession().toString());
             assertEquals(915, proteinSequence.getLength());
             assertEquals("MASFSMDCSP", proteinSequence.getSequenceAsString().substring(0, 10));
         });
@@ -59,7 +63,7 @@ public class GenBankIOTests {
             assertEquals("BI431008", dnaSequence.getAccession().toString());
             assertEquals(212, dnaSequence.getLength());
             assertEquals("GTGACTGCGC", dnaSequence.getSequenceAsString().substring(0, 10));
-            assertEquals("Mesocricetus auratus", dnaSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+            assertEquals("Mesocricetus auratus", dnaSequence.getFeatures().get(0).getQualifiers().get(ORGANISM).get(0).getValue());
         });
     }
 
@@ -76,7 +80,7 @@ public class GenBankIOTests {
             assertEquals("BI431008", dnaSequence.getAccession().toString());
             assertEquals(212, dnaSequence.getLength());
             assertEquals("GTGACTGCGC", dnaSequence.getSequenceAsString().substring(0, 10));
-            assertEquals("Mesocricetus auratus", dnaSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+            assertEquals("Mesocricetus auratus", dnaSequence.getFeatures().get(0).getQualifiers().get(ORGANISM).get(0).getValue());
         });
     }
 
@@ -90,7 +94,7 @@ public class GenBankIOTests {
             assertEquals("3MJ8_A", proteinSequence.getAccession().toString());
             assertEquals(213, proteinSequence.getLength());
             assertEquals("SYTLTQPPLV", proteinSequence.getSequenceAsString().substring(0, 10));
-            assertEquals("Cricetulus migratorius", proteinSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+            assertEquals("Cricetulus migratorius", proteinSequence.getFeatures().get(0).getQualifiers().get(ORGANISM).get(0).getValue());
         });
     }
 
@@ -107,7 +111,7 @@ public class GenBankIOTests {
             assertEquals("3MJ8_A", proteinSequence.getAccession().toString());
             assertEquals(213, proteinSequence.getLength());
             assertEquals("SYTLTQPPLV", proteinSequence.getSequenceAsString().substring(0, 10));
-            assertEquals("Cricetulus migratorius", proteinSequence.getFeatures().get(0).getQualifiers().get("organism").get(0).getValue());
+            assertEquals("Cricetulus migratorius", proteinSequence.getFeatures().get(0).getQualifiers().get(ORGANISM).get(0).getValue());
         });
     }
 

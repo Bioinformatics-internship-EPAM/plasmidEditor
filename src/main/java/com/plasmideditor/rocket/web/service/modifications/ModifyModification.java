@@ -11,7 +11,7 @@ import java.io.BufferedReader;
 
 @Slf4j
 public class ModifyModification<S extends AbstractSequence<C>, C extends Compound> extends SequenceModification<S, C> {
-    private final String SEQ_LEN_OUT_OF_RANGE = "Modified sequence is out of range";
+    private static final String SEQ_LEN_OUT_OF_RANGE = "Modified sequence is out of range";
 
     @Override
     S modify(BufferedReader br,
