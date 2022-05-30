@@ -28,5 +28,4 @@ public class GenBankEntity {
 
     @Column(name = "file")
     private String file;
-
 }

@@ -133,7 +133,7 @@ public class FileEditorControllerTest {
 
         doThrow(SequenceValidationException.class).when(editService).modifySequence(request, ADD);
 
-        checkResponseIsBadRequest(ADD_SEQ_PATH, json, NOT_SUITABLE_SEQ);
+        checkResponseIsUnprocessableEntity(ADD_SEQ_PATH, json, NOT_SUITABLE_SEQ);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class FileEditorControllerTest {
         ModificationRequest request = new ModificationRequest(3, testWrongSequence, DNA_FILE_ID, FILE_VERSION);
         doThrow(SequenceValidationException.class).when(editService).modifySequence(request, MODIFY);
 
-        checkResponseIsBadRequest(MODIFY_SEQ_PATH, json, NOT_SUITABLE_SEQ);
+        checkResponseIsUnprocessableEntity(MODIFY_SEQ_PATH, json, NOT_SUITABLE_SEQ);
     }
 
     @Test
@@ -188,6 +188,14 @@ public class FileEditorControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(content)));
+    }
+
+    private void checkResponseIsUnprocessableEntity(String path, String json, String content) throws Exception {
+        this.mockMvc.perform(post(EDIT_FILE_PATH + path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(content)));
     }
 

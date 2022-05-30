@@ -11,17 +11,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class GenBankDNAFileReader implements GenBankReader<DNASequence> {
+public class GenBankDNAFileReader implements GenBankReader<DNASequence, String> {
 
     @Override
-    public List<DNASequence> read_sequence(@NonNull String filename) throws GenBankFileReaderException {
+    public List<DNASequence> readSequence(@NonNull String filename) throws GenBankFileReaderException {
         try {
             File dnaFile = new File(filename);
 
             LinkedHashMap<String, DNASequence> dnaSequences =
                     GenbankReaderHelper.readGenbankDNASequence(dnaFile);
-            List<DNASequence> dnaSequencesList = new ArrayList<>(dnaSequences.values());
-            return dnaSequencesList;
+            return new ArrayList<>(dnaSequences.values());
         } catch (Exception e) {
             throw new GenBankFileReaderException("Filed to read GenBank DNA data from file " + filename, e);
         }

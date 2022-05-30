@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class GenBankProteinFileReader implements GenBankReader<ProteinSequence> {
+public class GenBankProteinFileReader implements GenBankReader<ProteinSequence, String> {
     @Override
-    public List<ProteinSequence> read_sequence(@NonNull String filename) throws GenBankFileReaderException {
+    public List<ProteinSequence> readSequence(@NonNull String filename) throws GenBankFileReaderException {
         try {
             File protFile = new File(filename);
 
@@ -21,7 +21,6 @@ public class GenBankProteinFileReader implements GenBankReader<ProteinSequence> 
                     GenbankReaderHelper.readGenbankProteinSequence(protFile);
             return new ArrayList<>(protSequences.values());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new GenBankFileReaderException("Failed to read Protein data from file " + filename, e);
         }
     }

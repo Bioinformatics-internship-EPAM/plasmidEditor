@@ -1,0 +1,50 @@
+LOCUS       BI431008                 212 bp    mRNA    linear   EST 14-AUG-2003
+DEFINITION  Ma19045 Hamster Bluescript DpnII library Mesocricetus auratus cDNA
+            similar to Putative novel gene, function unknown, mRNA sequence.
+ACCESSION   BI431008
+VERSION     BI431008.1
+DBLINK      BioSample: SAMN00164219
+KEYWORDS    EST.
+SOURCE      Mesocricetus auratus (golden hamster)
+  ORGANISM  Mesocricetus auratus
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia; Myomorpha;
+            Muroidea; Cricetidae; Cricetinae; Mesocricetus.
+REFERENCE   1  (bases 1 to 212)
+  AUTHORS   Oduru,S., Campbell,J.L., Karri,S., Hendry,W.J., Khan,S.A. and
+            Williams,S.C.
+  TITLE     Gene discovery in the hamster: a comparative genomics approach for
+            gene annotation by sequencing of hamster testis cDNAs
+  JOURNAL   BMC Genomics 4 (1), 22 (2003)
+   PUBMED   12783626
+COMMENT     Contact: Simon C. Williams
+            Department of Cell Biology and Biochemistry
+            Texas Tech University Health Science Center
+            3601 4th Street, Lubbock, TX 79430, USA
+            Tel: 806 743 2524
+            Fax: 806 743 2990
+            Email: simon.williams@ttmc.ttuhsc.edu
+            Exhibits weak similarity to human chromosome 10q23.2. Two strong
+            signals were detected in hamster testis, brain and heart RNAs by
+            Northern analysis.
+            Insert Length: 212   Std Error: 0.00
+            Seq primer: T7.
+FEATURES             Location/Qualifiers
+     source          1..212
+                     /organism="Mesocricetus auratus"
+                     /mol_type="mRNA"
+                     /db_xref="taxon:10036"
+                     /sex="male"
+                     /tissue_type="testis"
+                     /clone_lib="SAMN00164219 Hamster Bluescript DpnII library"
+                     /dev_stage="adult"
+                     /note="Library prepared by insertion of DpnII digested
+                     hamster testis cDNA into pBluescript, BamHI digested
+                     vector."
+ORIGIN
+        1 gtgactgcgf accacaactt tccttcggag acctcatagg accgggagtg tttccagcct
+       61 tgcgggccac cccagccttc tgcaaagcct cgcccatgcc gcctgcgttt tcagggtcct
+      121 gctcagctct gaccctgaag tcatctccag tgctttcctc ttcttctaag ggccatggca
+      181 tggcttcatg taatacagat ttggggcaga tc
+//
+
