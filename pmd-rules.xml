@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="Custom ruleset">
+
+<description>
+    PMD Basic Configuration
+</description>
+
+<rule ref="category/java/errorprone.xml" >
+    <exclude name="DataflowAnomalyAnalysis" />
+    <exclude name="CloseResource" />
+</rule>
+
+
+</ruleset>

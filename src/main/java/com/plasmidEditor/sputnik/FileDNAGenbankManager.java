@@ -33,7 +33,8 @@ public class FileDNAGenbankManager implements GenbankManager<DNASequence> {
     }
 
     private DNASequence getOnlySequenceFromMap(Map<String, DNASequence> dnaSequences) {
-        if (dnaSequences.size() == 1) {
+        int maxSeqCountInFile = 1;
+        if (dnaSequences.size() == maxSeqCountInFile) {
             return dnaSequences.values().iterator().next();
         }
         throw new ReadGenbankFileException();

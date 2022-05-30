@@ -4,6 +4,8 @@ import com.plasmidEditor.sputnik.GenBankDTO;
 import com.plasmidEditor.sputnik.entities.GenBankEntity;
 import com.plasmidEditor.sputnik.exceptions.GenBankNotFoundException;
 import com.plasmidEditor.sputnik.repositories.GenBankRepository;
+
+import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,12 +13,12 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+@Getter
 @Service
 public class GenBankServiceImpl implements GenBankService {
     @Autowired
     private GenBankRepository repository;
-
-    final private ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper = new ModelMapper();
 
     @Override
     public GenBankDTO save(GenBankDTO object) {

@@ -1,5 +1,6 @@
 package com.plasmidEditor.sputnik.editor;
 
+import com.plasmidEditor.sputnik.exceptions.BufferedReaderCloseException;
 import com.plasmidEditor.sputnik.exceptions.NewSequenceInstanceException;
 import com.plasmidEditor.sputnik.exceptions.SequenceClassException;
 import com.plasmidEditor.sputnik.exceptions.ValidationParametersException;
@@ -16,6 +17,7 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 
@@ -25,8 +27,12 @@ public abstract class EditorMethod {
         validationParameters (parameters);
         BufferedReader bufferedReader = new BufferedReader(new StringReader(parameters.getFileContent()));
         GenbankSequenceParser<S, C> parser = new GenbankSequenceParser<>();
-        String originalSequence = parser.getSequence(bufferedReader, 0);
-
+        final String originalSequence = parser.getSequence(bufferedReader, 0);
+        try {
+            bufferedReader.close();
+        } catch (IOException e) {
+            throw new BufferedReaderCloseException();
+        }
         Class<S> sequenceClass = getSequenceClass(parameters.getFileContent());
         String editedSequence = getEditedSequence(originalSequence, parameters);
 

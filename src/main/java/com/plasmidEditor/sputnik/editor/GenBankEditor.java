@@ -2,7 +2,9 @@ package com.plasmidEditor.sputnik.editor;
 
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GenBankEditor {
     public <S extends AbstractSequence<C>, C extends Compound> S add(String subsequence, int position, String file) {
         return new AddMethod().edit(new EditorParameters(subsequence, position, file, 0));

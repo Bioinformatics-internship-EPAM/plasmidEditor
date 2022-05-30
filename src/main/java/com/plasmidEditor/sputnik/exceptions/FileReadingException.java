@@ -6,6 +6,7 @@ import java.io.IOException;
 
 @Getter
 public class FileReadingException extends RuntimeException {
+    private static final long serialVersionUID = 1000L;
     private final String path;
 
     public FileReadingException(String path, Exception e) {

@@ -32,7 +32,8 @@ public class FileProteinGenbankManager implements GenbankManager<ProteinSequence
     }
 
     private ProteinSequence getOnlySequenceFromMap(Map<String, ProteinSequence> protSequences) {
-        if (protSequences.size() == 1) {
+        int maxSeqCountInFile = 1;
+        if (protSequences.size() == maxSeqCountInFile) {
             return protSequences.values().iterator().next();
         }
         throw new ReadGenbankFileException();

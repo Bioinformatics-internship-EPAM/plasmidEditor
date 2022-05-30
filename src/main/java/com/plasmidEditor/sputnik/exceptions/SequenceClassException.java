@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class SequenceClassException extends RuntimeException {
+    public static final long serialVersionUID = 1010L; //for pmd
     public SequenceClassException(String message) {
         super(message);
     }

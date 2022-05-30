@@ -12,7 +12,7 @@ import static com.plasmidEditor.sputnik.utils.RequestPath.*;
 @RestController
 @RequestMapping(path = GENBANK)
 public class GenbankFileDownloadController {
-    private final GenbankFileDownloadService genbankFileDownloadService;
+    private transient final GenbankFileDownloadService genbankFileDownloadService;
 
     @Autowired
     public GenbankFileDownloadController(GenbankFileDownloadService genbankFileDownloadService) {
