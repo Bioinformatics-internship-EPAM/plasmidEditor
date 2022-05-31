@@ -61,7 +61,6 @@ public class GenBankService {
                 .version(String.valueOf(version))
                 .file(content)
                 .build();
-        System.out.println("want to save " + updatedGenBank);
         repository.save(updatedGenBank);
         log.info("Upload " + accession + "." + version);
     }
