@@ -8,6 +8,7 @@ import com.plasmideditor.rocket.web.exceptions.SequenceValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Slf4j
+@Service
 @SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public class ProteinFileUploadService implements FileUploadService<ProteinSequence> {
 
