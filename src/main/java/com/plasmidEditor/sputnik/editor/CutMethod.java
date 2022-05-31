@@ -6,11 +6,11 @@ import org.biojava.nbio.core.sequence.template.Compound;
 
 public class CutMethod extends EditorMethod {
     @Override
-    protected String getEditedSequence(String sequence, EditorParameters parameters) {
+    protected String getEditedSequence(String sequence, String subsequence, int position, int cutSize) {
         StringBuilder sequenceBuilder = new StringBuilder(sequence);
         sequenceBuilder.delete(
-                parameters.getPosition() - 1,
-                parameters.getPosition() - 1 + parameters.getCutSize());
+                position - 1,
+                position - 1 + cutSize);
         return sequenceBuilder.toString();
     }
 

@@ -8,6 +8,7 @@ import lombok.Data;
 public class EditorParameters {
     private String subsequence;
     private int position;
-    private String fileContent;
+    private String accession;
+    private String version;
     private int cutSize;
 }

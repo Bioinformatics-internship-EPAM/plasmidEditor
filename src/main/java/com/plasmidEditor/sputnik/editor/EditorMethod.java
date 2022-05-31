@@ -23,9 +23,15 @@ import java.lang.reflect.InvocationTargetException;
 
 
 public abstract class EditorMethod {
-    public <S extends AbstractSequence<C>, C extends Compound> S edit(EditorParameters parameters) {
-        validationParameters (parameters);
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(parameters.getFileContent()));
+    public <S extends AbstractSequence<C>, C extends Compound> S edit
+            (String subsequence, int position, String fileContent, int cutSize) {
+        Class<S> sequenceClass = getSequenceClass(fileContent);
+
+        if (subsequence != null) {
+            validateSequenceSymbols(subsequence, sequenceClass);
+        }
+
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(fileContent));
         GenbankSequenceParser<S, C> parser = new GenbankSequenceParser<>();
         final String originalSequence = parser.getSequence(bufferedReader, 0);
         try {
@@ -33,20 +39,19 @@ public abstract class EditorMethod {
         } catch (IOException e) {
             throw new BufferedReaderCloseException();
         }
-        Class<S> sequenceClass = getSequenceClass(parameters.getFileContent());
-        String editedSequence = getEditedSequence(originalSequence, parameters);
+
+        String editedSequence = getEditedSequence(originalSequence, subsequence, position, cutSize);
 
         S sequence = createSequenceInstance(parser, editedSequence, sequenceClass);
-        int offset = (parameters.getSubsequence() == null)
-                ? parameters.getCutSize()
-                : parameters.getSubsequence().length();
 
-        adjustLocations(sequence, parameters.getPosition(), offset);
+        int offset = (subsequence == null) ? cutSize : subsequence.length();
+
+        adjustLocations(sequence, position, offset);
 
         return sequence;
     }
 
-    protected abstract String getEditedSequence(String sequence, EditorParameters parameters);
+    protected abstract String getEditedSequence(String sequence, String subsequence, int position, int cutSize);
 
     protected abstract <S extends AbstractSequence<C>, C extends Compound> void adjustLocations(
             S sequence, int position, int offset);
@@ -89,29 +94,14 @@ public abstract class EditorMethod {
             throw new SequenceClassException("Failed to get sequence class");
     }
 
-    private void validationParameters(EditorParameters parameters) {
-        if (parameters.getPosition() < 0) {
-            throw new ValidationParametersException("Error: position is negative");
-        }
-        if (parameters.getFileContent() == null || parameters.getFileContent().isEmpty()) {
-            throw new ValidationParametersException("Error: the file content is empty");
-        }
-        if (parameters.getSubsequence() == null) {
-            if (parameters.getCutSize() <= 0) {
-                throw new ValidationParametersException("Error: cut size is negative or 0");
-            }
-        } else if (parameters.getSubsequence().isEmpty()) {
-            throw new ValidationParametersException("Error: subsequence is empty");
-        } else {
-            Class temp = getSequenceClass(parameters.getFileContent());
-            try {
-                if (temp == ProteinSequence.class)
-                    ProteinTools.createProtein(parameters.getSubsequence());
-                else
-                    DNATools.createDNA(parameters.getSubsequence());
-            } catch (IllegalSymbolException e) {
-                throw new ValidationParametersException("Error: subsequence has invalid symbols");
-            }
+    private void validateSequenceSymbols(String sequence, Class sequenceClass) {
+        try {
+            if (sequenceClass == ProteinSequence.class)
+                ProteinTools.createProtein(sequence);
+            else
+                DNATools.createDNA(sequence);
+        } catch (IllegalSymbolException e) {
+            throw new ValidationParametersException("Error: subsequence has invalid symbols");
         }
     }
 }
