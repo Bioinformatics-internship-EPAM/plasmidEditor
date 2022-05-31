@@ -17,9 +17,10 @@ import java.util.List;
 
 @Service
 @Slf4j
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public class DNAFileUploadService implements FileUploadService<DNASequence> {
 
-    private final GenBankService service;
+    private transient final GenBankService service;
 
     @Autowired
     public DNAFileUploadService(GenBankService service) {

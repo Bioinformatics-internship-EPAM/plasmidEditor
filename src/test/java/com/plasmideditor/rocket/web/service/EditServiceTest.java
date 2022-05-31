@@ -28,15 +28,16 @@ import java.util.Optional;
 import static com.plasmideditor.rocket.web.service.utils.Operations.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public class EditServiceTest {
-    private final String TEST_DNA_SEQUENCE = "AAAAAAAAAA";
-    private final String TEST_PROTEIN_SEQUENCE = "MASMASMASM";
-    private final Integer TEST_START_POSITION = 3;
-    private final Integer TEST_SEQUENCE_LENGTH = 10;
+    private static final String TEST_DNA_SEQUENCE = "AAAAAAAAAA";
+    private static final String TEST_PROTEIN_SEQUENCE = "MASMASMASM";
+    private static final Integer TEST_START_POSITION = 3;
+    private static final Integer TEST_SEQUENCE_LENGTH = 10;
 
-    private final static String DNA_ACCESSION_ID = "1";
-    private final static String PROTEIN_ACCESSION_ID = "2";
-    private final static String FILE_VERSION = "111";
+    private static final String DNA_ACCESSION_ID = "1";
+    private static final String PROTEIN_ACCESSION_ID = "2";
+    private static final String FILE_VERSION = "111";
 
     private static final String TEST_DNA_FILE_PATH = "src/test/resources/BI431008.gb";
     private static final String TEST_PROTEIN_FILE_PATH = "src/test/resources/3MJ8_A.gb";

@@ -55,7 +55,14 @@ public class RocketExceptionHandler {
 
     @ExceptionHandler(FactoryUnknownOptionException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleFactoryUnknownOption(RequestBodyValidationException e) {
+    public ErrorResponse handleFactoryUnknownOption(FactoryUnknownOptionException e) {
+        String response = e.getMessage();
+        return new ErrorResponse(response);
+    }
+
+    @ExceptionHandler(FailedRequestHandleException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleFailedRequestHandle(FailedRequestHandleException e) {
         String response = e.getMessage();
         return new ErrorResponse(response);
     }

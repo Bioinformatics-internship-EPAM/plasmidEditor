@@ -15,9 +15,10 @@ import java.io.InputStream;
 import java.util.List;
 
 @Slf4j
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis"})
 public class ProteinFileUploadService implements FileUploadService<ProteinSequence> {
 
-    private final GenBankService service;
+    private transient final GenBankService service;
 
     @Autowired
     public ProteinFileUploadService(GenBankService service) {

@@ -2,6 +2,8 @@ package com.plasmideditor.rocket.exceptions;
 
 public class GenBankFileNotFoundException extends RuntimeException{
 
+    private static final long serialVersionUID = 1927124061910845061L;
+
     public GenBankFileNotFoundException(Long id) {
         super(String.format("GenBank with id '%d' not found", id));
     }

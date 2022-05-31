@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class FileDownloadService {
-    private final GenBankService genBankService;
+    private transient final GenBankService genBankService;
 
     @Autowired
     public FileDownloadService(GenBankService genBankService) {

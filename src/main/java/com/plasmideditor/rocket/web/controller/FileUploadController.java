@@ -22,9 +22,9 @@ import static com.plasmideditor.rocket.web.configuration.ApiConstants.*;
 public class FileUploadController {
 
     @Autowired
-    private DNAFileUploadService dnaFileEditorService;
+    private transient DNAFileUploadService dnaFileEditorService;
     @Autowired
-    private ProteinFileUploadService proteinFileEditorService;
+    private transient ProteinFileUploadService proteinFileEditorService;
 
     @PostMapping(
             path = DNA_ENDPOINT,
