@@ -17,12 +17,12 @@ repositories {
 
 dependencies {
 	// Spring Boot
-	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.6'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.6'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.7'
 
 	// Java Persistance API
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.data:spring-data-jpa:2.6.4'
+	implementation 'org.springframework.data:spring-data-jpa:2.7.0'
 
 	// Bio Java
 	implementation 'org.biojava:biojava-core:6.0.5'
@@ -35,11 +35,13 @@ dependencies {
 
 	implementation 'org.postgresql:postgresql'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 	testImplementation 'org.testcontainers:postgresql:1.17.1'
 	testImplementation 'org.testcontainers:testcontainers:1.17.1'
 	testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
-	testImplementation 'org.mockito:mockito-core:2.1.0'
+	testImplementation 'org.mockito:mockito-core:4.5.1'
 }
 
 docker {

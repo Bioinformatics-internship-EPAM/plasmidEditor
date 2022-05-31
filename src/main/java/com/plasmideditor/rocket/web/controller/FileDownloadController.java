@@ -26,18 +26,12 @@ public class FileDownloadController {
                 produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public byte[] downloadFile(@RequestBody String accession,
-                               @RequestBody String version) {
+    public byte[] downloadFile(@RequestParam String accession,
+                               @RequestParam String version) {
         try {
             GenBankData genBankData = fileDownloadService.downloadFile(accession, version);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(genBankData);
-            byte[] response = baos.toByteArray();
-            oos.close();
-            baos.close();
-            return response;
-        } catch (GenBankFileNotFoundException | IOException exception) {
+            return genBankData.getFile().getBytes();
+        } catch (GenBankFileNotFoundException e) {
             return null;
         }
     }
