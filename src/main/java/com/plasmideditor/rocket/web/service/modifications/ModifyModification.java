@@ -24,8 +24,10 @@ public class ModifyModification<S extends AbstractSequence<C>, C extends Compoun
             log.error(SEQ_LEN_OUT_OF_RANGE);
             throw new GenBankFileEditorException(SEQ_LEN_OUT_OF_RANGE);
         }
+        S newSequence = modifySequence(startPosition, sequence, cls, storedSequence);
+        modifyFeaturesLocation(sequenceParser.getFeatures(), newSequence, startPosition, sequence.length());
 
-        return modifySequence(startPosition, sequence, cls, storedSequence);
+        return newSequence;
     }
 
     @Override
@@ -33,6 +35,7 @@ public class ModifyModification<S extends AbstractSequence<C>, C extends Compoun
                                                   int start,
                                                   int seqLength,
                                                   AbstractFeature<AbstractSequence<C>, C> f) {
+        newSequence.addFeature(f);
     }
 
     @Override
