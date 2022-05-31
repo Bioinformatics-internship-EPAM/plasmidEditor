@@ -6,9 +6,9 @@ import org.biojava.nbio.core.sequence.template.Compound;
 
 public class AddMethod extends EditorMethod {
     @Override
-    protected String getEditedSequence(String sequence, EditorParameters parameters) {
+    protected String getEditedSequence(String sequence, String subsequence, int position, int cutSize) {
         StringBuilder sequenceBuilder = new StringBuilder(sequence);
-        sequenceBuilder.insert(parameters.getPosition() - 1, parameters.getSubsequence());
+        sequenceBuilder.insert(position - 1, subsequence);
         return sequenceBuilder.toString();
     }
 

@@ -1,6 +1,8 @@
 package com.plasmidEditor.sputnik;
 
+import com.plasmidEditor.sputnik.editor.EditorParameters;
 import com.plasmidEditor.sputnik.editor.GenBankEditor;
+import com.plasmidEditor.sputnik.services.GenBankService;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
 import org.biojava.nbio.core.sequence.features.AbstractFeature;
@@ -10,6 +12,7 @@ import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +31,8 @@ public class GenBankEditorTests {
     private static final int CUT_SIZE = 9;
 
     private static final String DNA_FILE_PATH = "src\\test\\resources\\X81322.gb";
+    private static final String DNA_ACCESSION = "X81322";
+    private static final String DNA_VERSION = "1";
     private static String DNA_FILE_CONTENT;
     private static String INIT_DNA_SEQUENCE;
 
@@ -36,32 +41,45 @@ public class GenBankEditorTests {
 
     @BeforeAll
     public static void init() throws IOException {
-        editor = new GenBankEditor();
         DNA_FILE_CONTENT = Files.readString(Path.of(DNA_FILE_PATH));
 
         BufferedReader bufferedReader = new BufferedReader(new StringReader(DNA_FILE_CONTENT));
         parser = new GenbankSequenceParser<>();
         INIT_DNA_SEQUENCE = parser.getSequence(bufferedReader, 0);
         bufferedReader.close();
+
+        GenBankDTO testDTO = GenBankDTO.builder()
+                .accession(DNA_ACCESSION)
+                .version(DNA_VERSION)
+                .file(DNA_FILE_CONTENT)
+                .build();
+
+        GenBankService serviceMock = Mockito.mock(GenBankService.class);
+        Mockito.when(serviceMock.get(DNA_ACCESSION, DNA_VERSION)).thenReturn(testDTO);
+
+        editor = new GenBankEditor(serviceMock);
     }
 
     @Test
     public void addDNASequenceTest() {
-        DNASequence newSequence = editor.add(DNA_SEQUENCE, POSITION, DNA_FILE_CONTENT);
+        EditorParameters parameters = new EditorParameters(DNA_SEQUENCE, POSITION, DNA_ACCESSION, DNA_VERSION, CUT_SIZE);
+        DNASequence newSequence = editor.add(parameters);
         checkCorrectDNASequenceInsert(newSequence);
         checkDNASequenceLocationsAfterInsert(newSequence);
     }
 
     @Test
     public void modifyDNASequenceTest() {
-        DNASequence newSequence = editor.modify(DNA_SEQUENCE, POSITION, DNA_FILE_CONTENT);
+        EditorParameters parameters = new EditorParameters(DNA_SEQUENCE, POSITION, DNA_ACCESSION, DNA_VERSION, CUT_SIZE);
+        DNASequence newSequence = editor.modify(parameters);
         checkCorrectDNASequenceModify(newSequence);
         checkDNASequenceLocationsAfterModify(newSequence);
     }
 
     @Test
     public void cutDNASequenceTest() {
-        DNASequence newSequence = editor.cut(POSITION, CUT_SIZE, DNA_FILE_CONTENT);
+        EditorParameters parameters = new EditorParameters(DNA_SEQUENCE, POSITION, DNA_ACCESSION, DNA_VERSION, CUT_SIZE);
+        DNASequence newSequence = editor.cut(parameters);
         checkCorrectDNASequenceCut(newSequence);
         checkDNASequenceLocationsAfterCut(newSequence);
     }

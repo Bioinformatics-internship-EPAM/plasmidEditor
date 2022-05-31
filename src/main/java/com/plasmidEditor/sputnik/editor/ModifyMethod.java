@@ -5,12 +5,12 @@ import org.biojava.nbio.core.sequence.template.Compound;
 
 public class ModifyMethod extends EditorMethod {
     @Override
-    protected String getEditedSequence(String sequence, EditorParameters parameters) {
+    protected String getEditedSequence(String sequence, String subsequence, int position, int cutSize) {
         StringBuilder sequenceBuilder = new StringBuilder(sequence);
         sequenceBuilder.replace(
-                parameters.getPosition() - 1,
-                parameters.getPosition() - 1 + parameters.getSubsequence().length(),
-                parameters.getSubsequence());
+                position - 1,
+                position - 1 + subsequence.length(),
+                subsequence);
         return sequenceBuilder.toString();
     }
 
